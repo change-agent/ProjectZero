@@ -38,7 +38,7 @@ public class SplashScreen extends AbstractScreen {
 		runtime += delta;
 		if (runtime > DELAY_TIME) {
 			// proceed to menu after 2 seconds
-			game.setScreen(new MainScreen(game));
+			game.setScreen(ProjectZero.mainScreen);
 		}
 			
 	}

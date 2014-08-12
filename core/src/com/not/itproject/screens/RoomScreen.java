@@ -50,7 +50,7 @@ public class RoomScreen extends AbstractScreen {
 	
 				} else if (btnNewGame.isTouched()) {
 					// debug log to console
-					game.setScreen(new SelectionScreen(game));
+					game.setScreen(ProjectZero.selectionScreen);
 					Gdx.app.log(ProjectZero.GAME_NAME,
 							"New Game button is pressed.");
 				}

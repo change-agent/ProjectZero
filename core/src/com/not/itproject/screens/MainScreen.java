@@ -39,12 +39,12 @@ public class MainScreen extends AbstractScreen {
 		
 		// check input from user and perform action
 		if (btnStart.isTouched()) {
-			game.setScreen(new RoomScreen(game));
+			game.setScreen(ProjectZero.roomScreen);
 			// debug log to console
 			Gdx.app.log(ProjectZero.GAME_NAME, "Start button is pressed.");
 			
 		} else if (btnHowToPlay.isTouched()) {
-			game.setScreen(new HelpScreen(game));
+			game.setScreen(ProjectZero.helpScreen);
 			// debug log to console
 			Gdx.app.log(ProjectZero.GAME_NAME, "How-to-play button is pressed.");
 			
