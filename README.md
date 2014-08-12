@@ -9,11 +9,21 @@
 ### How do I get set up? ###
 
 * Summary of set up
+
+Prepare Eclipse for development:
+
+
 * Configuration
+N/A
+
 * Dependencies
-* Database configuration
+N/A
+
 * How to run tests
+N/A
+
 * Deployment instructions
+N/A
 
 ### Contribution guidelines ###
 
