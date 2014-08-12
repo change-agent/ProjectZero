@@ -11,7 +11,7 @@ public class SimpleButton {
 	private int width;
 	private int height;
 	private Rectangle bounds;
-	private boolean isTouched;
+	protected boolean isTouched;
 	
 	public SimpleButton(int x, int y, int width, int height) {
 		// initialise variables
