@@ -10,8 +10,11 @@
 
 * Summary of set up
 
-Prepare Eclipse for development:
-
+For initial retrieval of the project, there are a few requirements that are needed to be completed.
+Firstly, prepare Eclipse for LibGDX development.
+Secondly, set up Android SDK with appropriate API.
+Thirdly, pull this repository onto your local machine.
+Lastly, compile and test the project.
 
 * Configuration
 N/A
