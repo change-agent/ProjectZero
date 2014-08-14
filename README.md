@@ -26,7 +26,7 @@ For initial retrieval of the project, there are a few requirements that are need
 
 **Configure Eclipse**
 
-Eclipse 4.4 (Luna)
+Install Eclipse 4.4 (Luna)
 
 With the following extensions from Eclipse marketplace:
 
