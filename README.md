@@ -24,11 +24,11 @@ For initial retrieval of the project, there are a few requirements that are need
 
 ### * Configuration ###
 
-1. Configure Eclipse
+**Configure Eclipse**
 
 Eclipse 4.4 (Luna)
 
-2. Android SDK
+**Android SDK**
 
 
 ### * Deployment instructions ###
