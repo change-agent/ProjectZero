@@ -2,15 +2,15 @@
 
 ## What is this repository for? ##
 
-* Quick summary
+Quick summary
 
-Project Zero
+* Project Zero
 
-* Version
+Version
 
-Prototype
+* Prototype
 
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+[Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ## How do I get set up? ##
 
