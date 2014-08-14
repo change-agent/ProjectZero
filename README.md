@@ -28,12 +28,28 @@ For initial retrieval of the project, there are a few requirements that are need
 
 Eclipse 4.4 (Luna)
 
-**Android SDK**
+With the following extensions from Eclipse marketplace:
 
+* Gradle Integration for Eclipse (4.4) 3.6.0.RELEASE
+* Android Development Tools for Eclipse
+
+
+**Android SDK**
+[Android SDK](http://developer.android.com/sdk/installing/index.html), you only need the SDK, not the ADT bundle, which includes Eclipse. 
+
+Install all platforms via the SDK Manager!
 
 ### * Deployment instructions ###
 
-Pull repository onto your local machine:
+**Pull repository onto your local machine:**
+
+Via the command line: *git clone https://tersun@bitbucket.org/tersun/project-zero.git*
+
+**Open the project via Eclipse**
+
+From the Projects view in Eclipse, right click onto blank space and select Import. 
+Under Gradle, select Gradle Project and click Next.
+Browse for the project and click Build Model.
 
 
 ## Contribution guidelines ##
