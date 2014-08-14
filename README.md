@@ -62,7 +62,11 @@ With the following tools and API:
 
 **Pull repository onto your local machine:**
 
-Via the command line: *git clone https://*username*@bitbucket.org/tersun/project-zero.git*
+Windows: Install Git and execute the following command via Git Bash.
+
+Linux: Install Git through the repository and execute the following command via terminal.
+
+**Command:** *git clone https://*username*@bitbucket.org/tersun/project-zero.git*
 
 **Open the project via Eclipse**
 
