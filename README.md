@@ -49,7 +49,9 @@ Via the command line: *git clone https://tersun@bitbucket.org/tersun/project-zer
 **Open the project via Eclipse**
 
 From the Projects view in Eclipse, right click onto blank space and select Import. 
+
 Under Gradle, select Gradle Project and click Next.
+
 Browse for the project and click Build Model.
 
 
