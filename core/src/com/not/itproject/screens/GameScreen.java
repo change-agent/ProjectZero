@@ -1,26 +1,27 @@
 package com.not.itproject.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.not.itproject.screens.SelectionScreen.SelectionState;
 import com.not.itproject.zero.ProjectZero;
 
-public class SelectionScreen extends AbstractScreen {
+public class GameScreen extends AbstractScreen {
 	// declare variables
-	SelectionState screenStatus;
-	enum SelectionState { TRACK, VEHICLE, READY };
+	GameState screenStatus;
+	enum GameState { READY, RUNNING, PAUSED };
 	
 	// main constructor
-	public SelectionScreen(ProjectZero game) {
+	public GameScreen(ProjectZero game) {
 		// define super
 		super(game);
 		
 		// initialise variables
-		screenStatus = SelectionState.TRACK;
+		screenStatus = GameState.READY;
 	}
 
 	public void update(float delta) {
+		// update objects
 	}
 	
 	@Override
@@ -29,42 +30,27 @@ public class SelectionScreen extends AbstractScreen {
 		Gdx.graphics.getGL20().glClearColor(1f, 1f, 0.85f, 0.85f);
 		Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		// update objects
-		update(delta);
-		
 		// determine screen status
 		switch (screenStatus) {
-			case TRACK:
-				// render track selection screen
-				batch.begin();
-				batch.end();
-				
-				// render shapes
-				shapeRenderer.begin(ShapeType.Line);
-				shapeRenderer.setColor(Color.BLACK);
-				shapeRenderer.end();
-				break;
-				
-			case VEHICLE:
-				// render vehicle selection screen
-				batch.begin();
-				batch.end();
-				
-				// render shapes
-				shapeRenderer.begin(ShapeType.Line);
-				shapeRenderer.setColor(Color.BLACK);
-				shapeRenderer.end();				
-				break;
-				
 			case READY:
-				// render ready screen
-				batch.begin();
-				batch.end();
+				// update objects
+				update(delta);
 				
-				// render shapes
-				shapeRenderer.begin(ShapeType.Line);
-				shapeRenderer.setColor(Color.BLACK);
-				shapeRenderer.end();
+				/** game render class function **/
+				break;
+				
+			case RUNNING:
+				// update objects
+				update(delta);
+				
+				/** game render class function **/
+				break;
+				
+			case PAUSED:
+				// update objects
+				update(delta);
+				
+				// paused function
 				break;
 		}
 	}

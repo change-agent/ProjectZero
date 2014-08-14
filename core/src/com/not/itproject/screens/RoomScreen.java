@@ -1,6 +1,7 @@
 package com.not.itproject.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.not.itproject.objects.SimpleButton;
@@ -89,6 +90,7 @@ public class RoomScreen extends AbstractScreen {
 				
 				// render shapes
 				shapeRenderer.begin(ShapeType.Line);
+				shapeRenderer.setColor(Color.BLACK);
 				shapeRenderer.rect(btnLoadGame.getPosition().x, btnLoadGame.getPosition().y, 
 						btnLoadGame.getWidth(), btnLoadGame.getHeight(), 0, 0, 0);
 				shapeRenderer.rect(btnNewGame.getPosition().x, btnNewGame.getPosition().y, 
@@ -103,6 +105,7 @@ public class RoomScreen extends AbstractScreen {
 				
 				// render shapes
 				shapeRenderer.begin(ShapeType.Line);
+				shapeRenderer.setColor(Color.BLACK);
 				shapeRenderer.rect(btnLoad.getPosition().x, btnLoad.getPosition().y, 
 						btnLoad.getWidth(), btnLoad.getHeight(), 0, 0, 0);
 				shapeRenderer.end();

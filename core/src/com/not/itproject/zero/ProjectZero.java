@@ -3,6 +3,7 @@ package com.not.itproject.zero;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.not.itproject.handlers.AssetHandler;
+import com.not.itproject.screens.GameScreen;
 import com.not.itproject.screens.HelpScreen;
 import com.not.itproject.screens.MainScreen;
 import com.not.itproject.screens.RoomScreen;
@@ -22,9 +23,8 @@ public class ProjectZero extends Game {
 	public static HelpScreen helpScreen;
 	public static RoomScreen roomScreen;
 	public static SelectionScreen selectionScreen;
-//	public static GameScreen gameScreen;
-//	public static MenuScreen menuScreen;
-	
+	public static GameScreen gameScreen;
+
 	@Override
 	public void create () {
 		// declare variables
@@ -36,8 +36,7 @@ public class ProjectZero extends Game {
 		helpScreen = new HelpScreen(this);
 		roomScreen = new RoomScreen(this);
 		selectionScreen = new SelectionScreen(this);
-//		gameScreen = new GameScreen(this);
-//		menuScreen = new MenuScreen(this);
+		gameScreen = new GameScreen(this);
 		
 		// load all assets
 		AssetHandler.load();

@@ -1,6 +1,7 @@
 package com.not.itproject.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.not.itproject.objects.SimpleButton;
@@ -134,6 +135,7 @@ public class HelpScreen extends AbstractScreen {
 				
 				// render shapes
 				shapeRenderer.begin(ShapeType.Line);
+				shapeRenderer.setColor(Color.BLACK);
 				shapeRenderer.rect(btnNext.getPosition().x, btnNext.getPosition().y, 
 						btnNext.getWidth(), btnNext.getHeight(), 0, 0, 0);
 				shapeRenderer.end();
@@ -150,6 +152,7 @@ public class HelpScreen extends AbstractScreen {
 				
 				// render shapes
 				shapeRenderer.begin(ShapeType.Line);
+				shapeRenderer.setColor(Color.BLACK);
 				shapeRenderer.rect(btnPrevious.getPosition().x, btnPrevious.getPosition().y, 
 						btnPrevious.getWidth(), btnPrevious.getHeight(), 0, 0, 0);
 				shapeRenderer.rect(btnNext.getPosition().x, btnNext.getPosition().y, 
@@ -168,6 +171,7 @@ public class HelpScreen extends AbstractScreen {
 				
 				// render shapes
 				shapeRenderer.begin(ShapeType.Line);
+				shapeRenderer.setColor(Color.BLACK);
 				shapeRenderer.rect(btnPrevious.getPosition().x, btnPrevious.getPosition().y, 
 						btnPrevious.getWidth(), btnPrevious.getHeight(), 0, 0, 0);
 				shapeRenderer.end();
