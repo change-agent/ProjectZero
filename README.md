@@ -1,14 +1,14 @@
 # Project Zero - README #
 
-### What is this repository for? ###
+## What is this repository for? ##
 
 * Quick summary
 * Version
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
-### How do I get set up? ###
+## How do I get set up? ##
 
-* Summary of set up
+### * Summary of set up ###
 
 For initial retrieval of the project, there are a few requirements that are needed to be completed.
 
@@ -22,29 +22,27 @@ For initial retrieval of the project, there are a few requirements that are need
 
 
 
-* Configuration
+### * Configuration ###
 
- 1. Configure Eclipse
+1. Configure Eclipse
 
 Eclipse 4.4 (Luna)
 
- 2. Android SDK
+2. Android SDK
 
 
-
-
-* Deployment instructions
+### * Deployment instructions ###
 
 Pull repository onto your local machine:
 
 
-### Contribution guidelines ###
+## Contribution guidelines ##
 
 * Writing tests
 * Code review
 * Other guidelines
 
-### Who do I talk to? ###
+## Who do I talk to? ##
 
 * Repo owner or admin
 * Other community or team contact
