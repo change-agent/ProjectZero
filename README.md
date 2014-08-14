@@ -66,6 +66,8 @@ Under Gradle, select Gradle Project and click Next.
 
 Browse for the project and click Build Model.
 
+Select the entire project by checking the checkbox and click Finish.
+
 
 ## Contribution guidelines ##
 
