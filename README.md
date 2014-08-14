@@ -35,6 +35,7 @@ With the following extensions from Eclipse marketplace:
 
 
 **Android SDK**
+
 [Android SDK](http://developer.android.com/sdk/installing/index.html), you only need the SDK, not the ADT bundle, which includes Eclipse. 
 
 Install all platforms via the SDK Manager!
