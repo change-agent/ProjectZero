@@ -3,7 +3,13 @@
 ## What is this repository for? ##
 
 * Quick summary
+
+Project Zero
+
 * Version
+
+Prototype
+
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ## How do I get set up? ##
@@ -91,8 +97,8 @@ Right click onto ProjectZero-desktop and select Run As > Java Application. From 
 
 ## Contribution guidelines ##
 
-* Writing tests
-* Code review
+* Project overview
+* Code contribution
 * Other guidelines
 
 ## Who do I talk to? ##
