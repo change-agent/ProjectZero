@@ -20,13 +20,16 @@ For initial retrieval of the project, there are a few requirements that are need
 
 4. Lastly, compile and test the project.
 
+
+
 * Configuration
 
-1. Configure Eclipse
+ 1. Configure Eclipse
 
 Eclipse 4.4 (Luna)
 
-2. Android SDK
+ 2. Android SDK
+
 
 
 
