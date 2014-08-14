@@ -81,11 +81,11 @@ From the imported project structure:
 * ProjectZero-core
 * ProjectZero-desktop
 
-For Android application:
+**For Android application:**
 
 Right click onto ProjectZero-android and select Run As > Android Application. From the Android Device Chooser select a Android device or Android virtual device. And the application should launch.
 
-For Desktop Application:
+**For Desktop Application:**
 
 Right click onto ProjectZero-desktop and select Run As > Java Application. From the Select Java Application, select DesktopLauncher and click OK. The application should launch.
 
