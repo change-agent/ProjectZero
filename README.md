@@ -46,7 +46,9 @@ With the following tools and API:
 
 * Android SDK Build-tools (Rev. 20)
 
-* Android 4.4W (API 20) - SDK Platform
+** Android 4.4W (API 20) - SDK Platform
+
+* Android 4.4.2 (API 19) - SDK Platform
 
 * Android Support Library (Rev. 20)
 
