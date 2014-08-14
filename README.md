@@ -39,11 +39,17 @@ With the following extensions from Eclipse marketplace:
 [Android SDK](http://developer.android.com/sdk/installing/index.html), you only need the SDK, not the ADT bundle, which includes Eclipse. 
 
 With the following tools and API:
+
 * Android SDK Tools (Rev. 23.0.2)
+
 * Android SDK Platform-tools (Rev. 20)
+
 * Android SDK Build-tools (Rev. 20)
+
 * Android 4.4W (API 20) - SDK Platform
+
 * Android Support Library (Rev. 20)
+
 * Google USB Driver
 
 ### * Deployment instructions ###
