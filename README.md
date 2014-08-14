@@ -46,8 +46,6 @@ With the following tools and API:
 
 * Android SDK Build-tools (Rev. 20)
 
-** Android 4.4W (API 20) - SDK Platform
-
 * Android 4.4.2 (API 19) - SDK Platform
 
 * Android Support Library (Rev. 20)
@@ -76,7 +74,20 @@ After the downloading and process of importing the Gradle project has completed 
 
 Due to the nature of LibGDX, there are currently two methods of testing out the application; as a Desktop application and as a Android application.
 
+From the imported project structure:
 
+* project-zero
+* ProjectZero-android
+* ProjectZero-core
+* ProjectZero-desktop
+
+For Android application:
+
+Right click onto ProjectZero-android and select Run As > Android Application. From the Android Device Chooser select a Android device or Android virtual device. And the application should launch.
+
+For Desktop Application:
+
+Right click onto ProjectZero-desktop and select Run As > Java Application. From the Select Java Application, select DesktopLauncher and click OK. The application should launch.
 
 ## Contribution guidelines ##
 
