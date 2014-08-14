@@ -62,7 +62,7 @@ With the following tools and API:
 
 **Pull repository onto your local machine:**
 
-Via the command line: *git clone https://tersun@bitbucket.org/tersun/project-zero.git*
+Via the command line: *git clone https://*username*@bitbucket.org/tersun/project-zero.git*
 
 **Open the project via Eclipse**
 
