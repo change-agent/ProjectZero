@@ -4,7 +4,7 @@
 
 Quick summary
 
-* Project Zero
+* Project Zero (Group 10)
 
 Version
 
