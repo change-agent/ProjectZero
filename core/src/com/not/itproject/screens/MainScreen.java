@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.objects.SimpleButton;
 import com.not.itproject.objects.ToggleButton;
 import com.not.itproject.zero.ProjectZero;
@@ -67,15 +68,21 @@ public class MainScreen extends AbstractScreen {
 		
 		// render screen
 		batch.begin();
+		batch.draw(AssetHandler.button, 
+				btnStart.getPosition().x, btnStart.getPosition().y, 
+				btnStart.getWidth(), btnStart.getHeight());
+		batch.draw(AssetHandler.button, 
+				btnHowToPlay.getPosition().x, btnHowToPlay.getPosition().y, 
+				btnHowToPlay.getWidth(), btnHowToPlay.getHeight());
 		batch.end();
 		
 		// render shapes
 		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(Color.BLACK);
-		shapeRenderer.rect(btnStart.getPosition().x, btnStart.getPosition().y, 
-				btnStart.getWidth(), btnStart.getHeight(), 0, 0, 0);
-		shapeRenderer.rect(btnHowToPlay.getPosition().x, btnHowToPlay.getPosition().y, 
-				btnHowToPlay.getWidth(), btnHowToPlay.getHeight(), 0, 0, 0);
+//		shapeRenderer.rect(btnStart.getPosition().x, btnStart.getPosition().y, 
+//				btnStart.getWidth(), btnStart.getHeight(), 0, 0, 0);
+//		shapeRenderer.rect(btnHowToPlay.getPosition().x, btnHowToPlay.getPosition().y, 
+//				btnHowToPlay.getWidth(), btnHowToPlay.getHeight(), 0, 0, 0);
 		shapeRenderer.rect(btnSoundToggle.getPosition().x, btnSoundToggle.getPosition().y, 
 				btnSoundToggle.getWidth(), btnSoundToggle.getHeight(), 0, 0, 0);
 		shapeRenderer.end();

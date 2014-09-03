@@ -1,24 +1,23 @@
 package com.not.itproject.objects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.not.itproject.zero.ProjectZero;
 
-public class SimpleButton {
+public class SimpleRoundButton {
 	// declare variables
 	private Vector2 position;
-	private int width;
-	private int height;
-	private Rectangle bounds;
+	private int radius;
+	private Circle bounds;
 	protected boolean isTouched;
 	
-	public SimpleButton(int x, int y, int width, int height) {
+	public SimpleRoundButton(int x, int y, int radius) {
 		// initialise variables
 		position = new Vector2(x, y);
-		this.width = width;
-		this.height = height;
-		bounds = new Rectangle(x, y, width, height);
+		this.radius = radius;
+		bounds = new Circle(x, y, radius);
 		isTouched = false;
 	}
 
@@ -32,15 +31,14 @@ public class SimpleButton {
 		// determine if pressed
 		if (Gdx.input.justTouched()) {
 			// check if within bounds
-			if (bounds.contains(x, y)) {
-//				(x >= position.x && x <= (position.x + width) && y >= position.y && y <= (position.y + height))
+			if(bounds.contains(x, y)) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public Rectangle getBounds() {
+	public Circle getBounds() {
 		return bounds;
 	}
 	
@@ -59,31 +57,17 @@ public class SimpleButton {
 	}
 
 	/**
-	 * @return the width
+	 * @return the radius
 	 */
-	public int getWidth() {
-		return width;
+	public int getRadius() {
+		return radius;
 	}
 
 	/**
-	 * @param width the width to set
+	 * @param width the radius to set
 	 */
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	/**
-	 * @return the height
-	 */
-	public int getHeight() {
-		return height;
-	}
-
-	/**
-	 * @param height the height to set
-	 */
-	public void setHeight(int height) {
-		this.height = height;
+	public void setWidth(int radius) {
+		this.radius = radius;
 	}
 
 	/**

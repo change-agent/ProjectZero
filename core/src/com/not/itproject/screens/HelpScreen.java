@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.not.itproject.objects.SimpleButton;
+import com.not.itproject.objects.SimpleRoundButton;
 import com.not.itproject.zero.ProjectZero;
 
 public class HelpScreen extends AbstractScreen {
@@ -12,6 +13,7 @@ public class HelpScreen extends AbstractScreen {
 	SimpleButton btnPrevious;
 	SimpleButton btnNext;
 	SimpleButton btnClose;
+	SimpleRoundButton btnBack;
 	HelpState screenStatus;
 	
 	// determines number of help screens
@@ -31,6 +33,7 @@ public class HelpScreen extends AbstractScreen {
 				(int)(gameHeight * 4/5), btnWidth, 30);
 		btnNext = new SimpleButton((int)(gameWidth * 3/4) - btnWidth/2, 
 				(int)(gameHeight * 4/5), btnWidth, 30);
+		btnBack = new SimpleRoundButton(20, 20, 12);
 	}
 	
 	// functions to determine the page status and its page number
@@ -73,6 +76,15 @@ public class HelpScreen extends AbstractScreen {
 		// update objects
 		btnPrevious.update(delta);
 		btnNext.update(delta);
+		btnBack.update(delta);
+		
+		// check input from user and perform action
+		if (btnBack.isTouched()) {
+			game.setScreen(ProjectZero.gameScreen);
+			// debug log to console
+			Gdx.app.log(ProjectZero.GAME_NAME, "Back button is pressed.");
+			
+		}
 		
 		// determine screen status
 		switch (screenStatus) {
@@ -138,6 +150,8 @@ public class HelpScreen extends AbstractScreen {
 				shapeRenderer.setColor(Color.BLACK);
 				shapeRenderer.rect(btnNext.getPosition().x, btnNext.getPosition().y, 
 						btnNext.getWidth(), btnNext.getHeight(), 0, 0, 0);
+				shapeRenderer.circle(btnBack.getPosition().x, btnBack.getPosition().y, 
+						(float) btnBack.getRadius());
 				shapeRenderer.end();
 				break;
 				
@@ -157,6 +171,8 @@ public class HelpScreen extends AbstractScreen {
 						btnPrevious.getWidth(), btnPrevious.getHeight(), 0, 0, 0);
 				shapeRenderer.rect(btnNext.getPosition().x, btnNext.getPosition().y, 
 						btnNext.getWidth(), btnNext.getHeight(), 0, 0, 0);
+				shapeRenderer.circle(btnBack.getPosition().x, btnBack.getPosition().y, 
+						(float) btnBack.getRadius());
 				shapeRenderer.end();
 				break;
 				
@@ -174,6 +190,8 @@ public class HelpScreen extends AbstractScreen {
 				shapeRenderer.setColor(Color.BLACK);
 				shapeRenderer.rect(btnPrevious.getPosition().x, btnPrevious.getPosition().y, 
 						btnPrevious.getWidth(), btnPrevious.getHeight(), 0, 0, 0);
+				shapeRenderer.circle(btnBack.getPosition().x, btnBack.getPosition().y, 
+						(float) btnBack.getRadius());
 				shapeRenderer.end();
 				break;
 		}
