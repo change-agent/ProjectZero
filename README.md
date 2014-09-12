@@ -111,7 +111,7 @@ From the imported project structure:
 
 **For Desktop Application:**
 
-Right click onto ProjectZero-desktop and select Run As > Java Application. From the Select Java Application, select TestDesktopLauncher and click OK. The application should launch.
+Right click onto ProjectZero-desktop and select Run As > Java Application. From the Select Java Application, select TestDesktopLauncher and click OK. The test cases should run and the results will be outputted to the Eclipse console.
 
 ## Contribution guidelines ##
 
