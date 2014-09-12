@@ -102,6 +102,16 @@ Right click onto ProjectZero-desktop and select Run As > Java Application. From 
 
 ## Testing Framework ##
 
+From the imported project structure:
+
+* project-zero
+* ProjectZero-android
+* ProjectZero-core
+* ProjectZero-desktop
+
+**For Desktop Application:**
+
+Right click onto ProjectZero-desktop and select Run As > Java Application. From the Select Java Application, select TestDesktopLauncher and click OK. The application should launch.
 
 ## Contribution guidelines ##
 
