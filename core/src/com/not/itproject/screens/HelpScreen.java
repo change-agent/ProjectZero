@@ -80,7 +80,7 @@ public class HelpScreen extends AbstractScreen {
 		
 		// check input from user and perform action
 		if (btnBack.isTouched()) {
-			game.setScreen(ProjectZero.gameScreen);
+			game.nextScreen(ProjectZero.gameScreen, this);
 			// debug log to console
 			Gdx.app.log(ProjectZero.GAME_NAME, "Back button is pressed.");
 			

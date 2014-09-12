@@ -1,18 +1,22 @@
 package com.not.itproject.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.not.itproject.objects.SimpleRoundButton;
-import com.not.itproject.screens.SelectionScreen.SelectionState;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad.TouchpadStyle;
+import com.not.itproject.objects.GameInputProcessor;
+import com.not.itproject.objects.GameRenderer;
+import com.not.itproject.objects.GameWorld;
 import com.not.itproject.zero.ProjectZero;
 
 public class GameScreen extends AbstractScreen {
 	// declare variables
-	GameState screenStatus;
-	enum GameState { READY, RUNNING, PAUSED };
-	SimpleRoundButton btnA, btnB;
+	GameWorld gameWorld;
+	GameRenderer gameRenderer;
+	GameInputProcessor gameInputProcessor;
 	
 	// main constructor
 	public GameScreen(ProjectZero game) {
@@ -20,65 +24,32 @@ public class GameScreen extends AbstractScreen {
 		super(game);
 		
 		// initialise variables
-		screenStatus = GameState.READY;
-		btnA = new SimpleRoundButton(20, 20, 12);
-		btnB = new SimpleRoundButton((int) (gameWidth-20), 20, 12);
+		gameWorld = new GameWorld(game);
+		gameRenderer = new GameRenderer(gameWorld);
+		gameInputProcessor = new GameInputProcessor(gameWorld);
+         
+        Gdx.input.setInputProcessor(gameInputProcessor.getStage());
 	}
 
 	public void update(float delta) {
-		// update objects
-		btnA.update(delta);
-		btnB.update(delta);
-		
-		// check input from user and perform action
-		if (btnA.isTouched()) {
-			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME, "A button is pressed.");
-		}
-		if (btnB.isTouched()) {
-			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME, "B button is pressed.");
-		}
+		// update world
+		gameWorld.update(delta);
+
+		// update controls	
 	}
 	
 	@Override
 	public void render(float delta) {
 		// clear screen
-		Gdx.graphics.getGL20().glClearColor(1f, 1f, 0.85f, 0.85f);
+		Gdx.graphics.getGL20().glClearColor(1f, 0.85f, 0.45f, 0.85f);
 		Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		// render shapes
-		shapeRenderer.begin(ShapeType.Line);
-		shapeRenderer.setColor(Color.BLACK);
-		shapeRenderer.circle(btnA.getPosition().x, btnA.getPosition().y, 
-				(float) btnA.getRadius());
-		shapeRenderer.circle(btnB.getPosition().x, btnB.getPosition().y, 
-				(float) btnB.getRadius());
-		shapeRenderer.end();
 		
-		// determine screen status
-		switch (screenStatus) {
-			case READY:
-				// update objects
-				update(delta);
-				
-				/** game render class function **/
-				break;
-				
-			case RUNNING:
-				// update objects
-				update(delta);
-				
-				/** game render class function **/
-				break;
-				
-			case PAUSED:
-				// update objects
-				update(delta);
-				
-				// paused function
-				break;
-		}
+		// render game
+		gameRenderer.render(delta); 
+		
+		// render controls
+		gameInputProcessor.update(delta);
+		gameInputProcessor.render(delta);
 	}
 
 	@Override
@@ -104,5 +75,8 @@ public class GameScreen extends AbstractScreen {
 	@Override
 	public void dispose() {
 		game.dispose();
+		gameWorld.dispose();
+		gameRenderer.dispose();
+		gameInputProcessor.dispose();
 	}
 }

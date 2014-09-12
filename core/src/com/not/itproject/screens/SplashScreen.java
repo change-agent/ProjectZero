@@ -40,7 +40,6 @@ public class SplashScreen extends AbstractScreen {
 			// proceed to menu after 2 seconds
 			game.setScreen(ProjectZero.mainScreen);
 		}
-			
 	}
 
 	@Override

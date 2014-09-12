@@ -8,12 +8,12 @@ public class ToggleButton extends SimpleButton {
 	// declare variables
 	boolean isToggleOn;
 	
-	public ToggleButton(int x, int y, int width, int height) {
+	public ToggleButton(int x, int y, int width, int height, boolean toggled) {
 		// define super
 		super(x, y, width, height);
 		
 		// initialise variables
-		isToggleOn = false;
+		isToggleOn = toggled;
 	}
 	
 

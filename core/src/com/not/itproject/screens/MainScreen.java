@@ -28,9 +28,9 @@ public class MainScreen extends AbstractScreen {
 		btnHowToPlay = new SimpleButton((int)(gameWidth * 3/4) - btnWidth/2 - btnOffset, 
 				(int)(gameHeight/2), btnWidth, 30);
 		
-		btnWidth = 80; // reassign for sound toggle
+		btnWidth = 100; // reassign for sound toggle
 		btnSoundToggle = new ToggleButton((int)(gameWidth / 2) - btnWidth/2, 
-				(int)(gameHeight * 4/5), btnWidth, 20);
+				(int)(gameHeight * 4/5), btnWidth, 20, AssetHandler.getSoundMute());
 	}
 
 	public void update(float delta) {
@@ -41,16 +41,23 @@ public class MainScreen extends AbstractScreen {
 		
 		// check input from user and perform action
 		if (btnStart.isTouched()) {
-			game.setScreen(ProjectZero.roomScreen);
+			// proceed to next screen
+			game.nextScreen(ProjectZero.roomScreen, this);
+			
 			// debug log to console
 			Gdx.app.log(ProjectZero.GAME_NAME, "Start button is pressed.");
 			
 		} else if (btnHowToPlay.isTouched()) {
-			game.setScreen(ProjectZero.helpScreen);
+			// proceed to next screen
+			game.nextScreen(ProjectZero.helpScreen, this);
+			
 			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME, "How-to-play button is pressed.");
+			Gdx.app.log(ProjectZero.GAME_NAME, "How-to-play button is pre9ssed.");
 			
 		} else if (btnSoundToggle.isTouched()) {
+			// toggle sound mute
+			AssetHandler.setSoundMute(btnSoundToggle.isToggleOn());
+			
 			// debug log to console
 			Gdx.app.log(ProjectZero.GAME_NAME, "Sound button is toggled. " + 
 					"Toggle on: " + btnSoundToggle.isToggleOn());
@@ -68,12 +75,24 @@ public class MainScreen extends AbstractScreen {
 		
 		// render screen
 		batch.begin();
-		batch.draw(AssetHandler.button, 
+		batch.draw(AssetHandler.buttonStart, 
 				btnStart.getPosition().x, btnStart.getPosition().y, 
 				btnStart.getWidth(), btnStart.getHeight());
-		batch.draw(AssetHandler.button, 
+		batch.draw(AssetHandler.buttonTutorial, 
 				btnHowToPlay.getPosition().x, btnHowToPlay.getPosition().y, 
 				btnHowToPlay.getWidth(), btnHowToPlay.getHeight());
+		// display sound mute button
+		if (AssetHandler.getSoundMute() == true) {
+			// sound mute = on
+			batch.draw(AssetHandler.toggleButtonSoundOn, 
+					btnSoundToggle.getPosition().x, btnSoundToggle.getPosition().y, 
+					btnSoundToggle.getWidth(), btnSoundToggle.getHeight());
+		} else {
+			// sound mute = off
+			batch.draw(AssetHandler.toggleButtonSoundOff, 
+					btnSoundToggle.getPosition().x, btnSoundToggle.getPosition().y, 
+					btnSoundToggle.getWidth(), btnSoundToggle.getHeight());
+		}
 		batch.end();
 		
 		// render shapes
@@ -83,8 +102,8 @@ public class MainScreen extends AbstractScreen {
 //				btnStart.getWidth(), btnStart.getHeight(), 0, 0, 0);
 //		shapeRenderer.rect(btnHowToPlay.getPosition().x, btnHowToPlay.getPosition().y, 
 //				btnHowToPlay.getWidth(), btnHowToPlay.getHeight(), 0, 0, 0);
-		shapeRenderer.rect(btnSoundToggle.getPosition().x, btnSoundToggle.getPosition().y, 
-				btnSoundToggle.getWidth(), btnSoundToggle.getHeight(), 0, 0, 0);
+//		shapeRenderer.rect(btnSoundToggle.getPosition().x, btnSoundToggle.getPosition().y, 
+//				btnSoundToggle.getWidth(), btnSoundToggle.getHeight(), 0, 0, 0);
 		shapeRenderer.end();
 	}
 

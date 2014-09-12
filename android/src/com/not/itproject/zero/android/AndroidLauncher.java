@@ -11,6 +11,10 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+		
+		// enable immersive for Android 4.4
+		config.useImmersiveMode = true;
+		
 		initialize(new ProjectZero(), config);
 	}
 }

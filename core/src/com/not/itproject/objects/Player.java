@@ -19,11 +19,15 @@ public class Player extends GameObject {
 	}
 	
 	public void moveLeft(float value, float delta) {
+		// move left with rotation
 		position.x -= value * delta;
+		rotation -= value * delta;
 	}
 	
 	public void moveRight(float value, float delta) {
+		// move right with rotation
 		position.x += value * delta;
+		rotation += value * delta;
 	}
 	
 	public Rectangle getBounds() {

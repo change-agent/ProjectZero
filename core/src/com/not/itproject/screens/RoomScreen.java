@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.objects.SimpleButton;
 import com.not.itproject.zero.ProjectZero;
 
@@ -51,7 +52,7 @@ public class RoomScreen extends AbstractScreen {
 	
 				} else if (btnNewGame.isTouched()) {
 					// debug log to console
-					game.setScreen(ProjectZero.selectionScreen);
+					game.nextScreen(ProjectZero.selectionScreen, this);
 					Gdx.app.log(ProjectZero.GAME_NAME,
 							"New Game button is pressed.");
 				}
@@ -86,29 +87,22 @@ public class RoomScreen extends AbstractScreen {
 			case WAITING:
 				// render room (waiting) screen
 				batch.begin();
+				batch.draw(AssetHandler.buttonLoadGame, 
+						btnLoadGame.getPosition().x, btnLoadGame.getPosition().y, 
+						btnLoadGame.getWidth(), btnLoadGame.getHeight());
+				batch.draw(AssetHandler.buttonNewGame, 
+						btnNewGame.getPosition().x, btnNewGame.getPosition().y, 
+						btnNewGame.getWidth(), btnNewGame.getHeight());
 				batch.end();
-				
-				// render shapes
-				shapeRenderer.begin(ShapeType.Line);
-				shapeRenderer.setColor(Color.BLACK);
-				shapeRenderer.rect(btnLoadGame.getPosition().x, btnLoadGame.getPosition().y, 
-						btnLoadGame.getWidth(), btnLoadGame.getHeight(), 0, 0, 0);
-				shapeRenderer.rect(btnNewGame.getPosition().x, btnNewGame.getPosition().y, 
-						btnNewGame.getWidth(), btnNewGame.getHeight(), 0, 0, 0);
-				shapeRenderer.end();
 				break;
 				
 			case LOAD:
 				// render load screen
 				batch.begin();
+				batch.draw(AssetHandler.buttonLoad, 
+						btnLoad.getPosition().x, btnLoad.getPosition().y, 
+						btnLoad.getWidth(), btnLoad.getHeight());
 				batch.end();
-				
-				// render shapes
-				shapeRenderer.begin(ShapeType.Line);
-				shapeRenderer.setColor(Color.BLACK);
-				shapeRenderer.rect(btnLoad.getPosition().x, btnLoad.getPosition().y, 
-						btnLoad.getWidth(), btnLoad.getHeight(), 0, 0, 0);
-				shapeRenderer.end();
 				break;
 		}
 	}
