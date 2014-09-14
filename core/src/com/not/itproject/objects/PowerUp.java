@@ -14,7 +14,7 @@ public class PowerUp extends GameObject {
 	private PowerType type;
 	Rectangle bounds;
 	private float wait;
-	private Boolean collected = true; // check this when rendering, only render if false
+	private Boolean collected; // check this when rendering, only render if false
 	
 	public PowerUp(float x, float y, float width, float height, float rotation) {
 		// define super
