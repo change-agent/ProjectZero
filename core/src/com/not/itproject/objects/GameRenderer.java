@@ -62,6 +62,26 @@ public class GameRenderer {
 				world.getPlayer().getWidth(), world.getPlayer().getHeight(), 
 				1, 1, world.getPlayer().getRotation());
 		
+		// Draws other players
+		for (Player opponent : world.opponents) {
+			batch.draw(AssetHandler.button, 
+					opponent.getPosition().x - opponent.getWidth() / 2, 
+					opponent.getPosition().y - opponent.getHeight() / 2, 
+					0, 0, 
+					opponent.getWidth(), opponent.getHeight(), 
+					1, 1, opponent.getRotation());
+		}
+		
+		//Draws static objects (powers and obstacles)
+		for (GameObject staticObj : world.staticObjects) {
+			batch.draw(AssetHandler.button, 
+					staticObj.getPosition().x - staticObj.getWidth() / 2, 
+					staticObj.getPosition().y - staticObj.getHeight() / 2, 
+					0, 0, 
+					staticObj.getWidth(), staticObj.getHeight(), 
+					1, 1, staticObj.getRotation());
+		}
+		
 		batch.end();
 	}
 
