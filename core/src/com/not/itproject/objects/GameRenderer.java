@@ -10,15 +10,19 @@ import com.not.itproject.zero.ProjectZero;
 public class GameRenderer {
 	// declare variables
 	GameWorld world;
+	GameInputProcessor gameInputProcessor;
 	OrthographicCamera camera;
 	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
 	private float gameWidth, gameHeight;
 	
 	// main constructor
-	public GameRenderer(GameWorld world) {
+	public GameRenderer(GameWorld world, GameInputProcessor gameInputProcessor) {
 		// get world
 		this.world = world;
+		
+		// get controls
+		this.gameInputProcessor = gameInputProcessor;
 		
 		// calculate ratio
 		float screenWidth = Gdx.graphics.getWidth();
@@ -37,8 +41,14 @@ public class GameRenderer {
 	
 	public void render(float delta) {
 		// get game state
-		if (world.isReady()) { renderReady(delta); } 
-		else if (world.isRunning()) { renderRunning(delta); } 
+		if (world.isReady()) { 
+			renderControls(delta);			
+			renderReady(delta); 
+		} 
+		else if (world.isRunning()) { 
+			renderControls(delta);			
+			renderRunning(delta); 
+		} 
 		else if (world.isPaused()) { renderPaused(delta); }
 		else if (world.hasEnded()) { renderEnded(delta); }
 	}
@@ -87,6 +97,12 @@ public class GameRenderer {
 
 	public void renderPaused(float delta) {
 		
+	}
+	
+	public void renderControls(float delta) {
+		// update/render controls
+		gameInputProcessor.update(delta);
+		gameInputProcessor.render(delta);		
 	}
 	
 	public void dispose() {

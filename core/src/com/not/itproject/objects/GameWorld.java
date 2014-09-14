@@ -96,6 +96,16 @@ public class GameWorld {
 		}
 		return false;
 	}
+	
+	public void resumeGame() {
+		// game resume - countdown
+		gameStatus = GameState.READY;
+	}
+	
+	public void pauseGame() {
+		// game paused
+		gameStatus = GameState.PAUSED;
+	}
 
 	public void dispose() {
 		
