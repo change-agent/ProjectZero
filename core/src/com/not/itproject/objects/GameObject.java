@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 public class GameObject {
 	// declare variables
 	Vector2 position;
-	Vector2 velocity;
 	float width;
 	float height;
 	float rotation; 
@@ -13,7 +12,6 @@ public class GameObject {
 	// main constructor
 	public GameObject(float x, float y, float width, float height, float rotation) {
 		position = new Vector2(x, y);
-		velocity = new Vector2(0, 0);
 		this.width = width;
 		this.height = height;
 		this.rotation = rotation;
@@ -31,20 +29,6 @@ public class GameObject {
 	 */
 	public void setPosition(Vector2 position) {
 		this.position = position;
-	}
-
-	/**
-	 * @return the velocity
-	 */
-	public Vector2 getVelocity() {
-		return velocity;
-	}
-
-	/**
-	 * @param velocity the velocity to set
-	 */
-	public void setVelocity(Vector2 velocity) {
-		this.velocity = velocity;
 	}
 
 	/**

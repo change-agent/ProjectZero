@@ -39,9 +39,15 @@ public class GameRenderer {
 		// get game state
 		if (world.isReady()) { renderReady(delta); } 
 		else if (world.isRunning()) { renderRunning(delta); } 
-		else if (world.isPaused()) { renderPaused(delta); } 
+		else if (world.isPaused()) { renderPaused(delta); }
+		else if (world.hasEnded()) { renderEnded(delta); }
 	}
 	
+	public void renderEnded(float delta) {
+		//change screen to end game screen 
+		
+	}
+
 	public void renderReady(float delta) {
 		
 	}
