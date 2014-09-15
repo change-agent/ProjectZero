@@ -65,7 +65,7 @@ public class GameRenderer {
 	public void renderRunning(float delta) {
 		// render running state
 		batch.begin();
-		batch.draw(AssetHandler.button, 
+		batch.draw(AssetHandler.player, 
 				world.getPlayer().getPosition().x - world.getPlayer().getWidth() / 2, 
 				world.getPlayer().getPosition().y - world.getPlayer().getHeight() / 2, 
 				0, 0, 
@@ -74,7 +74,7 @@ public class GameRenderer {
 		
 		// Draws other players
 		for (Player opponent : world.opponents) {
-			batch.draw(AssetHandler.button, 
+			batch.draw(AssetHandler.opponent, 
 					opponent.getPosition().x - opponent.getWidth() / 2, 
 					opponent.getPosition().y - opponent.getHeight() / 2, 
 					0, 0, 
