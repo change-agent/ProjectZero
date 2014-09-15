@@ -25,17 +25,15 @@ public class GameScreen extends AbstractScreen {
 		
 		// initialise variables
 		gameWorld = new GameWorld(game);
-		gameRenderer = new GameRenderer(gameWorld);
-		gameInputProcessor = new GameInputProcessor(gameWorld);
+		gameInputProcessor = new GameInputProcessor(gameWorld, gameWidth, gameHeight);
+		gameRenderer = new GameRenderer(gameWorld, gameInputProcessor);
          
         Gdx.input.setInputProcessor(gameInputProcessor.getStage());
 	}
 
 	public void update(float delta) {
 		// update world
-		gameWorld.update(delta);
-
-		// update controls	
+		gameWorld.update(delta);	
 	}
 	
 	@Override
@@ -46,10 +44,6 @@ public class GameScreen extends AbstractScreen {
 		
 		// render game
 		gameRenderer.render(delta); 
-		
-		// render controls
-		gameInputProcessor.update(delta);
-		gameInputProcessor.render(delta);
 	}
 
 	@Override
