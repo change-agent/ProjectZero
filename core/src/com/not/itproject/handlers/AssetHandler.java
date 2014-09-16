@@ -11,12 +11,14 @@ public class AssetHandler {
 	public static Texture logoTexture, buttonTexture, buttonStartTexture, buttonTutorialTexture,
 							toggleButtonSoundOffTexture, toggleButtonSoundOnTexture,
 							buttonLoadGameTexture, buttonNewGameTexture, buttonLoadTexture,
-							buttonNextTexture, buttonReadyTexture, buttonStartSessionTexture;
+							buttonNextTexture, buttonReadyTexture, buttonStartSessionTexture,
+							buttonBackTexture;
 	public static Texture playerTexture, opponentTexture;
 	public static TextureRegion logo, button, buttonStart, buttonTutorial,
 							toggleButtonSoundOff, toggleButtonSoundOn,
 							buttonLoadGame, buttonNewGame, buttonLoad,
-							buttonNext, buttonReady, buttonStartSession;
+							buttonNext, buttonReady, buttonStartSession,
+							buttonBack;
 	public static TextureRegion player, opponent;
 	public static Preferences prefs;
 	
@@ -52,6 +54,8 @@ public class AssetHandler {
 		playerTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		opponentTexture = new Texture(Gdx.files.internal("vehicles/type1-blue.png"));
 		opponentTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		buttonBackTexture = new Texture(Gdx.files.internal("buttonBack.png"));
+		buttonBackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		// load regions
 		logo = new TextureRegion(logoTexture);
@@ -82,6 +86,8 @@ public class AssetHandler {
 		player.flip(false, true);
 		opponent = new TextureRegion(opponentTexture);
 		opponent.flip(false, true);
+		buttonBack = new TextureRegion(buttonBackTexture);
+		buttonBack.flip(false, true);
 		
 		// load preferences/settings
 		loadSettings();

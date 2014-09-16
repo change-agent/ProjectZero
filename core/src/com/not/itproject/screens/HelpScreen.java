@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.not.itproject.handlers.AssetHandler;
+import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.objects.SimpleButton;
 import com.not.itproject.objects.SimpleRoundButton;
 import com.not.itproject.zero.ProjectZero;
@@ -18,7 +20,7 @@ public class HelpScreen extends AbstractScreen {
 	
 	// determines number of help screens
 	private static final int NUM_HELP_PAGES = 3;
-	enum HelpState { HELP_ONE, HELP_TWO, HELP_THREE }; 
+	enum HelpState { HELP_ONE, HELP_TWO, HELP_THREE };
 	
 	// main constructor
 	public HelpScreen(ProjectZero game) {
@@ -33,7 +35,7 @@ public class HelpScreen extends AbstractScreen {
 				(int)(gameHeight * 4/5), btnWidth, 30);
 		btnNext = new SimpleButton((int)(gameWidth * 3/4) - btnWidth/2, 
 				(int)(gameHeight * 4/5), btnWidth, 30);
-		btnBack = new SimpleRoundButton(20, 20, 12);
+		btnBack = new SimpleRoundButton(20, 20, 15);
 	}
 	
 	// functions to determine the page status and its page number
@@ -72,7 +74,7 @@ public class HelpScreen extends AbstractScreen {
 		}
 	}
 
-	public void update(float delta) {
+	public void update(float delta) {		
 		// update objects
 		btnPrevious.update(delta);
 		btnNext.update(delta);
@@ -80,7 +82,7 @@ public class HelpScreen extends AbstractScreen {
 		
 		// check input from user and perform action
 		if (btnBack.isTouched()) {
-			game.nextScreen(ProjectZero.gameScreen, this);
+			game.nextScreen(ProjectZero.mainScreen, this);
 			// debug log to console
 			Gdx.app.log(ProjectZero.GAME_NAME, "Back button is pressed.");
 			
@@ -143,6 +145,10 @@ public class HelpScreen extends AbstractScreen {
 				
 				// render first help screen
 				batch.begin();
+				batch.draw(AssetHandler.buttonBack, 
+						btnBack.getPosition().x - btnBack.getRadius(), 
+						btnBack.getPosition().y - btnBack.getRadius(), 
+						btnBack.getRadius() * 2, btnBack.getRadius() * 2);
 				batch.end();
 				
 				// render shapes
@@ -162,6 +168,10 @@ public class HelpScreen extends AbstractScreen {
 				
 				// render second help screen
 				batch.begin();
+				batch.draw(AssetHandler.buttonBack, 
+						btnBack.getPosition().x - btnBack.getRadius(), 
+						btnBack.getPosition().y - btnBack.getRadius(), 
+						btnBack.getRadius() * 2, btnBack.getRadius() * 2);
 				batch.end();
 				
 				// render shapes
@@ -183,6 +193,10 @@ public class HelpScreen extends AbstractScreen {
 				
 				// render second help screen
 				batch.begin();
+				batch.draw(AssetHandler.buttonBack, 
+						btnBack.getPosition().x - btnBack.getRadius(), 
+						btnBack.getPosition().y - btnBack.getRadius(), 
+						btnBack.getRadius() * 2, btnBack.getRadius() * 2);
 				batch.end();
 				
 				// render shapes

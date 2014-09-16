@@ -52,10 +52,9 @@ public class GameWorld {
 	}
 
 	public void update(float delta) {
-		
 		// update players and check for win
 		player.update(delta);
-		if(player.getLapNum() == GAMELAPS) {
+		if (player.getLapNum() == GAMELAPS) {
 			gameStatus = GameState.ENDED;
 		}
 		for (Player opponent : opponents) {

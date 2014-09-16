@@ -3,6 +3,7 @@ package com.not.itproject.zero;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.not.itproject.handlers.AssetHandler;
+import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.screens.AbstractScreen;
 import com.not.itproject.screens.GameScreen;
 import com.not.itproject.screens.HelpScreen;
@@ -34,6 +35,9 @@ public class ProjectZero extends Game {
 
 		// load all assets
 		AssetHandler.load();
+		
+		// load network
+		NetworkHandler.load();
 		
 		// declare screens
 		splashScreen = new SplashScreen(this);

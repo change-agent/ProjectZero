@@ -43,6 +43,7 @@ public class GameScreen extends AbstractScreen {
 		Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		// render game
+		update(delta);
 		gameRenderer.render(delta); 
 	}
 

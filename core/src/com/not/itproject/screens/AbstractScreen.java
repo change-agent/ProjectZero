@@ -37,12 +37,10 @@ public class AbstractScreen implements Screen {
 	
 	@Override
 	public void render(float delta) {
-		
 	}
 	
 	// updates the screen and objects
 	public void update(float delta) {
-		
 	}
 
 	@Override

@@ -31,7 +31,6 @@ public class GameInputProcessor {
 	Drawable touchButtonUp;
 	Drawable touchButtonDown;
 
-
 	ButtonStyle buttonMenuStyle;
 	Skin buttonMenuSkin;
 	Drawable touchButtonMenuUp;
@@ -159,7 +158,7 @@ public class GameInputProcessor {
 			float rotAngle = 100 * touchpad.getKnobPercentX();
 			world.getPlayer().getCar().applyTorque(rotAngle);
 		}
-		
+
 		// get controls
 		if (buttonOne.isPressed()) {
 			world.getPlayer().getCar().applyForce(1.0f);
