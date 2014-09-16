@@ -155,26 +155,20 @@ public class GameInputProcessor {
 
 	public void update(float delta) {
 		// get controls
-		if (touchpad.getKnobPercentX() < 0) {
-			world.getPlayer().moveLeft(
-					100 * Math.abs(touchpad.getKnobPercentX()), delta);
-		} else if (touchpad.getKnobPercentX() > 0) {
-			world.getPlayer().moveRight(
-					100 * Math.abs(touchpad.getKnobPercentX()), delta);
+		if (touchpad.getKnobPercentX() < 0 || touchpad.getKnobPercentX() > 0) {
+			float rotAngle = 100 * touchpad.getKnobPercentX();
+			world.getPlayer().getCar().applyTorque(rotAngle);
 		}
 		
 		// get controls
 		if (buttonOne.isPressed()) {
-			world.getPlayer().moveLeft(
-					30, delta);
+			world.getPlayer().getCar().applyForce(1.0f);
 		}
 		if (buttonTwo.isPressed()) {
-			world.getPlayer().moveLeft(
-					30, delta);
+			world.getPlayer().getCar().applyForce(-1.0f);
 		}
 		if (buttonThree.isPressed()) {
-			world.getPlayer().moveRight(
-					30, delta);
+			world.getPlayer().usePower();
 		}
 		if (buttonMenu.isPressed()) {
 			// pause game

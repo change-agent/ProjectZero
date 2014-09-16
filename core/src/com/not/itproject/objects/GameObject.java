@@ -4,16 +4,19 @@ import com.badlogic.gdx.math.Vector2;
 
 public class GameObject {
 	// declare variables
-	Vector2 position;
-	float width;
-	float height;
-	float rotation; 
+	protected Vector2 position;
+	protected float width;
+	protected float height;
+	protected float rotation;
+	private GameWorld gameWorld;
 	
 	// main constructor
-	public GameObject(float x, float y, float width, float height, float rotation) {
+	public GameObject(GameWorld gameWorld, float x, float y, float width, float height, float rotation) {
 		position = new Vector2(x, y);
 		this.width = width;
 		this.height = height;
+		this.rotation = rotation;
+		this.gameWorld = gameWorld;
 		this.rotation = rotation;
 	}
 

@@ -30,7 +30,7 @@ public class GameRenderer {
 		gameWidth = ProjectZero.GAME_WIDTH;
 		gameHeight = screenHeight / (screenWidth / gameWidth);
 		
-		// initialise variables
+		// initialize variables
 		camera = new OrthographicCamera();
 		camera.setToOrtho(true, gameWidth, gameHeight);
 		batch = new SpriteBatch();
@@ -65,33 +65,32 @@ public class GameRenderer {
 	public void renderRunning(float delta) {
 		// render running state
 		batch.begin();
-		batch.draw(AssetHandler.player, 
-				world.getPlayer().getPosition().x - world.getPlayer().getWidth() / 2, 
-				world.getPlayer().getPosition().y - world.getPlayer().getHeight() / 2, 
-				0, 0, 
-				world.getPlayer().getWidth(), world.getPlayer().getHeight(), 
-				1, 1, world.getPlayer().getRotation());
-		
-		// Draws other players
-		for (Player opponent : world.opponents) {
-			batch.draw(AssetHandler.opponent, 
-					opponent.getPosition().x - opponent.getWidth() / 2, 
-					opponent.getPosition().y - opponent.getHeight() / 2, 
+			batch.draw(AssetHandler.player, 
+					world.getPlayer().getCar().getPosition().x - world.getPlayer().getCar().getWidth() / 2, 
+					world.getPlayer().getCar().getPosition().y - world.getPlayer().getCar().getHeight() / 2, 
 					0, 0, 
-					opponent.getWidth(), opponent.getHeight(), 
-					1, 1, opponent.getRotation());
-		}
-		
-		//Draws static objects (powers and obstacles)
-		for (GameObject staticObj : world.staticObjects) {
-			batch.draw(AssetHandler.button, 
-					staticObj.getPosition().x - staticObj.getWidth() / 2, 
-					staticObj.getPosition().y - staticObj.getHeight() / 2, 
-					0, 0, 
-					staticObj.getWidth(), staticObj.getHeight(), 
-					1, 1, staticObj.getRotation());
-		}
-		
+					world.getPlayer().getCar().getWidth(), world.getPlayer().getCar().getHeight(), 
+					1, 1, world.getPlayer().getCar().getRotation());
+			
+			// Draws other players
+			for (Player opponent : world.opponents) {
+				batch.draw(AssetHandler.opponent, 
+						opponent.getCar().getPosition().x - opponent.getCar().getWidth() / 2, 
+						opponent.getCar().getPosition().y - opponent.getCar().getHeight() / 2, 
+						0, 0, 
+						opponent.getCar().getWidth(), opponent.getCar().getHeight(), 
+						1, 1, opponent.getCar().getRotation());
+			}
+			
+			//Draws static objects (powers and obstacles)
+			for (GameObject staticObj : world.staticObjects) {
+				batch.draw(AssetHandler.button, 
+						staticObj.getPosition().x - staticObj.getWidth() / 2, 
+						staticObj.getPosition().y - staticObj.getHeight() / 2, 
+						0, 0, 
+						staticObj.getWidth(), staticObj.getHeight(), 
+						1, 1, staticObj.getRotation());
+			}
 		batch.end();
 	}
 

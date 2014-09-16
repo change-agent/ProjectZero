@@ -41,7 +41,7 @@ public class TestFramework extends Game {
 		font.setColor(Color.BLACK);
 		
 		// define player
-		player = new Player(playerX, playerY, playerWidth, playerHeight, rotation);
+		player = new Player(null, playerX, playerY, playerWidth, playerHeight, rotation);
 		
 		// perform tests
 		Gdx.app.log("Project Zero", "Testing Framework");
@@ -49,10 +49,10 @@ public class TestFramework extends Game {
 	
 	public void resetPlayer() {
 		// reset variables
-		player.setPosition(new Vector2(playerX, playerY));
-		player.setWidth(playerWidth);
-		player.setHeight(playerHeight);
-		player.setRotation(rotation);
+		player.getCar().setPosition(new Vector2(playerX, playerY));
+		player.getCar().setWidth(playerWidth);
+		player.getCar().setHeight(playerHeight);
+		player.getCar().setRotation(rotation);
 	}
 
 	public void testScenarios(float delta) {
@@ -60,10 +60,10 @@ public class TestFramework extends Game {
 		
 		float playerInitial, playerFinal;
 		Gdx.app.log("Test Case", "*** Task #1 - Player Movement (Move Left) ***");
-		playerInitial = player.getPosition().x;
+		playerInitial = player.getCar().getPosition().x;
 		Gdx.app.log("Test Case", "Expected Result: <" + playerInitial);
-		player.moveLeft(100, delta);
-		playerFinal = player.getPosition().x;
+		player.getCar().applyForce(-1);
+		playerFinal = player.getCar().getPosition().x;
 		Gdx.app.log("Test Case", "Actual Result: " + playerFinal);
 		// print result
 		if (playerInitial > playerFinal) {
@@ -76,11 +76,11 @@ public class TestFramework extends Game {
 		resetPlayer(); // reset player
 		
 		Gdx.app.log("Test Case", "*** Task #2 - Player Movement (Move Right) ***");
-		playerInitial = player.getPosition().x;
-		Gdx.app.log("Test Case", "Expected Result: >" + player.getPosition().x);
-		player.moveRight(100, delta);
-		playerFinal = player.getPosition().x;
-		Gdx.app.log("Test Case", "Actual Result: " + player.getPosition().x);
+		playerInitial = player.getCar().getPosition().x;
+		Gdx.app.log("Test Case", "Expected Result: >" + player.getCar().getPosition().x);
+		player.getCar().applyForce(1);
+		playerFinal = player.getCar().getPosition().x;
+		Gdx.app.log("Test Case", "Actual Result: " + player.getCar().getPosition().x);
 		// print result
 		if (playerInitial < playerFinal) {
 			Gdx.app.log("Test Case", "Test Successful \n");

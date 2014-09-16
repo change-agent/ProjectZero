@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.not.itproject.zero.ProjectZero;
 
 public class GameWorld {
@@ -12,14 +14,20 @@ public class GameWorld {
 	
 	// Player - the device player
 	// List players are all other players
-	Player player;
-	List<Player> opponents;
-	List<GameObject> staticObjects;
+	public Player player;
+	public List<Player> opponents;
+	public List<GameObject> staticObjects;
+	public World worldBox2D;
+	public final Vector2 gravity = new Vector2(0, 9.8f);
+	public float screenWidth = Gdx.graphics.getWidth();
+	public float screenHeight = Gdx.graphics.getHeight();
 	
 	float gameWidth, gameHeight;
 	GameState gameStatus;
 	enum GameState { READY, RUNNING, PAUSED, ENDED };
-	static final int GAMELAPS = 3; 
+	static final int GAMELAPS = 3;
+	public static final float FRICTION = 2.0f; 
+	
 	
 	// main constructor
 	public GameWorld(ProjectZero game) {
@@ -28,19 +36,19 @@ public class GameWorld {
 		opponents = new ArrayList<Player>();
 		staticObjects = new ArrayList<GameObject>();
 
-		// calculate ratio
-		float screenWidth = Gdx.graphics.getWidth();
-		float screenHeight = Gdx.graphics.getHeight();
+		// calculate ratio used for object placement
 		gameWidth = ProjectZero.GAME_WIDTH;
 		gameHeight = screenHeight / (screenWidth / gameWidth);
 		
-		// initialise variables
-		//gameStatus = GameState.READY;
+		// initialize variables
 		gameStatus = GameState.RUNNING;
 
 		// define player and opponents
-		player = new Player(gameWidth / 2 - 22, gameHeight / 2, 24, 40, 0);
-		opponents.add(new Player(gameWidth / 2 + 22, gameHeight / 2, 24, 40, 0));		
+		player = new Player(this, gameWidth / 2 - gameWidth / 12, gameHeight / 2, 24, 40, 0);
+		opponents.add(new Player(this, gameWidth / 2 + gameWidth / 12, gameHeight / 2, 24, 40, 0));
+		
+		//Initialize box2D world object
+		worldBox2D = new World(gravity, false);
 	}
 
 	public void update(float delta) {

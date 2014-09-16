@@ -3,6 +3,7 @@ package com.not.itproject.objects;
 import java.util.Random;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 public class PowerUp extends GameObject {
 
@@ -16,9 +17,9 @@ public class PowerUp extends GameObject {
 	private float wait;
 	private Boolean collected; // check this when rendering, only render if false
 	
-	public PowerUp(float x, float y, float width, float height, float rotation) {
+	public PowerUp(GameWorld gameWorld, float x, float y, float width, float height, float rotation) {
 		// define super
-		super(x, y, width, height, rotation);
+		super(gameWorld, x, y, width, height, rotation);
 		type = setRandomPower();
 		bounds = new Rectangle(x, y, width, height);
 		collected = false;
@@ -59,11 +60,12 @@ public class PowerUp extends GameObject {
 	
 	/* Applies power to a specific player - maybe we should move this to game world*/
 	public void applyPower(Player player) {
+		Vector2 playerVel = player.getCar().getVelocity(); 
 		if(type == PowerType.SPEEDBOOST){
-			player.velocity = player.velocity.mulAdd(player.velocity, 1.0f);
+			player.getCar().setVelocity(playerVel.scl(2.0f));
 		}
 		if(type == PowerType.SPEEDREDUCE){
-			player.velocity = player.velocity.mulAdd(player.velocity, -0.5f);
+			player.getCar().setVelocity(playerVel.scl(0.5f));
 		}
 	}
 	
