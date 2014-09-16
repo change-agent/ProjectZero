@@ -12,10 +12,12 @@ public class AssetHandler {
 							toggleButtonSoundOffTexture, toggleButtonSoundOnTexture,
 							buttonLoadGameTexture, buttonNewGameTexture, buttonLoadTexture,
 							buttonNextTexture, buttonReadyTexture, buttonStartSessionTexture;
+	public static Texture playerTexture, opponentTexture;
 	public static TextureRegion logo, button, buttonStart, buttonTutorial,
 							toggleButtonSoundOff, toggleButtonSoundOn,
 							buttonLoadGame, buttonNewGame, buttonLoad,
 							buttonNext, buttonReady, buttonStartSession;
+	public static TextureRegion player, opponent;
 	public static Preferences prefs;
 	
 	public static void load() {
@@ -46,6 +48,10 @@ public class AssetHandler {
 		buttonReadyTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		buttonStartSessionTexture = new Texture(Gdx.files.internal("buttonStartSession.png"));
 		buttonStartSessionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		playerTexture = new Texture(Gdx.files.internal("vehicles/type1-red.png"));
+		playerTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		opponentTexture = new Texture(Gdx.files.internal("vehicles/type1-blue.png"));
+		opponentTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		// load regions
 		logo = new TextureRegion(logoTexture);
@@ -72,6 +78,10 @@ public class AssetHandler {
 		buttonReady.flip(false, true);
 		buttonStartSession = new TextureRegion(buttonStartSessionTexture);
 		buttonStartSession.flip(false, true);
+		player = new TextureRegion(playerTexture);
+		player.flip(false, true);
+		opponent = new TextureRegion(opponentTexture);
+		opponent.flip(false, true);
 		
 		// load preferences/settings
 		loadSettings();
