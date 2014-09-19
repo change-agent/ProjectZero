@@ -161,10 +161,10 @@ public class GameInputProcessor {
 
 		// get controls
 		if (buttonOne.isPressed()) {
-			world.getPlayer().getCar().applyForce(1.0f);
+			world.getPlayer().getCar().applyForce(100.0f);
 		}
 		if (buttonTwo.isPressed()) {
-			world.getPlayer().getCar().applyForce(-1.0f);
+			world.getPlayer().getCar().applyForce(-100.0f);
 		}
 		if (buttonThree.isPressed()) {
 			world.getPlayer().usePower();

@@ -1,5 +1,6 @@
 package com.not.itproject.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
 
 public class Car extends GameObject{
 	
@@ -32,21 +34,21 @@ public class Car extends GameObject{
 		this.bounds = new Rectangle(x, y, width, height);
 		this.velocity = new Vector2(0, 0);
 		this.acceleration = new Vector2(0, 0);
-//		
-//		// Set up the physics body
-//		BodyDef bodyDef = new BodyDef();
-//		bodyDef.type = BodyType.DynamicBody;
-//		
-//		PolygonShape chasisShape = new PolygonShape();
-//		chasisShape.setAsBox(width/2, height/2, centerOfMass, rotation);
-//		
-//		FixtureDef fixDef = new FixtureDef();
-//		fixDef.friction = gameWorld.FRICTION;
-//		fixDef.shape = chasisShape;
-//
-//		gameWorld.worldBox2D.createBody(bodyDef);
-//		chasis.createFixture(fixDef);
 		
+		// Set up the physics body
+		BodyDef bodyDef = new BodyDef();
+		bodyDef.type = BodyType.DynamicBody;
+		
+		PolygonShape chasisShape = new PolygonShape();
+		chasisShape.setAsBox(width/2, height/2, centerOfMass, rotation);
+		
+		FixtureDef fixDef = new FixtureDef();
+		fixDef.friction = gameWorld.FRICTION;
+		fixDef.shape = chasisShape;
+
+		gameWorld.worldBox2D.createBody(bodyDef);
+		chasis = gameWorld.worldBox2D.createBody(bodyDef);
+		chasis.createFixture(fixDef);
 		
 	}
 	
@@ -69,11 +71,12 @@ public class Car extends GameObject{
 
 	public void applyForce(float force) {
 		// TODO Auto-generated method stub
-		
+		chasis.applyForce(force, 0, centerOfMass.x, centerOfMass.y, true);
 	}
 
 	public void applyTorque(float rotation) {
 		// TODO Auto-generated method stub
+		chasis.applyTorque(rotation, true);
 		
 	}
 	

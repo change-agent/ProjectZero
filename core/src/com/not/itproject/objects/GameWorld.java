@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.not.itproject.zero.ProjectZero;
 
@@ -18,7 +19,7 @@ public class GameWorld {
 	public List<Player> opponents;
 	public List<GameObject> staticObjects;
 	public World worldBox2D;
-	public final Vector2 gravity = new Vector2(0, 9.8f);
+	public final Vector2 gravity = new Vector2(0, 0);//new Vector2(0, 9.8f);
 	public float screenWidth = Gdx.graphics.getWidth();
 	public float screenHeight = Gdx.graphics.getHeight();
 	
@@ -27,7 +28,6 @@ public class GameWorld {
 	enum GameState { READY, RUNNING, PAUSED, ENDED };
 	static final int GAMELAPS = 3;
 	public static final float FRICTION = 2.0f; 
-	
 	
 	// main constructor
 	public GameWorld(ProjectZero game) {
@@ -42,16 +42,19 @@ public class GameWorld {
 		
 		// initialize variables
 		gameStatus = GameState.RUNNING;
-
-		// define player and opponents
-		player = new Player(this, gameWidth / 2 - gameWidth / 12, gameHeight / 2, 24, 40, 0);
-		opponents.add(new Player(this, gameWidth / 2 + gameWidth / 12, gameHeight / 2, 24, 40, 0));
 		
 		//Initialize box2D world object
 		worldBox2D = new World(gravity, false);
+
+		// define player and opponents
+		player = new Player(this, gameWidth / 2 - gameWidth / 12, gameHeight / 2, 24, 40, 0);
+		//opponents.add(new Player(this, gameWidth / 2 + gameWidth / 12, gameHeight / 2, 24, 40, 0));
 	}
 
 	public void update(float delta) {
+		// update box2d world
+		worldBox2D.step(delta, 1, 1);
+		
 		// update players and check for win
 		player.update(delta);
 		if (player.getLapNum() == GAMELAPS) {

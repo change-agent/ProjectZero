@@ -4,22 +4,24 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.zero.ProjectZero;
 
 public class GameRenderer {
 	// declare variables
-	GameWorld world;
+	GameWorld gameWorld;
 	GameInputProcessor gameInputProcessor;
 	OrthographicCamera camera;
 	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
 	private float gameWidth, gameHeight;
+	Box2DDebugRenderer box2Drenderer;
 	
 	// main constructor
-	public GameRenderer(GameWorld world, GameInputProcessor gameInputProcessor) {
+	public GameRenderer(GameWorld gameWorld, GameInputProcessor gameInputProcessor) {
 		// get world
-		this.world = world;
+		this.gameWorld = gameWorld;
 		
 		// get controls
 		this.gameInputProcessor = gameInputProcessor;
@@ -37,20 +39,23 @@ public class GameRenderer {
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(camera.combined);
+		box2Drenderer = new Box2DDebugRenderer();
 	}
 	
 	public void render(float delta) {
+		box2Drenderer.render(gameWorld.worldBox2D, camera.combined);
+		
 		// get game state
-		if (world.isReady()) { 
+		if (gameWorld.isReady()) { 
 			renderControls(delta);			
 			renderReady(delta); 
 		} 
-		else if (world.isRunning()) { 
+		else if (gameWorld.isRunning()) { 
 			renderControls(delta);			
 			renderRunning(delta); 
 		} 
-		else if (world.isPaused()) { renderPaused(delta); }
-		else if (world.hasEnded()) { renderEnded(delta); }
+		else if (gameWorld.isPaused()) { renderPaused(delta); }
+		else if (gameWorld.hasEnded()) { renderEnded(delta); }
 	}
 	
 	public void renderEnded(float delta) {
@@ -66,14 +71,14 @@ public class GameRenderer {
 		// render running state
 		batch.begin();
 			batch.draw(AssetHandler.player, 
-					world.getPlayer().getCar().getPosition().x - world.getPlayer().getCar().getWidth() / 2, 
-					world.getPlayer().getCar().getPosition().y - world.getPlayer().getCar().getHeight() / 2, 
+					gameWorld.getPlayer().getCar().getPosition().x - gameWorld.getPlayer().getCar().getWidth() / 2, 
+					gameWorld.getPlayer().getCar().getPosition().y - gameWorld.getPlayer().getCar().getHeight() / 2, 
 					0, 0, 
-					world.getPlayer().getCar().getWidth(), world.getPlayer().getCar().getHeight(), 
-					1, 1, world.getPlayer().getCar().getRotation());
+					gameWorld.getPlayer().getCar().getWidth(), gameWorld.getPlayer().getCar().getHeight(), 
+					1, 1, gameWorld.getPlayer().getCar().getRotation());
 			
 			// Draws other players
-			for (Player opponent : world.opponents) {
+			for (Player opponent : gameWorld.opponents) {
 				batch.draw(AssetHandler.opponent, 
 						opponent.getCar().getPosition().x - opponent.getCar().getWidth() / 2, 
 						opponent.getCar().getPosition().y - opponent.getCar().getHeight() / 2, 
@@ -83,7 +88,7 @@ public class GameRenderer {
 			}
 			
 			//Draws static objects (powers and obstacles)
-			for (GameObject staticObj : world.staticObjects) {
+			for (GameObject staticObj : gameWorld.staticObjects) {
 				batch.draw(AssetHandler.button, 
 						staticObj.getPosition().x - staticObj.getWidth() / 2, 
 						staticObj.getPosition().y - staticObj.getHeight() / 2, 
