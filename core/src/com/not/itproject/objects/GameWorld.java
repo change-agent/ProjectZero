@@ -18,11 +18,13 @@ public class GameWorld {
 	public Player player;
 	public List<Player> opponents;
 	public List<GameObject> staticObjects;
+	
+	// Box2D Variables
 	public World worldBox2D;
 	public final Vector2 gravity = new Vector2(0, 0);//new Vector2(0, 9.8f);
+	
 	public float screenWidth = Gdx.graphics.getWidth();
 	public float screenHeight = Gdx.graphics.getHeight();
-	
 	float gameWidth, gameHeight;
 	GameState gameStatus;
 	enum GameState { READY, RUNNING, PAUSED, ENDED };
