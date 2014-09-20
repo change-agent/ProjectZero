@@ -132,7 +132,7 @@ public class RoomScreen extends AbstractScreen {
 					game.nextScreen(ProjectZero.mainScreen, this);
 				}
 				break;
-	
+//	
 			case LOAD:
 				// update objects
 				btnLoad.update(delta);

@@ -1,5 +1,7 @@
 package com.not.itproject.objects;
 
+import com.badlogic.gdx.physics.box2d.World;
+
 public class Player {
 	private Car car;
 	private int lapNum;
@@ -9,8 +11,8 @@ public class Player {
 	
 	
 	// main constructor
-	public Player(GameWorld gameWorld, float x, float y, float width, float height, float rotation) {	
-		car = new Car(gameWorld, x, y, width, height, 0);
+	public Player(World worldBox2D, float x, float y, float width, float height, float rotation) {	
+		car = new Car(worldBox2D, x, y, width, height, 0);
 		isHit = false;
 		hasPower = false;
 		power = null;

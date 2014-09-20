@@ -11,6 +11,6 @@ public class GameVariables {
 //		54558, 54559, 54560, 54561, 54562, 54563, 54564, 54565, 54566};
 	
 	// in-game variables
-	public final static float MAX_SPEED = 20;
-	public final static float TURNING_SPEED = 10;
+	public final int GAMELAPS = 3;
+	public final int PPM = 8;
 }

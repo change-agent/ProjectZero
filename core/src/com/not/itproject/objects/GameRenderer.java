@@ -73,7 +73,7 @@ public class GameRenderer {
 			batch.draw(AssetHandler.player, 
 					gameWorld.getPlayer().getCar().getPosition().x - gameWorld.getPlayer().getCar().getWidth() / 2, 
 					gameWorld.getPlayer().getCar().getPosition().y - gameWorld.getPlayer().getCar().getHeight() / 2, 
-					0, 0, 
+					gameWorld.getPlayer().getCar().getWidth()/2, gameWorld.getPlayer().getCar().getHeight()/2, 
 					gameWorld.getPlayer().getCar().getWidth(), gameWorld.getPlayer().getCar().getHeight(), 
 					1, 1, gameWorld.getPlayer().getCar().getRotation());
 			

@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class PowerUp extends GameObject {
 
@@ -17,9 +18,9 @@ public class PowerUp extends GameObject {
 	private float wait;
 	private Boolean collected; // check this when rendering, only render if false
 	
-	public PowerUp(GameWorld gameWorld, float x, float y, float width, float height, float rotation) {
+	public PowerUp(World worldBox2D, float x, float y, float width, float height, float rotation) {
 		// define super
-		super(gameWorld, x, y, width, height, rotation);
+		super(worldBox2D, x, y, width, height, rotation);
 		type = setRandomPower();
 		bounds = new Rectangle(x, y, width, height);
 		collected = false;
@@ -62,10 +63,10 @@ public class PowerUp extends GameObject {
 	public void applyPower(Player player) {
 		Vector2 playerVel = player.getCar().getVelocity(); 
 		if(type == PowerType.SPEEDBOOST){
-			player.getCar().setVelocity(playerVel.scl(2.0f));
+			//player.getCar().setVelocity(playerVel.scl(2.0f));
 		}
 		if(type == PowerType.SPEEDREDUCE){
-			player.getCar().setVelocity(playerVel.scl(0.5f));
+			//player.getCar().setVelocity(playerVel.scl(0.5f));
 		}
 	}
 	

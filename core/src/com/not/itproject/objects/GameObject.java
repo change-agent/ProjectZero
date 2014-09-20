@@ -1,6 +1,7 @@
 package com.not.itproject.objects;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class GameObject {
 	// declare variables
@@ -8,15 +9,15 @@ public class GameObject {
 	protected float width;
 	protected float height;
 	protected float rotation;
-	private GameWorld gameWorld;
+	protected World worldBox2D;
 	
 	// main constructor
-	public GameObject(GameWorld gameWorld, float x, float y, float width, float height, float rotation) {
+	public GameObject(World worldBox2D, float x, float y, float width, float height, float rotation) {
 		position = new Vector2(x, y);
 		this.width = width;
 		this.height = height;
 		this.rotation = rotation;
-		this.gameWorld = gameWorld;
+		this.worldBox2D = worldBox2D;
 		this.rotation = rotation;
 	}
 
