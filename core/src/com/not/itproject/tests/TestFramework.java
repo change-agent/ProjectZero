@@ -62,7 +62,7 @@ public class TestFramework extends Game {
 		Gdx.app.log("Test Case", "*** Task #1 - Player Movement (Move Left) ***");
 		playerInitial = player.getCar().getPosition().x;
 		Gdx.app.log("Test Case", "Expected Result: <" + playerInitial);
-		player.getCar().applyForce(-1);
+		player.getCar().powerOnEngine(-1);
 		playerFinal = player.getCar().getPosition().x;
 		Gdx.app.log("Test Case", "Actual Result: " + playerFinal);
 		// print result
@@ -78,7 +78,7 @@ public class TestFramework extends Game {
 		Gdx.app.log("Test Case", "*** Task #2 - Player Movement (Move Right) ***");
 		playerInitial = player.getCar().getPosition().x;
 		Gdx.app.log("Test Case", "Expected Result: >" + player.getCar().getPosition().x);
-		player.getCar().applyForce(1);
+		player.getCar().powerOnEngine(1);
 		playerFinal = player.getCar().getPosition().x;
 		Gdx.app.log("Test Case", "Actual Result: " + player.getCar().getPosition().x);
 		// print result

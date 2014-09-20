@@ -155,19 +155,27 @@ public class GameInputProcessor {
 	public void update(float delta) {
 		// get controls
 		if (touchpad.getKnobPercentX() < 0 || touchpad.getKnobPercentX() > 0) {
-			float rotAngle = touchpad.getKnobPercentX();
-			world.getPlayer().getCar().applyTorque(rotAngle);
+			float steerAngle = touchpad.getKnobPercentX();
+			world.getPlayer().getCar().setSteeringAngle(steerAngle);
+		}
+		else{
+			world.getPlayer().getCar().zeroSteeringAngle();
 		}
 
-		// get controls
+		// Power on engine if pressed else power off engine
 		if (buttonOne.isPressed()) {
-			world.getPlayer().getCar().applyForce(500000.0f);
+			world.getPlayer().getCar().powerOnEngine(1);
 		}
+		else if (buttonThree.isPressed()) {
+			world.getPlayer().getCar().powerOnEngine(-1);
+		}
+		else{
+			world.getPlayer().getCar().powerOffEngine();
+		}
+		
+		// Activate power or menu
 		if (buttonTwo.isPressed()) {
-			
-		}
-		if (buttonThree.isPressed()) {
-			world.getPlayer().getCar().applyForce(-500000.0f);
+			world.getPlayer().usePower();
 		}
 		if (buttonMenu.isPressed()) {
 			// pause game

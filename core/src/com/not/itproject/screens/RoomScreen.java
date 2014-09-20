@@ -74,18 +74,18 @@ public class RoomScreen extends AbstractScreen {
 	}
 
 	public void update(float delta) {
-		// setup networking
-		if (!setupNetwork) {
-			// initialise networking
-			NetworkHandler.setupClient();
-			detectGameSessions();
-			setupNetwork = true;
-		}
-		elapsedNetworkRefresh += delta;
-		if (!NetworkHandler.isConnected() && elapsedNetworkRefresh > refreshDelay) {
-			detectGameSessions();
-			elapsedNetworkRefresh = 0;
-		}
+//		// setup networking
+//		if (!setupNetwork) {
+//			// initialise networking
+//			NetworkHandler.setupClient();
+//			detectGameSessions();
+//			setupNetwork = true;
+//		}
+//		elapsedNetworkRefresh += delta;
+//		if (!NetworkHandler.isConnected() && elapsedNetworkRefresh > refreshDelay) {
+//			detectGameSessions();
+//			elapsedNetworkRefresh = 0;
+//		}
 		
 		// determine screen status
 		switch (screenStatus) {

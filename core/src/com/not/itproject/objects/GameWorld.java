@@ -31,7 +31,6 @@ public class GameWorld {
 	
 	// Box2D world in which our objects will be created in and handled by
 	public World worldBox2D;
-	public ContactListener contactListener;
 	
 	// Game state information used to handle screen changes
 	public GameState gameStatus;
@@ -56,8 +55,8 @@ public class GameWorld {
 		worldBox2D = new World(new Vector2(0.0f, 0.0f), false);
 
 		// define player and opponents
-		carWidth = 20;
-		carHeight = 36;
+		carWidth = 16;
+		carHeight = 32;
 		player = new Player(worldBox2D, gameWidth / 2 - gameWidth / 12, 
 				gameHeight / 2, carWidth, carHeight, 0);
 		//opponents.add(new Player(this, gameWidth / 2 + gameWidth / 12, gameHeight / 2, 24, 40, 0));
@@ -65,7 +64,7 @@ public class GameWorld {
 
 	public void update(float delta) {
 		// update box2d world
-		worldBox2D.step(delta, 1, 1);
+		player.getCar().update(delta);
 		
 		// update players and check for win
 		player.update(delta);
