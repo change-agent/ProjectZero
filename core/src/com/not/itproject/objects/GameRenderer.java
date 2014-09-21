@@ -46,13 +46,13 @@ public class GameRenderer {
 		box2Drenderer.render(gameWorld.worldBox2D, camera.combined);
 		
 		// get game state
-		if (gameWorld.isReady()) { 
-			renderControls(delta);			
+		if (gameWorld.isReady()) { 		
 			renderReady(delta); 
+			renderControls(delta);	
 		} 
-		else if (gameWorld.isRunning()) { 
-			renderControls(delta);			
-			renderRunning(delta); 
+		else if (gameWorld.isRunning()) { 	
+			renderRunning(delta);
+			renderControls(delta);		 
 		} 
 		else if (gameWorld.isPaused()) { renderPaused(delta); }
 		else if (gameWorld.hasEnded()) { renderEnded(delta); }
