@@ -19,6 +19,7 @@ public class RoomScreen extends AbstractScreen {
 	SimpleButton btnNewGame;
 	SimpleButton btnLoad;
 	SimpleRoundButton btnBack;
+	SimpleRoundButton btnRefresh;
 	RoomState screenStatus;
 	enum RoomState { WAITING, LOAD };
 	
@@ -45,6 +46,7 @@ public class RoomScreen extends AbstractScreen {
 		btnLoad = new SimpleButton((int)(gameWidth * 3/4) - btnWidth/2 - btnOffset, 
 				(int)(gameHeight * 4/5), btnWidth, 30);
 		btnBack = new SimpleRoundButton(20, 20, 15);
+		btnRefresh = new SimpleRoundButton((int)gameWidth - 20, 20, 15);
 		
 		font = new BitmapFont();
 		font.setScale(1, -1);
@@ -94,6 +96,7 @@ public class RoomScreen extends AbstractScreen {
 				btnLoadGame.update(delta);
 				btnNewGame.update(delta);
 				btnBack.update(delta);
+				btnRefresh.update(delta);
 				
 				// check input from user and perform action
 				for (int i=0; i < NetworkHandler.getListOfServers().size(); i++) {
@@ -127,9 +130,13 @@ public class RoomScreen extends AbstractScreen {
 					game.nextScreen(ProjectZero.selectionScreen, this);
 					Gdx.app.log(ProjectZero.GAME_NAME,
 							"New Game button is pressed.");
+					
 				} else if (btnBack.isTouched()) {
 					// proceed back to main menu
 					game.nextScreen(ProjectZero.mainScreen, this);
+					
+				} else if (btnRefresh.isTouched()) {
+					// refresh network
 				}
 				break;
 //	
@@ -191,6 +198,10 @@ public class RoomScreen extends AbstractScreen {
 						btnBack.getPosition().x - btnBack.getRadius(), 
 						btnBack.getPosition().y - btnBack.getRadius(), 
 						btnBack.getRadius() * 2, btnBack.getRadius() * 2);
+				batch.draw(AssetHandler.buttonBack, 
+						btnRefresh.getPosition().x - btnRefresh.getRadius(), 
+						btnRefresh.getPosition().y - btnRefresh.getRadius(), 
+						btnRefresh.getRadius() * 2, btnRefresh.getRadius() * 2);
 				batch.end();
 				break;
 				
