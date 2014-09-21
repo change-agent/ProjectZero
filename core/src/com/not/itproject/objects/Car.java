@@ -138,6 +138,7 @@ public class Car extends GameObject{
 		worldBox2D.createJoint(leftRearJointDef);
 		worldBox2D.createJoint(rightRearJointDef);
 		
+		// Create a test obstacle
 		BodyDef box = new BodyDef();
 		box.type = BodyType.StaticBody;
 		box.position.set(new Vector2(100, 50));
@@ -149,7 +150,6 @@ public class Car extends GameObject{
 	}
 	
 	public void update(float delta) {
-		
 		// This updates the box2d world
 		// Adjust last two params for performance increase
 		worldBox2D.step(delta, 8, 8);
@@ -181,6 +181,7 @@ public class Car extends GameObject{
 		bounds.y = position.y;
 	}
 	
+	// Getters for bounds and velocity
 	public Rectangle getBounds() {
 		return bounds;
 	}
@@ -189,9 +190,8 @@ public class Car extends GameObject{
 		return chassis.getLinearVelocity();
 	}
 	
-	
+	// Prevents the car from rotating about center and travelling orthogonally
 	public void killRightVelocity(Body wheel) {
-		
 		// Prevent too much skidding by killing orthogonal
 		Vector2 currRightNorm = wheel.getWorldVector( new Vector2(1, 0) );
 		Vector2 orhthogAmount = currRightNorm.scl(currRightNorm.dot(wheel.getLinearVelocity()));
@@ -204,9 +204,17 @@ public class Car extends GameObject{
 		
 	}
 	
+	// Applies a force in the local forward direction of the body
+	private void applyForwardForce(Body body, float force) {
+		Vector2 forwardNormal = body.getWorldVector(new Vector2(0, 1));
+		forwardNormal.nor();
+		body.applyForce(forwardNormal.scl(force), body.getWorldCenter(), true);
+	}
+	
 	// These methods are used by the input handler to set engine power and steering angle
 	public void powerOnEngine(int direction) {
-		enginePower = direction * HORSEPOWER;
+		enginePower += direction * HORSEPOWER * 0.05;
+		enginePower = clamp(enginePower, -HORSEPOWER, HORSEPOWER);
 	}
 	
 	public void setSteeringAngle(float steerAmount) {
@@ -214,16 +222,24 @@ public class Car extends GameObject{
 	}
 	
 	public void powerOffEngine() {
-		enginePower /= 1.02;
+		// Kills the engine slowly to give the effect of drag slow-down
+		enginePower /= 1.04;
 	}
 	
 	public void zeroSteeringAngle() {
 		steeringAngle = 0;
 	}
 	
-	private void applyForwardForce(Body body, float force) {
-		Vector2 forwardNormal = body.getWorldVector(new Vector2(0, 1));
-		forwardNormal.nor();
-		body.applyForce(forwardNormal.scl(force), body.getWorldCenter(), true);
+	// Clamps a float between min and max
+	public float clamp(float val, float min, float max) {
+		if(val < min) {
+			return min;
+		}
+		else if(val > max) {
+			return max;
+		}
+		else {
+			return val;
+		}
 	}
 }

@@ -75,7 +75,7 @@ public class GameRenderer {
 					gameWorld.getPlayer().getCar().getPosition().y - gameWorld.getPlayer().getCar().getHeight() / 2, 
 					gameWorld.getPlayer().getCar().getWidth()/2, gameWorld.getPlayer().getCar().getHeight()/2, 
 					gameWorld.getPlayer().getCar().getWidth(), gameWorld.getPlayer().getCar().getHeight(), 
-					1, 1, gameWorld.getPlayer().getCar().getRotation());
+					1.2f, 1.2f, gameWorld.getPlayer().getCar().getRotation());
 			
 			// Draws other players
 			for (Player opponent : gameWorld.opponents) {
