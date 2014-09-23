@@ -18,6 +18,12 @@ public class GameRenderer {
 	private float gameWidth, gameHeight;
 	Box2DDebugRenderer box2Drenderer;
 	
+	// ready state variables
+	private float resumeCountDown;
+	
+	// paused menu variables
+	SimpleButton btnResumeGame;
+	
 	// main constructor
 	public GameRenderer(GameWorld gameWorld, GameInputProcessor gameInputProcessor) {
 		// get world
@@ -40,31 +46,84 @@ public class GameRenderer {
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		box2Drenderer = new Box2DDebugRenderer();
+	
+		// initialise ready state variables
+		resumeCountDown = 0f;
+		
+		// initialise paused menu variables
+		int btnWidth = 120; // assign for main buttons
+		btnResumeGame = new SimpleButton((int)(gameWidth * 1/2) - btnWidth/2, 
+				(int)(gameHeight/2), btnWidth, 30);
 	}
 	
-	public void render(float delta) {
-		box2Drenderer.render(gameWorld.worldBox2D, camera.combined);
+	public void update(float delta) {
+		// get game state
+		if (gameWorld.isReady()) { updateReady(delta); } 
+//		else if (gameWorld.isRunning()) { updateRunning(delta); } 
+		else if (gameWorld.isPaused()) { updatePaused(delta); }
+//		else if (gameWorld.hasEnded()) { updateEnded(delta); }
+	}
+	
+	private void updateReady(float delta) {
+		// update ready state
+		resumeCountDown += delta;
 		
+		// change state after countdown
+		if (resumeCountDown >= 6f) {
+			gameWorld.startGame();
+		}
+	}
+	
+	private void updatePaused(float delta) {
+		// update paused menu objects
+		btnResumeGame.update(delta);
+		
+		// check input from user and perform action
+		if (btnResumeGame.isTouched()) {
+			// resume game
+			gameWorld.resumeGame();
+		}	
+	}
+ 	
+	public void render(float delta) {
 		// get game state
 		if (gameWorld.isReady()) { 		
 			renderReady(delta); 
 			renderControls(delta);	
 		} 
 		else if (gameWorld.isRunning()) { 	
+			box2Drenderer.render(gameWorld.worldBox2D, camera.combined);
 			renderRunning(delta);
 			renderControls(delta);		 
 		} 
 		else if (gameWorld.isPaused()) { renderPaused(delta); }
 		else if (gameWorld.hasEnded()) { renderEnded(delta); }
 	}
-	
-	public void renderEnded(float delta) {
-		//change screen to end game screen 
-		
-	}
 
 	public void renderReady(float delta) {
-		
+		// render ready state
+		batch.begin();
+		renderCountDown(resumeCountDown);
+		batch.end();
+	}
+	
+	private void renderCountDown(float countDown) {
+		// render countdown		
+		if (countDown >= 1f && countDown < 2f) {
+			AssetHandler.getFont(1f).draw(batch, "READY", 20, 20);
+		}
+		else if (countDown >= 2f && countDown < 3f) {
+			AssetHandler.getFont(1f).draw(batch, "3", 20, 20);
+		}
+		else if (countDown >= 3f && countDown < 4f) {
+			AssetHandler.getFont(1f).draw(batch, "2", 20, 20);
+		}
+		else if (countDown >= 4f && countDown < 5f) {
+			AssetHandler.getFont(1f).draw(batch, "1", 20, 20);
+		}
+		else if (countDown >= 5f && countDown < 6f) {
+			AssetHandler.getFont(1f).draw(batch, "GO", 20, 20);
+		}
 	}
 	
 	public void renderRunning(float delta) {
@@ -100,6 +159,16 @@ public class GameRenderer {
 	}
 
 	public void renderPaused(float delta) {
+		// render paused controls/buttons
+		batch.begin();
+		batch.draw(AssetHandler.button, 
+				btnResumeGame.getPosition().x, btnResumeGame.getPosition().y, 
+				btnResumeGame.getWidth(), btnResumeGame.getHeight());
+		batch.end();
+	}
+	
+	public void renderEnded(float delta) {
+		//change screen to end game screen 
 		
 	}
 	

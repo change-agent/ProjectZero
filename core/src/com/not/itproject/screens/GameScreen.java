@@ -34,6 +34,7 @@ public class GameScreen extends AbstractScreen {
 	public void update(float delta) {
 		// update world
 		gameWorld.update(delta);	
+		gameRenderer.update(delta);
 	}
 	
 	@Override

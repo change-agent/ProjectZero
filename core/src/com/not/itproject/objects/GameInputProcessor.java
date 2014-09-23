@@ -147,7 +147,9 @@ public class GameInputProcessor {
 
 		// create button
 		buttonMenu = new Button(buttonMenuStyle);
-		buttonMenu.scaleBy(0.5f);
+		
+		// determine button size
+		buttonMenu.setSize(70, 25);
 		
 		// determine button locations
 		buttonOne.setPosition(220, 10);
@@ -218,7 +220,6 @@ public class GameInputProcessor {
 //			// pause game
 //			world.pauseGame();
 //		}
-
 
 		// update stage
 		stage.act(delta);

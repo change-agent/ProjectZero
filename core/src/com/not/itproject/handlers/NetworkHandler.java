@@ -2,11 +2,11 @@ package com.not.itproject.handlers;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -24,15 +24,28 @@ public class NetworkHandler {
 	private static boolean isConnected;
 	private static boolean isHost;
 	private static boolean isClient;
-	private static UUID playerID;
-	private static ArrayList<UUID> sessionPlayersID;
+	private static int gameSessionID;
 	
+	/**
+	 * @return the gameSessionID
+	 */
+	public static int getGameSessionID() {
+		return gameSessionID;
+	}
+
+	/**
+	 * @param gameSessionID the gameSessionID to set
+	 */
+	public static void setGameSessionID(int gameSessionID) {
+		NetworkHandler.gameSessionID = gameSessionID;
+	}
+
 	// main loading
 	public static void load() {
 		// initialise variables
 		listOfServers = new HashMap<Integer, InetAddress>();
 		isConnected = false;
-		playerID = UUID.randomUUID();
+		setGameSessionID(-1); // reset game session
 	}
 
 	public static void startGameSession() {
@@ -41,11 +54,26 @@ public class NetworkHandler {
 		server.start();
 
 		// connect to server
-		try {
-			server.bind(GameVariables.VALID_TCP_PORTS[0], GameVariables.VALID_UDP_PORTS[0]);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		int nextPort = 0;
+		do {
+			try {
+				server.bind(GameVariables.VALID_TCP_PORTS[nextPort],
+						GameVariables.VALID_UDP_PORTS[nextPort]);
+				setConnected(true);
+				setGameSessionID(nextPort);
+				
+			} catch (IOException e) {
+				// try next port
+				setConnected(false);
+				nextPort += 1;
+				
+			}
+			
+			// if all ports are taken - return error
+			if (nextPort >= GameVariables.VALID_TCP_PORTS.length) {
+				break;
+			}
+		} while (!isConnected);
 		registerServer();
 
 		// handle incoming connections
@@ -53,7 +81,7 @@ public class NetworkHandler {
 			public void received(Connection connection, Object object) {
 				if (object instanceof ConnectionRequest) {
 					ConnectionRequest request = (ConnectionRequest) object;
-					sessionPlayersID.add(request.uniqueID);
+					Gdx.app.log("NETWORK", "Received message: " + request.message);
 
 					ConnectionResponse response = new ConnectionResponse();
 					response.message = "Connection Established.";
@@ -64,8 +92,6 @@ public class NetworkHandler {
 		
 		// set as host
 		setHost(true);
-		sessionPlayersID = new ArrayList<UUID>();
-		sessionPlayersID.add(playerID);
 	}
 	
 	public static void endGameSession() {
@@ -83,6 +109,9 @@ public class NetworkHandler {
 		// declare address variable
 		InetAddress serverAddress;
 		
+		// clear list of servers
+		clearListOfServers();
+		
 		// iterate through valid UDP ports
 		for (int i=0; i<GameVariables.VALID_UDP_PORTS.length; i++) {
 			// try obtain address
@@ -97,25 +126,22 @@ public class NetworkHandler {
 			client.connect(5000, listOfServers.get(serverNumber), 
 					GameVariables.VALID_TCP_PORTS[serverNumber], 
 					GameVariables.VALID_UDP_PORTS[serverNumber]);
+			
+			setConnected(true);
+			setGameSessionID(serverNumber);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		isConnected = true;
 		registerClient();
 
 		// set as host
 		setClient(true);
-		
-		// send request
-		ConnectionRequest request = new ConnectionRequest();
-		request.message = "Connection Request.";
-		request.uniqueID = playerID;
-		client.sendTCP(request);
 	}
 	
 	public static void leaveGameSession() {
 		// close connection
 		client.close();
+		setConnected(false);
 	}
 	
 	public static void registerServer() {
@@ -132,11 +158,26 @@ public class NetworkHandler {
 		clientKryo.register(UUID.class);
 	}
 
+	public static void sendMessage(String text) {	
+		// send request
+		ConnectionRequest request = new ConnectionRequest();
+		request.message = text;
+//		request.uniqueID = playerID;
+		client.sendTCP(request);
+	}
+	
 	/**
 	 * @return the listOfServers
 	 */
 	public static Map<Integer, InetAddress> getListOfServers() {
 		return listOfServers;
+	}
+	
+	/**
+	 * @return clear the listOfServers
+	 */
+	public static void clearListOfServers() {
+		listOfServers.clear();
 	}
 
 	/**
@@ -178,6 +219,7 @@ public class NetworkHandler {
 	 * @param isConnected the isConnected to set
 	 */
 	public static void setConnected(boolean isConnected) {
+		setGameSessionID(-1); // reset game session
 		NetworkHandler.isConnected = isConnected;
 	}
 }

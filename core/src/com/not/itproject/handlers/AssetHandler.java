@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AssetHandler {
@@ -12,14 +13,21 @@ public class AssetHandler {
 							toggleButtonSoundOffTexture, toggleButtonSoundOnTexture,
 							buttonLoadGameTexture, buttonNewGameTexture, buttonLoadTexture,
 							buttonNextTexture, buttonReadyTexture, buttonStartSessionTexture,
-							buttonBackTexture;
+							buttonBackTexture, buttonRefreshTexture;
 	public static Texture playerTexture, opponentTexture;
 	public static TextureRegion logo, button, buttonStart, buttonTutorial,
 							toggleButtonSoundOff, toggleButtonSoundOn,
 							buttonLoadGame, buttonNewGame, buttonLoad,
 							buttonNext, buttonReady, buttonStartSession,
-							buttonBack;
+							buttonBack, buttonRefresh;
 	public static TextureRegion player, opponent;
+	
+	public static Texture menuTrackTexture, menuVehicleTexture, menuReadyTexture,
+							playerOneTexture;
+	public static TextureRegion menuTrack, menuVehicle, menuReady,
+							playerOne;
+	
+	public static BitmapFont font;
 	public static Preferences prefs;
 	
 	public static void load() {
@@ -56,6 +64,16 @@ public class AssetHandler {
 		opponentTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		buttonBackTexture = new Texture(Gdx.files.internal("buttonBack.png"));
 		buttonBackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		buttonRefreshTexture = new Texture(Gdx.files.internal("buttonRefresh.png"));
+		buttonRefreshTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		menuTrackTexture = new Texture(Gdx.files.internal("menuTrack.png"));
+		menuTrackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		menuVehicleTexture = new Texture(Gdx.files.internal("menuVehicle.png"));
+		menuVehicleTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		menuReadyTexture = new Texture(Gdx.files.internal("menuReady.png"));
+		menuReadyTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		playerOneTexture = new Texture(Gdx.files.internal("playerOne.png"));
+		playerOneTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		// load regions
 		logo = new TextureRegion(logoTexture);
@@ -88,6 +106,19 @@ public class AssetHandler {
 		opponent.flip(false, true);
 		buttonBack = new TextureRegion(buttonBackTexture);
 		buttonBack.flip(false, true);
+		buttonRefresh = new TextureRegion(buttonRefreshTexture);
+		buttonRefresh.flip(false, true);
+		menuTrack = new TextureRegion(menuTrackTexture);
+		menuTrack.flip(false, true);
+		menuVehicle = new TextureRegion(menuVehicleTexture);
+		menuVehicle.flip(false, true);
+		menuReady = new TextureRegion(menuReadyTexture);
+		menuReady.flip(false, true);
+		playerOne = new TextureRegion(playerOneTexture);
+		playerOne.flip(false, true);
+		
+		// load fonts
+		font = new BitmapFont(Gdx.files.internal("fonts/kenvector.fnt"), true);
 		
 		// load preferences/settings
 		loadSettings();
@@ -113,6 +144,11 @@ public class AssetHandler {
 	public static boolean getSoundMute() {
 		// get sound mute status
 		return prefs.getBoolean("soundMute");
+	}
+	
+	public static BitmapFont getFont(float scale) {
+		font.setScale(scale);
+		return font;
 	}
  	
 	public static void release() {

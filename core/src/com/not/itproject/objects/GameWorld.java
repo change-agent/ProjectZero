@@ -5,11 +5,6 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.not.itproject.zero.ProjectZero;
 
@@ -49,6 +44,7 @@ public class GameWorld {
 		gameHeight = screenHeight / (screenWidth / gameWidth);
 		
 		// initialize variables
+//		gameStatus = GameState.READY;
 		gameStatus = GameState.RUNNING;
 		
 		//Initialize box2D world object
@@ -59,7 +55,6 @@ public class GameWorld {
 		carHeight = 32;
 		player = new Player(worldBox2D, gameWidth / 2 - gameWidth / 12, 
 				gameHeight / 2, carWidth, carHeight, 0);
-		//opponents.add(new Player(this, gameWidth / 2 + gameWidth / 12, gameHeight / 2, 24, 40, 0));
 	}
 
 	public void update(float delta) {
@@ -115,6 +110,11 @@ public class GameWorld {
 			return true;
 		}
 		return false;
+	}
+	
+	public void startGame() {
+		// game start
+		gameStatus = GameState.RUNNING;
 	}
 	
 	public void resumeGame() {
