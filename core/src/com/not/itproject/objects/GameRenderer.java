@@ -40,13 +40,13 @@ public class GameRenderer {
 		
 		// initialize variables
 		camera = new OrthographicCamera();
-		camera.setToOrtho(true, gameWidth, gameHeight);
+		camera.setToOrtho(true, gameWidth , gameHeight);
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		box2Drenderer = new Box2DDebugRenderer();
-	
+		
 		// initialise ready state variables
 		resumeCountDown = 0f;
 		
@@ -148,12 +148,28 @@ public class GameRenderer {
 			
 			//Draws static objects (powers and obstacles)
 			for (GameObject staticObj : gameWorld.staticObjects) {
-				batch.draw(AssetHandler.button, 
-						staticObj.getPosition().x - staticObj.getWidth() / 2, 
-						staticObj.getPosition().y - staticObj.getHeight() / 2, 
-						0, 0, 
-						staticObj.getWidth(), staticObj.getHeight(), 
-						1, 1, staticObj.getRotation());
+				if(staticObj.getObjType().value() == GameObject.ObjType.POWER.value())
+				{
+					// Only draw a power up if it is not in its cool down period
+					PowerUp power = (PowerUp) staticObj;
+					if(!power.isCoolingDown()) 
+					{
+						batch.draw(AssetHandler.button, 
+								staticObj.getPosition().x - staticObj.getWidth() / 2, 
+								staticObj.getPosition().y - staticObj.getHeight() / 2, 
+								0, 0, 
+								staticObj.getWidth(), staticObj.getHeight(), 
+								1, 1, staticObj.getRotation());
+					}
+				}
+				else{
+					batch.draw(AssetHandler.button, 
+							staticObj.getPosition().x - staticObj.getWidth() / 2, 
+							staticObj.getPosition().y - staticObj.getHeight() / 2, 
+							0, 0, 
+							staticObj.getWidth(), staticObj.getHeight(), 
+							1, 1, staticObj.getRotation());
+				}
 			}
 		batch.end();
 	}

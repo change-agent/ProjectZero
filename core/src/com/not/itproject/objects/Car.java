@@ -12,43 +12,45 @@ import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 
-public class Car extends GameObject{
-	
-	//Conversion function
-	private static float DEG2RAD = (float)Math.PI / 180;
-	private static float RAD2DEG = 1/DEG2RAD;
-	
+public class Car extends GameObject{	
+	/** ----------------------------- CONSTANTS ------------------------------ **/
 	// Static properties used for car handling
-	private static final float LOCK_ANGLE = 15 * DEG2RAD;
+	private static final float LOCK_ANGLE = 45 * DEG_TO_RAD;
 	private static final float STEER_SPEED = 2.0f;
-	private static final float HORSEPOWER = 1000.0f;
-	private static final float DRIFT_COEFF = 0.5f; // Decrease for more skid
+	private static final float HORSEPOWER = 600.0f;
+	private static final float DRIFT_COEFF = 0.4f; // Decrease for more skid
 	private static final float LINEAR_FRICTION = 2.0f;
-	private static final float PPM = 8.0f; //pixels per meter
-	private static final float CHASSIS_DENSITY = 1.0f / (PPM * PPM);
-	private static final float WHEEL_DENSITY = 0.8f / (PPM * PPM);
-	public static final float WHEEL_WIDTH = 2.5f;
-	public static final float WHEEL_HEIGHT = 4.0f;		
+	private static final float CHASSIS_DENSITY = 2.0f;
+	private static final float WHEEL_DENSITY = 1.5f;
+	public static final float WHEEL_WIDTH = 2.5f * PIXELS_TO_METERS;
+	public static final float WHEEL_HEIGHT = 4.0f * PIXELS_TO_METERS;
 	
+	/** ----------------------------- VARIABLES ------------------------------ **/
 	// Variable properties ued for car handling
-	private Rectangle bounds; // don't forget to update bounds too
-	private Body obs, chassis, leftFrontWheel, rightFrontWheel, leftRearWheel, rightRearWheel;
+	private Body chassis, leftFrontWheel, rightFrontWheel, leftRearWheel, rightRearWheel;
 	private RevoluteJoint leftFrontWheelJoint, rightFrontWheelJoint;
 	private float enginePower = 0.0f;
 	private float steeringAngle = 0.0f;
+	private PowerUp power;
+	private boolean hasPower;
 	
+	/** ----------------------------- START CONSTRUCTOR ----------------------- **/
 	// Box2D box used for applying forces and collision handling
-	public Car(World worldBox2D, float x, float y, float width, float height, float rotation) {
+	public Car(World worldBox2D, float x, float y, 
+			float width, float height, float rotation) {
 		super(worldBox2D, x, y, width, height, rotation);
-		
-		// define initial starting conditions
-		this.bounds = new Rectangle(x, y, width, height);
+	
+		// Set up the object and power variables
+		this.power = null;
+		this.hasPower = false;
+		this.objType = ObjType.CAR;
 		
 		// Set up the physics body
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set( new Vector2(x, y) );
 		bodyDef.linearDamping = 1.0f;
+		bodyDef.angularDamping = 2.0f;
 		
 		// Create the chassis shape and associated fixture
 		PolygonShape chasisShape = new PolygonShape();
@@ -57,16 +59,21 @@ public class Car extends GameObject{
 		chassisFixDef.density = CHASSIS_DENSITY;
 		chassisFixDef.friction = 0;
 		chassisFixDef.shape = chasisShape;
+		chassisFixDef.filter.categoryBits = objType.value();
 		
 		// Create the car chassis in the world of box2D
-		chassis = worldBox2D.createBody(bodyDef);
+		this.chassis = worldBox2D.createBody(bodyDef);
 		chassis.createFixture(chassisFixDef);
 		
 		// Relative position of each wheel from the chassis
-		Vector2 leftFrontWheelPos = new Vector2(-width / 2 + WHEEL_WIDTH / 4, -height / 2 + WHEEL_HEIGHT / 1.5f);
-		Vector2 leftRearWheelPos = new Vector2(-width / 2 + WHEEL_WIDTH / 4 , height / 2 - WHEEL_HEIGHT / 1.5f);
-		Vector2 rightRearWheelPos = new Vector2(width / 2 - WHEEL_WIDTH / 4, height / 2 - WHEEL_HEIGHT / 1.5f);
-		Vector2 rightFrontWheelPos = new Vector2(width / 2 - WHEEL_WIDTH / 4, -height / 2 + WHEEL_HEIGHT / 1.5f);
+		Vector2 leftFrontWheelPos = new Vector2(-width / 2 + WHEEL_WIDTH / 4,
+				-height / 2 + WHEEL_HEIGHT / 1.5f).scl(PIXELS_TO_METERS);
+		Vector2 leftRearWheelPos = new Vector2(-width / 2 + WHEEL_WIDTH / 4 ,
+				height / 2 - WHEEL_HEIGHT / 1.5f).scl(PIXELS_TO_METERS);
+		Vector2 rightRearWheelPos = new Vector2(width / 2 - WHEEL_WIDTH / 4,
+				height / 2 - WHEEL_HEIGHT / 1.5f).scl(PIXELS_TO_METERS);
+		Vector2 rightFrontWheelPos = new Vector2(width / 2 - WHEEL_WIDTH / 4,
+				-height / 2 + WHEEL_HEIGHT / 1.5f).scl(PIXELS_TO_METERS);
 				
 		// Define the wheel shape and fixture
 		PolygonShape wheelShape = new PolygonShape();
@@ -75,40 +82,45 @@ public class Car extends GameObject{
 		wheelFixDef.density = WHEEL_DENSITY;
 		wheelFixDef.friction = LINEAR_FRICTION;
 		wheelFixDef.shape = wheelShape;
+		wheelFixDef.filter.categoryBits = objType.value();
 		
 		// Create a shape for each wheel
 		BodyDef leftFrontWheelBodyDef = new BodyDef();
 		leftFrontWheelBodyDef.type = BodyType.DynamicBody;
 		leftFrontWheelBodyDef.linearDamping = 1.0f;
-		leftFrontWheelBodyDef.angularDamping = 1.0f;
-		leftFrontWheelBodyDef.position.set(chassis.getPosition().add(leftFrontWheelPos));
-		leftFrontWheel = worldBox2D.createBody(leftFrontWheelBodyDef);
+		leftFrontWheelBodyDef.angularDamping = 2.0f;
+		leftFrontWheelBodyDef.position.set(
+				chassis.getPosition().add(leftFrontWheelPos));
+		this.leftFrontWheel = worldBox2D.createBody(leftFrontWheelBodyDef);
 		leftFrontWheel.createFixture(wheelFixDef);
 		
 		BodyDef rightFrontWheelBodyDef = new BodyDef();
 		rightFrontWheelBodyDef.type = BodyType.DynamicBody;
 		rightFrontWheelBodyDef.linearDamping = 1.0f;
-		rightFrontWheelBodyDef.angularDamping = 1.0f;
-		rightFrontWheelBodyDef.position.set(chassis.getPosition().add(rightFrontWheelPos));
-		rightFrontWheel = worldBox2D.createBody(rightFrontWheelBodyDef);
+		rightFrontWheelBodyDef.angularDamping = 2.0f;
+		rightFrontWheelBodyDef.position.set(
+				chassis.getPosition().add(rightFrontWheelPos));
+		this.rightFrontWheel = worldBox2D.createBody(rightFrontWheelBodyDef);
 		rightFrontWheel.createFixture(wheelFixDef);
 		
 		BodyDef leftRearWheelBodyDef = new BodyDef();
 		leftRearWheelBodyDef.type = BodyType.DynamicBody;
-		leftRearWheelBodyDef.position.set(chassis.getPosition().add(leftRearWheelPos));
-		leftRearWheel = worldBox2D.createBody(leftRearWheelBodyDef);
+		leftRearWheelBodyDef.position.set(
+				chassis.getPosition().add(leftRearWheelPos));
+		this.leftRearWheel = worldBox2D.createBody(leftRearWheelBodyDef);
 		leftRearWheel.createFixture(wheelFixDef);
 		
 		BodyDef rightRearWheelBodyDef = new BodyDef();
 		rightRearWheelBodyDef.type = BodyType.DynamicBody;
-		rightRearWheelBodyDef.position.set(chassis.getPosition().add(rightRearWheelPos));
-		rightRearWheel = worldBox2D.createBody(rightRearWheelBodyDef);
+		rightRearWheelBodyDef.position.set(
+				chassis.getPosition().add(rightRearWheelPos));
+		this.rightRearWheel = worldBox2D.createBody(rightRearWheelBodyDef);
 		rightRearWheel.createFixture(wheelFixDef);
-		
 		
 		//Create the joints to attach to body
 		RevoluteJointDef leftFrontJointDef = new RevoluteJointDef();
-		leftFrontJointDef.initialize(chassis, leftFrontWheel, leftFrontWheel.getWorldCenter());
+		leftFrontJointDef.initialize(
+				chassis, leftFrontWheel, leftFrontWheel.getWorldCenter());
 		leftFrontJointDef.enableMotor = true;
 		leftFrontJointDef.enableLimit = true;
 		leftFrontJointDef.maxMotorTorque = 200;
@@ -116,7 +128,8 @@ public class Car extends GameObject{
 		leftFrontJointDef.upperAngle = LOCK_ANGLE;
 		
 		RevoluteJointDef rightFrontJointDef = new RevoluteJointDef();
-		rightFrontJointDef.initialize(chassis, rightFrontWheel, rightFrontWheel.getWorldCenter());
+		rightFrontJointDef.initialize(
+				chassis, rightFrontWheel, rightFrontWheel.getWorldCenter());
 		rightFrontJointDef.enableMotor = true;
 		rightFrontJointDef.enableLimit = true;
 		rightFrontJointDef.maxMotorTorque = 200;
@@ -124,36 +137,28 @@ public class Car extends GameObject{
 		rightFrontJointDef.upperAngle = LOCK_ANGLE;
 		
 		PrismaticJointDef leftRearJointDef = new PrismaticJointDef();
-		leftRearJointDef.initialize(chassis, leftRearWheel, leftRearWheel.getWorldCenter(), new Vector2(1.0f, 0));
+		leftRearJointDef.initialize(chassis, leftRearWheel, 
+				leftRearWheel.getWorldCenter(), new Vector2(1.0f, 0));
 		leftRearJointDef.enableLimit = true;
-		leftRearJointDef.lowerTranslation = leftRearJointDef.upperTranslation = 0;
+		leftRearJointDef.lowerTranslation = 0; 
+		leftRearJointDef.upperTranslation = 0;
 		
 		PrismaticJointDef rightRearJointDef = new PrismaticJointDef();
-		rightRearJointDef.initialize(chassis, rightRearWheel, rightRearWheel.getWorldCenter(), new Vector2(1.0f, 0));
+		rightRearJointDef.initialize(chassis, rightRearWheel, 
+				rightRearWheel.getWorldCenter(), new Vector2(1.0f, 0));
 		rightRearJointDef.enableLimit = true;
-		rightRearJointDef.lowerTranslation = rightRearJointDef.upperTranslation = 0;
+		rightRearJointDef.lowerTranslation = 0; 
+		rightRearJointDef.upperTranslation = 0;
 		
-		leftFrontWheelJoint = (RevoluteJoint) worldBox2D.createJoint(leftFrontJointDef);
-		rightFrontWheelJoint = (RevoluteJoint) worldBox2D.createJoint(rightFrontJointDef);
+		this.leftFrontWheelJoint = (RevoluteJoint) worldBox2D.createJoint(leftFrontJointDef);
+		this.rightFrontWheelJoint = (RevoluteJoint) worldBox2D.createJoint(rightFrontJointDef);
 		worldBox2D.createJoint(leftRearJointDef);
 		worldBox2D.createJoint(rightRearJointDef);
-		
-		// Create a test obstacle
-		BodyDef box = new BodyDef();
-		box.type = BodyType.StaticBody;
-		box.position.set(new Vector2(100, 50));
-		
-		PolygonShape boxshape = new PolygonShape();
-		boxshape.setAsBox(25, 10);
-		obs =  worldBox2D.createBody(box);
-		obs.createFixture(boxshape, 2);
 	}
+	/** ----------------------------- END CONSTRUCTOR --------------------------- **/
 	
+	/** ------------------------------ START UPDATE ----------------------------- **/
 	public void update(float delta) {
-		// This updates the box2d world
-		// Adjust last two params for performance increase
-		worldBox2D.step(delta, 8, 8);
-		
 		// Kill the orthogonal wheel velocity to make steering more linear vel 
 		killRightVelocity(leftFrontWheel);
 		killRightVelocity(leftRearWheel);
@@ -176,20 +181,11 @@ public class Car extends GameObject{
 		
 		// Update the sprite position and rotation based on chassis
 		position = chassis.getPosition();
-		rotation = chassis.getAngle() * RAD2DEG;
-		bounds.x = position.x;
-		bounds.y = position.y;
+		rotation = chassis.getAngle() * RAD_TO_DEG;
 	}
+	/** ----------------------------- END UPDATE -------------------------------- **/
 	
-	// Getters for bounds and velocity
-	public Rectangle getBounds() {
-		return bounds;
-	}
-	
-	public Vector2 getVelocity() {
-		return chassis.getLinearVelocity();
-	}
-	
+	/** ----------------------- CAR HANDLING FUNCTIONS -------------------------- **/
 	// Prevents the car from rotating about center and travelling orthogonally
 	public void killRightVelocity(Body wheel) {
 		// Prevent too much skidding by killing orthogonal
@@ -199,8 +195,10 @@ public class Car extends GameObject{
 		wheel.applyLinearImpulse(impulse, wheel.getWorldCenter(), true);
 		
 		// Prevent too much spot - rotation by killing the angular velocity
-		float angleImpulse = 0.1f * wheel.getInertia() * DRIFT_COEFF;
+		float angleImpulse = 0.1f * wheel.getInertia() * -DRIFT_COEFF;
 		wheel.applyAngularImpulse(wheel.getAngularVelocity() * angleImpulse, true);
+		
+		System.out.println(wheel.getAngularVelocity());
 		
 	}
 	
@@ -229,7 +227,30 @@ public class Car extends GameObject{
 	public void zeroSteeringAngle() {
 		steeringAngle = 0;
 	}
+	/** ------------------------END CAR HANDLING FUNCTIONS --------------------- **/
 	
+	/** ------------------------ POWERUP HANDLING FUNCTIONS -------------------- **/
+	// These functions will be used to set and get the current held power
+	public void setPower(PowerUp power) {
+		this.power = power;
+		hasPower = true;
+	}
+	
+	public void usePower() {
+		this.power = null;
+		hasPower = false;
+	}
+	
+	public PowerUp getPower() {
+		return power;
+	}
+	
+	public boolean hasPower() {
+		return hasPower;
+	}
+	/** ---------------------- END POWERUP HANDLING FUNCTIONS ------------------ **/
+	
+	/** -------------------------- UTILITY FUNCTIONS --------------------------- **/
 	// Clamps a float between min and max
 	public float clamp(float val, float min, float max) {
 		if(val < min) {
@@ -242,4 +263,13 @@ public class Car extends GameObject{
 			return val;
 		}
 	}
+	
+	public Vector2 getVelocity() {
+		return chassis.getLinearVelocity();
+	}
+	
+	public void setVelocity(Vector2 velocity) {
+		chassis.setLinearVelocity(velocity);
+	}
+	/** ------------------------ END UTILITY FUNCTIONS -------------------------- **/
 }

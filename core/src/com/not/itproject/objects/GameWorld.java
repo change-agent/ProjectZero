@@ -51,14 +51,21 @@ public class GameWorld {
 		worldBox2D = new World(new Vector2(0.0f, 0.0f), false);
 
 		// define player and opponents
-		carWidth = 16;
-		carHeight = 32;
+		carWidth = 16 * GameObject.PIXELS_TO_METERS;
+		carHeight = 32 * GameObject.PIXELS_TO_METERS;
 		player = new Player(worldBox2D, gameWidth / 2 - gameWidth / 12, 
 				gameHeight / 2, carWidth, carHeight, 0);
+		
+		staticObjects.add(new Obstacle(worldBox2D, 100, 50, 10 * GameObject.PIXELS_TO_METERS, 10 * GameObject.PIXELS_TO_METERS, 0));
+		staticObjects.add(new Obstacle(worldBox2D, 120, 50, 10 * GameObject.PIXELS_TO_METERS, 10 * GameObject.PIXELS_TO_METERS, 0));
+		staticObjects.add(new Obstacle(worldBox2D, 140, 50, 10 * GameObject.PIXELS_TO_METERS, 10 * GameObject.PIXELS_TO_METERS, 0));
 	}
 
 	public void update(float delta) {
-		// update box2d world
+		
+		// This updates the box2d world
+		// Adjust last two params for performance increase
+		worldBox2D.step(delta, 1, 1);
 		player.getCar().update(delta);
 		
 		// update players and check for win

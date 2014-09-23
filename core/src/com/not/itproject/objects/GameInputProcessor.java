@@ -170,10 +170,10 @@ public class GameInputProcessor {
 
 		// Power on engine if pressed else power off engine
 		if (buttonTwo.isPressed()) {
-			world.getPlayer().getCar().powerOnEngine(-1);
+			world.getPlayer().getCar().powerOnEngine(1);
 		}
 		else if (buttonOne.isPressed()) {
-			world.getPlayer().getCar().powerOnEngine(1);
+			world.getPlayer().getCar().powerOnEngine(-1);
 		}
 		else{
 			world.getPlayer().getCar().powerOffEngine();
