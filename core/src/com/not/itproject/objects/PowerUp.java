@@ -1,11 +1,13 @@
 package com.not.itproject.objects;
 
+import java.util.List;
 import java.util.Random;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -16,11 +18,11 @@ public class PowerUp extends GameObject {
 
 	private static final float SPAWNTIME = 3;
 	private static final Random rand = new Random();
-	private enum PowerType {SPEEDBOOST, SPEEDREDUCE};
-	private Body body;
-	
+	private static enum PowerType {SPEEDBOOST, SPEEDREDUCE}
+
 	// Variable object types
-	private PowerType type;
+    private Body body;
+	private PowerType powerType;
 	public float coolDown;
 	private Boolean collected; // check this when rendering, only render if false
 	
@@ -31,11 +33,11 @@ public class PowerUp extends GameObject {
 		// Call super constructor
 		super(worldBox2D, x, y, width, height, rotation);
 		
-		this.type = setRandomPower();
+		this.powerType = setRandomPower();
 		this.collected = false;
 		this.coolDown = 0;
 		this.objType = ObjType.POWER;
-		
+
 		// Define the box2D body for this power
 		BodyDef box = new BodyDef();
 		box.type = BodyType.StaticBody;
@@ -90,8 +92,11 @@ public class PowerUp extends GameObject {
 	// Re-spawns a power once the cool down period is over
 	public void reSpawn()
 	{
-		type = setRandomPower();
+		powerType = setRandomPower();
 		collected = false;
+		Filter unmask = new Filter();
+		unmask.maskBits = (short) 0xFFFF;
+		body.getFixtureList().get(0).setFilterData(unmask);
 		coolDown = 0; //just to be safe
 	}
 	
@@ -109,16 +114,22 @@ public class PowerUp extends GameObject {
 	}
 		
 	// Applies power to a specific player
-	public void applyPower(Player player) 
+	public void applyPower(Player player, List<Player> opponents) 
 	{
-		Vector2 velocity = player.getCar().getVelocity();
-		if(type == PowerType.SPEEDBOOST)
+		if(powerType == PowerType.SPEEDBOOST)
 		{
+			Vector2 velocity = player.getCar().getVelocity();
 			player.getCar().setVelocity(velocity.scl(2.0f));
+			System.out.println(velocity.scl(1.2f).x);
+			System.out.println(velocity.scl(1.2f).y);
 		}
-		if(type == PowerType.SPEEDREDUCE)
+		if(powerType == PowerType.SPEEDREDUCE)
 		{
-			player.getCar().setVelocity(velocity.scl(0.5f));
+			for (Player opponent : opponents) {
+				Vector2 velocity = opponent.getCar().getVelocity();
+				if(opponent == player) {continue;}
+				opponent.getCar().setVelocity(velocity.scl(0.5f));
+			}
 		}
 	}
 	/** ----------------------------- END METHODS ------------------------- **/
@@ -147,7 +158,7 @@ public class PowerUp extends GameObject {
 		System.out.print("Item spawned!\n");
 		System.out.print("Collected: " + collected);
 		System.out.print("Wait time: " + coolDown);
-		System.out.print("New power type: " + type);
+		System.out.print("New power type: " + powerType);
 	}
 	/** --------------------- END DEBUG UNIT TESTING  ------------------ **/
 }

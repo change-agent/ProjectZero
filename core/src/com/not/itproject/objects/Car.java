@@ -1,6 +1,5 @@
 package com.not.itproject.objects;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -16,12 +15,12 @@ public class Car extends GameObject{
 	/** ----------------------------- CONSTANTS ------------------------------ **/
 	// Static properties used for car handling
 	private static final float LOCK_ANGLE = 45 * DEG_TO_RAD;
-	private static final float STEER_SPEED = 2.0f;
-	private static final float HORSEPOWER = 600.0f;
+	private static final float STEER_SPEED = 6.0f;
+	private static final float HORSEPOWER = 450.0f;
 	private static final float DRIFT_COEFF = 0.4f; // Decrease for more skid
-	private static final float LINEAR_FRICTION = 2.0f;
+	private static final float LINEAR_FRICTION = 1.0f;
 	private static final float CHASSIS_DENSITY = 2.0f;
-	private static final float WHEEL_DENSITY = 1.5f;
+	private static final float WHEEL_DENSITY = 1.0f;
 	public static final float WHEEL_WIDTH = 2.5f * PIXELS_TO_METERS;
 	public static final float WHEEL_HEIGHT = 4.0f * PIXELS_TO_METERS;
 	
@@ -33,6 +32,7 @@ public class Car extends GameObject{
 	private float steeringAngle = 0.0f;
 	private PowerUp power;
 	private boolean hasPower;
+	private boolean usePower;
 	
 	/** ----------------------------- START CONSTRUCTOR ----------------------- **/
 	// Box2D box used for applying forces and collision handling
@@ -44,6 +44,7 @@ public class Car extends GameObject{
 		this.power = null;
 		this.hasPower = false;
 		this.objType = ObjType.CAR;
+		this.usePower = false;
 		
 		// Set up the physics body
 		BodyDef bodyDef = new BodyDef();
@@ -154,6 +155,14 @@ public class Car extends GameObject{
 		this.rightFrontWheelJoint = (RevoluteJoint) worldBox2D.createJoint(rightFrontJointDef);
 		worldBox2D.createJoint(leftRearJointDef);
 		worldBox2D.createJoint(rightRearJointDef);
+		
+		// Sets the bodies to hold a reference to the object they belong to
+		// This is used in the contact listener
+		chassis.setUserData(this);
+		leftFrontWheel.setUserData(this);
+		leftRearWheel.setUserData(this);
+		rightFrontWheel.setUserData(this);
+		rightRearWheel.setUserData(this);
 	}
 	/** ----------------------------- END CONSTRUCTOR --------------------------- **/
 	
@@ -197,9 +206,6 @@ public class Car extends GameObject{
 		// Prevent too much spot - rotation by killing the angular velocity
 		float angleImpulse = 0.1f * wheel.getInertia() * -DRIFT_COEFF;
 		wheel.applyAngularImpulse(wheel.getAngularVelocity() * angleImpulse, true);
-		
-		System.out.println(wheel.getAngularVelocity());
-		
 	}
 	
 	// Applies a force in the local forward direction of the body
@@ -236,17 +242,26 @@ public class Car extends GameObject{
 		hasPower = true;
 	}
 	
-	public void usePower() {
-		this.power = null;
-		hasPower = false;
+	public void setUsePower() {
+		if(hasPower) {
+			usePower = true;
+		}
+		else{
+			usePower = false;
+		}
+	}
+	
+	public Boolean usePower() {
+		return usePower;
 	}
 	
 	public PowerUp getPower() {
 		return power;
 	}
 	
-	public boolean hasPower() {
-		return hasPower;
+	public void removePower() {
+		power = null;
+		hasPower = false;
 	}
 	/** ---------------------- END POWERUP HANDLING FUNCTIONS ------------------ **/
 	
@@ -270,6 +285,14 @@ public class Car extends GameObject{
 	
 	public void setVelocity(Vector2 velocity) {
 		chassis.setLinearVelocity(velocity);
+	}
+	
+	public void setDensity(float scale) {
+		chassis.getFixtureList().get(0).setDensity(CHASSIS_DENSITY * scale);
+		leftFrontWheel.getFixtureList().get(0).setDensity(CHASSIS_DENSITY * scale);
+		leftRearWheel.getFixtureList().get(0).setDensity(CHASSIS_DENSITY * scale);
+		rightFrontWheel.getFixtureList().get(0).setDensity(CHASSIS_DENSITY * scale);
+		rightRearWheel.getFixtureList().get(0).setDensity(CHASSIS_DENSITY * scale);
 	}
 	/** ------------------------ END UTILITY FUNCTIONS -------------------------- **/
 }

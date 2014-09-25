@@ -29,8 +29,8 @@ public class Player {
 	public void setHit(boolean b) {
 		isHit = b;	
 	}
-	
-	public void usePower() {
-		
+
+	public void flagUsePower() {
+		getCar().setUsePower();
 	}
 }

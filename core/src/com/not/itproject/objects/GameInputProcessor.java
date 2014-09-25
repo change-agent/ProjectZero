@@ -181,7 +181,7 @@ public class GameInputProcessor {
 		
 		// Activate power or menu
 		if (buttonThree.isPressed()) {
-			world.getPlayer().usePower();
+			world.getPlayer().flagUsePower();
 		}
 		if (buttonMenu.isPressed()) {
 			// pause game

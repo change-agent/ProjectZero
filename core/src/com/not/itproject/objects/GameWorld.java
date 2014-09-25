@@ -5,7 +5,14 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.not.itproject.objects.GameObject.ObjType;
 import com.not.itproject.zero.ProjectZero;
 
 public class GameWorld {
@@ -18,10 +25,53 @@ public class GameWorld {
 	public float carWidth;
 	public float carHeight;
 	
+	
+	/**------------------- DEBUG CONTACT LISTENER FOR POWER UP TESTING------**/
+	public ContactListener c = new ContactListener() {
+		
+		@Override
+		public void preSolve(Contact contact, Manifold oldManifold) {}
+		@Override
+		public void postSolve(Contact contact, ContactImpulse impulse) {}
+		@Override
+		public void endContact(Contact contact) {}
+		
+		@Override
+		public void beginContact(Contact contact) {
+			Fixture A = contact.getFixtureA();
+			Fixture B = contact.getFixtureB();
+			
+			if(A.isSensor()) {
+				PowerUp power = (PowerUp) A.getBody().getUserData();
+				power.collect();
+				
+				Car car = (Car) B.getBody().getUserData();
+				car.setPower(power);
+				
+				Filter f = new Filter();
+				f.maskBits = (ObjType.POWER.value());
+				A.setFilterData(f);
+				A.getBody().setUserData(power);
+			}
+			if(B.isSensor()) {
+				PowerUp power = (PowerUp) B.getBody().getUserData();
+				power.collect();
+				
+				Car car = (Car) A.getBody().getUserData();
+				car.setPower(power);
+				
+				Filter f = new Filter();
+				f.maskBits = (ObjType.POWER.value());
+				B.setFilterData(f);
+				B.getBody().setUserData(power);
+			}
+		}
+	};
+	/**-------------------------------- END -------------------------------**/
+	
 	// Player - the device player
 	// List of players called 'opponents' are all other players
-	public Player player;
-	public List<Player> opponents;
+	public List<Player> players;
 	public List<GameObject> staticObjects;
 	
 	// Box2D world in which our objects will be created in and handled by
@@ -36,7 +86,7 @@ public class GameWorld {
 		// Init the game, game variables and objects
 		this.game = game;
 		gameVariables = new GameVariables();
-		opponents = new ArrayList<Player>();
+		players = new ArrayList<Player>();
 		staticObjects = new ArrayList<GameObject>();
 
 		// calculate ratio used for object placement
@@ -49,41 +99,58 @@ public class GameWorld {
 		
 		//Initialize box2D world object
 		worldBox2D = new World(new Vector2(0.0f, 0.0f), false);
+		worldBox2D.setContactListener(c);
 
 		// define player and opponents
 		carWidth = 16 * GameObject.PIXELS_TO_METERS;
 		carHeight = 32 * GameObject.PIXELS_TO_METERS;
-		player = new Player(worldBox2D, gameWidth / 2 - gameWidth / 12, 
-				gameHeight / 2, carWidth, carHeight, 0);
+		
+		// This worlds player will always be at index 0
+		// This makes using powers more transparent and will allow for network data efficiency
+		players.add(new Player(worldBox2D, gameWidth / 2 - gameWidth / 12, 
+				gameHeight / 2, carWidth, carHeight, 0));
+		players.add(new Player(worldBox2D, gameWidth / 2 + gameWidth / 12, 
+				gameHeight / 2, carWidth, carHeight, 0));
 		
 		staticObjects.add(new Obstacle(worldBox2D, 100, 50, 10 * GameObject.PIXELS_TO_METERS, 10 * GameObject.PIXELS_TO_METERS, 0));
 		staticObjects.add(new Obstacle(worldBox2D, 120, 50, 10 * GameObject.PIXELS_TO_METERS, 10 * GameObject.PIXELS_TO_METERS, 0));
 		staticObjects.add(new Obstacle(worldBox2D, 140, 50, 10 * GameObject.PIXELS_TO_METERS, 10 * GameObject.PIXELS_TO_METERS, 0));
+		staticObjects.add(new PowerUp(worldBox2D, 200, 50, 100 * GameObject.PIXELS_TO_METERS, 100 * GameObject.PIXELS_TO_METERS, 0));
 	}
 
 	public void update(float delta) {
 		
 		// This updates the box2d world
 		// Adjust last two params for performance increase
-		worldBox2D.step(delta, 1, 1);
-		player.getCar().update(delta);
+		worldBox2D.step(delta, 4, 4);
 		
 		// update players and check for win
-		player.update(delta);
-		if (player.getLapNum() == gameVariables.GAMELAPS) {
-			gameStatus = GameState.ENDED;
-		}
-		for (Player opponent : opponents) {
-			opponent.update(delta);
-			if(opponent.getLapNum() == gameVariables.GAMELAPS) {
+		for (Player player : players) {
+			player.update(delta);
+			
+			if(player.getLapNum() == gameVariables.GAMELAPS) {
 				gameStatus = GameState.ENDED;
+			}
+			
+			// Use powers if necessary
+			if(player.getCar().usePower()){
+				PowerUp power = player.getCar().getPower();
+				player.getCar().removePower();
+				power.applyPower(player, players);
+			}
+		}
+		
+		for (GameObject staticObj : staticObjects) {
+			if(staticObj.getObjType() == ObjType.POWER){
+				PowerUp power = (PowerUp) staticObj;
+				power.update(delta);
 			}
 		}
 	}
 	
 	// Get the player that is playing on the current device
 	public Player getPlayer() {
-		return player;
+		return players.get(0);
 	}
 
 	// *** Game state functions ***// 
@@ -138,4 +205,6 @@ public class GameWorld {
 	public void dispose() {
 		
 	}
+	
+	
 }

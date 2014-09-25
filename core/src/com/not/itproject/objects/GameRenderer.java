@@ -129,21 +129,14 @@ public class GameRenderer {
 	public void renderRunning(float delta) {
 		// render running state
 		batch.begin();
-			batch.draw(AssetHandler.player, 
-					gameWorld.getPlayer().getCar().getPosition().x - gameWorld.getPlayer().getCar().getWidth() / 2, 
-					gameWorld.getPlayer().getCar().getPosition().y - gameWorld.getPlayer().getCar().getHeight() / 2, 
-					gameWorld.getPlayer().getCar().getWidth()/2, gameWorld.getPlayer().getCar().getHeight()/2, 
-					gameWorld.getPlayer().getCar().getWidth(), gameWorld.getPlayer().getCar().getHeight(), 
-					1.2f, 1.2f, gameWorld.getPlayer().getCar().getRotation());
-			
-			// Draws other players
-			for (Player opponent : gameWorld.opponents) {
+			// Draws players
+			for (Player players : gameWorld.players) {
 				batch.draw(AssetHandler.opponent, 
-						opponent.getCar().getPosition().x - opponent.getCar().getWidth() / 2, 
-						opponent.getCar().getPosition().y - opponent.getCar().getHeight() / 2, 
-						0, 0, 
-						opponent.getCar().getWidth(), opponent.getCar().getHeight(), 
-						1, 1, opponent.getCar().getRotation());
+						players.getCar().getPosition().x - players.getCar().getWidth() / 2, 
+						players.getCar().getPosition().y - players.getCar().getHeight() / 2, 
+						players.getCar().getWidth()/2, players.getCar().getHeight()/2, 
+						players.getCar().getWidth(), players.getCar().getHeight(), 
+						1.2f, 1.2f, players.getCar().getRotation());
 			}
 			
 			//Draws static objects (powers and obstacles)
