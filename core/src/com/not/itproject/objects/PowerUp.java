@@ -16,6 +16,7 @@ import com.not.itproject.objects.GameObject.ObjType;
 
 public class PowerUp extends GameObject {
 
+	// test branch comment
 	private static final float SPAWNTIME = 3;
 	private static final Random rand = new Random();
 	private static enum PowerType {SPEEDBOOST, SPEEDREDUCE}
