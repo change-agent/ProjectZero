@@ -163,6 +163,24 @@ public class GameInputProcessor {
 		if (touchpad.getKnobPercentX() < 0 || touchpad.getKnobPercentX() > 0) {
 			float steerAngle = touchpad.getKnobPercentX();
 			world.getPlayer().getCar().setSteeringAngle(steerAngle);
+			float steerDir_X = touchpad.getKnobX();
+			float steerDir_Y = touchpad.getKnobY();
+			// Move camera around based on touchpad angle
+			if(steerDir_X > 23 && steerDir_X < 52 && steerDir_Y > 50 && steerDir_Y < 58)
+				// Move up
+				GameRenderer.camera.translate(0,1);
+						
+			if(steerDir_X > 17 && steerDir_X  < 23 && steerDir_Y > 23 && steerDir_Y < 51)
+				// Move left
+				GameRenderer.camera.translate(1,0);
+						
+			if(steerDir_X > 50 && steerDir_X < 58 && steerDir_Y > 23 && steerDir_Y < 51)
+				// Move right
+				GameRenderer.camera.translate(-1,0);
+						
+			if(steerDir_X > 23 && steerDir_X < 50 && steerDir_Y > 17 && steerDir_Y < 23)
+				// Move down
+				GameRenderer.camera.translate(0,-1);
 		}
 		else{
 			world.getPlayer().getCar().zeroSteeringAngle();

@@ -5,6 +5,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.zero.ProjectZero;
 
@@ -12,11 +16,13 @@ public class GameRenderer {
 	// declare variables
 	GameWorld gameWorld;
 	GameInputProcessor gameInputProcessor;
-	OrthographicCamera camera;
+	static OrthographicCamera camera;
 	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
 	private float gameWidth, gameHeight;
 	Box2DDebugRenderer box2Drenderer;
+	static TiledMap tiledMap;
+    TiledMapRenderer tiledMapRenderer;
 	
 	// ready state variables
 	private float resumeCountDown;
@@ -41,6 +47,9 @@ public class GameRenderer {
 		// initialize variables
 		camera = new OrthographicCamera();
 		camera.setToOrtho(true, gameWidth , gameHeight);
+		camera.update();
+		tiledMap = new TmxMapLoader().load("map.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer = new ShapeRenderer();
@@ -92,6 +101,8 @@ public class GameRenderer {
 			renderControls(delta);	
 		} 
 		else if (gameWorld.isRunning()) { 	
+			tiledMapRenderer.setView(camera);
+			tiledMapRenderer.render();
 			box2Drenderer.render(gameWorld.worldBox2D, camera.combined);
 			renderRunning(delta);
 			renderControls(delta);		 

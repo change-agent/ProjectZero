@@ -7,8 +7,33 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Rectangle;
+//import com.badlogic.gdx.math.Intersector;
 
 public class Obstacle extends GameObject {
+	private Rectangle bounds;
+
+	public void MapObstacle(Player player) {
+		// Select the layer that contains the invisible collision tiles
+		int objectLayerId = 2;
+			
+		// Extract all objects from the collision layer
+		TiledMapTileLayer collisionObjectLayer = (TiledMapTileLayer)GameRenderer.tiledMap.getLayers().get(objectLayerId);
+		MapObjects objects = collisionObjectLayer.getObjects();
+		
+		// Check each of those objects for a collision
+		for(RectangleMapObject rectangleObject : objects.getByType(RectangleMapObject.class)) {
+			Rectangle rectangle = rectangleObject.getRectangle();
+			
+		// Updated Player code has broken this method of checking for collisions – included only for reference
+		/*if(Intersector.overlaps(rectangle, player.getCar().getBounds())) {
+		    // collision logic here
+		  }*/
+		}
+	}
 
 	private Body body;
 	
