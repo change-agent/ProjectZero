@@ -27,7 +27,7 @@ public class GameRenderer {
 	// ready state variables
 	private float resumeCountDown;
 	
-	// paused menu variables
+	// paused menu variables 
 	SimpleButton btnResumeGame;
 	
 	// main constructor

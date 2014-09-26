@@ -30,7 +30,7 @@ public class Obstacle extends GameObject {
 			Rectangle rectangle = rectangleObject.getRectangle();
 			
 		// Updated Player code has broken this method of checking for collisions – included only for reference
-		/*if(Intersector.overlaps(rectangle, player.getCar().getBounds())) {
+		  /*if(Intersector.overlaps(rectangle, player.getCar().getBounds())) {
 		    // collision logic here
 		  }*/
 		}

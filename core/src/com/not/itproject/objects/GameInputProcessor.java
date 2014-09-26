@@ -167,7 +167,7 @@ public class GameInputProcessor {
 			System.out.println(steerDir_X + "  " + steerDir_Y);
 			world.getPlayer().getCar().setSteeringAngle(steerAngle);
 			
-			// Move camera around based on touchpad angle
+			// Move camera around based on touchpad angle 
 			
 			// Move up
 			if(steerDir_X > 23 && steerDir_X < 52 && steerDir_Y > 50 && steerDir_Y < 58)
