@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 //import com.badlogic.gdx.math.Intersector;
 
+
 public class Obstacle extends GameObject {
 	private Rectangle bounds;
 

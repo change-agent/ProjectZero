@@ -46,7 +46,7 @@ public class GameRenderer {
 		
 		// initialize variables
 		camera = new OrthographicCamera();
-		camera.setToOrtho(true, gameWidth , gameHeight);
+		camera.setToOrtho(true, gameWidth, gameHeight);
 		camera.update();
 		tiledMap = new TmxMapLoader().load("map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
@@ -100,7 +100,7 @@ public class GameRenderer {
 			renderReady(delta); 
 			renderControls(delta);	
 		} 
-		else if (gameWorld.isRunning()) { 	
+		else if (gameWorld.isRunning()) {
 			tiledMapRenderer.setView(camera);
 			tiledMapRenderer.render();
 			box2Drenderer.render(gameWorld.worldBox2D, camera.combined);

@@ -10,10 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad.TouchpadStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
+import com.not.itproject.handlers.NetworkHandler;
 
 public class GameInputProcessor {
 	// declare variables
@@ -162,24 +162,24 @@ public class GameInputProcessor {
 		// get controls
 		if (touchpad.getKnobPercentX() < 0 || touchpad.getKnobPercentX() > 0) {
 			float steerAngle = touchpad.getKnobPercentX();
-			world.getPlayer().getCar().setSteeringAngle(steerAngle);
 			float steerDir_X = touchpad.getKnobX();
 			float steerDir_Y = touchpad.getKnobY();
+			System.out.println(steerDir_X + "  " + steerDir_Y);
+			world.getPlayer().getCar().setSteeringAngle(steerAngle);
+			
 			// Move camera around based on touchpad angle
+			
+			// Move up
 			if(steerDir_X > 23 && steerDir_X < 52 && steerDir_Y > 50 && steerDir_Y < 58)
-				// Move up
 				GameRenderer.camera.translate(0,1);
-						
+			// Move left
 			if(steerDir_X > 17 && steerDir_X  < 23 && steerDir_Y > 23 && steerDir_Y < 51)
-				// Move left
 				GameRenderer.camera.translate(1,0);
-						
+			// Move right
 			if(steerDir_X > 50 && steerDir_X < 58 && steerDir_Y > 23 && steerDir_Y < 51)
-				// Move right
 				GameRenderer.camera.translate(-1,0);
-						
+			// Move down
 			if(steerDir_X > 23 && steerDir_X < 50 && steerDir_Y > 17 && steerDir_Y < 23)
-				// Move down
 				GameRenderer.camera.translate(0,-1);
 		}
 		else{
