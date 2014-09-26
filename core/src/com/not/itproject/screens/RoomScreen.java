@@ -21,10 +21,8 @@ public class RoomScreen extends AbstractScreen {
 	RoomState screenStatus;
 	enum RoomState { WAITING, LOAD };
 	
-	private float elapsedNetworkRefresh = 0;
-	private float refreshDelay = 10;
+	// declare buttons for showing sessions
 	private boolean setupNetwork = false;
-	
 	Map<Integer, SimpleButton> btnGameSessions;
 	
 	// main constructor
@@ -51,7 +49,7 @@ public class RoomScreen extends AbstractScreen {
 
 	private void detectGameSessions() {
 		// discover servers
-		NetworkHandler.discoverServer();
+		NetworkHandler.getNetworkClient().discoverServers();
 		
 		// clear button objects
 		btnGameSessions.clear();
@@ -61,8 +59,8 @@ public class RoomScreen extends AbstractScreen {
 		int btnWidth = (int) (gameWidth - btnOffset*2);
 		
 		// iterate and add buttons to join session
-		for (int i=0; i < NetworkHandler.getListOfServers().size(); i++) {
-			if (NetworkHandler.getListOfServers().get(i) != null) {
+		for (int i=0; i < NetworkHandler.getNetworkClient().getListOfServers().size(); i++) {
+			if (NetworkHandler.getNetworkClient().getListOfServers().get(i) != null) {
 				btnGameSessions.put(i, new SimpleButton(btnOffset - 20, 
 						btnOffset + (33 * i), btnWidth, 30));
 			}
@@ -70,24 +68,25 @@ public class RoomScreen extends AbstractScreen {
 	}
 
 	private void autoDetectSessions(float delta) {
-		// auto detecting game sessions
-		elapsedNetworkRefresh += delta;
-		if (!NetworkHandler.isConnected() && elapsedNetworkRefresh > refreshDelay) {
-			detectGameSessions();
-			elapsedNetworkRefresh = 0;
-		}	
+//		// auto detecting game sessions
+//		elapsedNetworkRefresh += delta;
+//		if (!NetworkHandler.getNetworkClient().getClient().isConnected() && 
+//				elapsedNetworkRefresh > refreshDelay) {
+//			detectGameSessions();
+//			elapsedNetworkRefresh = 0;
+//		}	
 	}
 	
 	public void update(float delta) {
 		// setup networking
 		if (!setupNetwork) {
 			// initialise networking
-			NetworkHandler.setupClient();
+			NetworkHandler.client.startClient();
 			detectGameSessions();
 			setupNetwork = true;
 		}
 		
-		// auto detecting game sessions
+//		// auto detecting game sessions
 //		autoDetectSessions(delta);
 		
 		// determine screen status
@@ -110,18 +109,18 @@ public class RoomScreen extends AbstractScreen {
 		btnRefresh.update(delta);
 		
 		// check input from user and perform action
-		for (int i=0; i < NetworkHandler.getListOfServers().size(); i++) {
-			if (NetworkHandler.getListOfServers().get(i) != null) {
+		for (int i = 0; i < NetworkHandler.getNetworkClient().getListOfServers().size(); i++) {
+			if (NetworkHandler.getNetworkClient().getListOfServers().get(i) != null) {
 				// render session buttons
 				btnGameSessions.get(i).update(delta);
 				
 				// handle user input
 				if (btnGameSessions.get(i).isTouched()) {
 					// connect to game session
-					NetworkHandler.connectToGameSession(i);
+					NetworkHandler.getNetworkClient().connectToGameSession(i);
 					
 					// determine whether connection success
-					if (NetworkHandler.isConnected()) {
+					if (NetworkHandler.getNetworkClient().getClient().isConnected()) {
 						game.nextScreen(ProjectZero.selectionScreen, this);
 					}
 				}
@@ -130,6 +129,7 @@ public class RoomScreen extends AbstractScreen {
 		
 		if (btnLoadGame.isTouched()) {
 			// proceed to loading a game
+			setupNetwork = false;
 			screenStatus = RoomState.LOAD;
 			
 			// debug log to console
@@ -138,12 +138,14 @@ public class RoomScreen extends AbstractScreen {
 
 		} else if (btnNewGame.isTouched()) {
 			// debug log to console
+			setupNetwork = false;
 			game.nextScreen(ProjectZero.selectionScreen, this);
 			Gdx.app.log(ProjectZero.GAME_NAME,
 					"New Game button is pressed.");
 			
 		} else if (btnBack.isTouched()) {
 			// proceed back to main menu
+			setupNetwork = false;
 			game.nextScreen(ProjectZero.mainScreen, this);
 			
 		} else if (btnRefresh.isTouched()) {
@@ -201,8 +203,8 @@ public class RoomScreen extends AbstractScreen {
 		// render waiting state
 
 		// display all game sessions
-		for (int i=0; i < NetworkHandler.getListOfServers().size(); i++) {
-			if (NetworkHandler.getListOfServers().get(i) != null) {
+		for (int i=0; i < NetworkHandler.getNetworkClient().getListOfServers().size(); i++) {
+			if (NetworkHandler.getNetworkClient().getListOfServers().get(i) != null) {
 				// render session buttons
 				btnGameSessions.get(i).update(delta);
 				batch.draw(AssetHandler.button,

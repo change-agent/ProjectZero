@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="100" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="element_blue_square" tilewidth="32" tileheight="32">
+  <image source="Android/resources/graphics/puzzle-graphics/png/element_blue_square.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="2" name="element_green_square" tilewidth="32" tileheight="32">
+  <image source="Android/resources/graphics/puzzle-graphics/png/element_green_square.png" width="32" height="32"/>
+ </tileset>
+ <layer name="Blue" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt2EFqxDAQAEE7/3/0nvYWgvDCpKWtgjkOSLQv1n1d121SQ4MeLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq06NGiR4seLXq03IfPbt7n/jlwdu5xoh3vpUeLHi16tOjRokeLHi16tOjR8rTHDu8e39Zjih5re1P0WNubosfa3hQ91vam6LG2N0WPtb0peqztTdFjbW/KJz12+G/97cxP9qbs+J0/dfJ7yY6+7b51erSc2mPXO+nRokeLHi16tOjR8h9vCubveQGNQQKv
+  </data>
+ </layer>
+ <layer name="Green" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt0cENwDAMA7Gg+w/dtyaQEpCAB7DuHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgB3fg3ez9nZ6pPZ2eqT2dnqk9nZ6pPZ2eqT2dnqk9nZ6pPZ2eqT1X/XY+lWPrV/12PpVj61f9dj6VY+tX/XY+lWPrV/12PpVj61f9dj6VY/772bt7fRI7e30SO3t9Ejt7fRI7e30SO3t9Ejt7fRg1Q9OTwlj
+  </data>
+ </layer>
+ <objectgroup name="Powerup" width="100" height="100">
+  <object x="170" y="2355" width="121" height="121"/>
+  <object x="94" y="2624" width="124" height="124"/>
+  <object x="273" y="2888" width="115" height="115"/>
+  <object x="573" y="2264" width="70" height="70"/>
+  <object x="1003" y="2373" width="55" height="55"/>
+ </objectgroup>
+ <objectgroup name="Object Layer 2" width="100" height="100">
+  <object x="749" y="2318" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object x="1236" y="2285" width="63" height="63">
+   <ellipse/>
+  </object>
+  <object x="1472" y="2430" width="84" height="84">
+   <ellipse/>
+  </object>
+  <object x="1492" y="2879" width="67" height="67">
+   <ellipse/>
+  </object>
+  <object x="1096" y="2970" width="47" height="47">
+   <ellipse/>
+  </object>
+  <object x="1363" y="3018" width="43" height="43">
+   <ellipse/>
+  </object>
+ </objectgroup>
+</map>

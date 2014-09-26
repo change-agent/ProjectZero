@@ -12,5 +12,5 @@ public class GameVariables {
 	
 	// in-game variables
 	public final int GAMELAPS = 3;
-	public final int PPM = 8;
+	public final static float PPM = 8;
 }

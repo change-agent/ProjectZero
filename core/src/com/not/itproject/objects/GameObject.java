@@ -9,9 +9,8 @@ public class GameObject {
 	//DEG <-> RAD Conversion functions
 	protected static final float DEG_TO_RAD = (float)Math.PI / 180;
 	protected static final float RAD_TO_DEG = 1/DEG_TO_RAD;
-	protected static final float PPM = 8.0f;
-	protected static final float PIXELS_TO_METERS = 1 / PPM;
-	protected static final float METERS_TO_PIXELS = PPM; 
+	protected static final float PIXELS_TO_METERS = 1 / GameVariables.PPM;
+	protected static final float METERS_TO_PIXELS = GameVariables.PPM; 
 
 	/** ---------------------- START VARIABLES --------------------------- **/
 	protected Vector2 position;

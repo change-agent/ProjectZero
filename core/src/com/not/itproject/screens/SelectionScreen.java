@@ -17,8 +17,6 @@ public class SelectionScreen extends AbstractScreen {
 	SelectionState screenStatus;
 	enum SelectionState { TRACK, VEHICLE, READY };
 	private boolean setupNetwork = false;
-
-	SimpleButton btnSendOne;
 	
 	// main constructor
 	public SelectionScreen(ProjectZero game) {
@@ -36,27 +34,38 @@ public class SelectionScreen extends AbstractScreen {
 		btnStart = new SimpleButton((int)(gameWidth * 4/5) - btnWidth/2 + btnOffset, 
 				(int)(gameHeight * 4/5), btnWidth, 30);
 		btnBack = new SimpleRoundButton(20, 20, 15);
-		btnSendOne = new SimpleButton((int)(gameWidth / 2) - btnWidth/2, 
-				(int)(gameHeight / 2), btnWidth, 30);
 	}
 
 	public void update(float delta) {
-		// setup networking
-		if (!setupNetwork && !NetworkHandler.isConnected()) {
-			// initialise networking
-			NetworkHandler.startGameSession();
+		/* setup networking */
+		if (!setupNetwork && !NetworkHandler.getNetworkClient().getClient().isConnected()) {
+			// create a new game session as host
+			NetworkHandler.getNetworkServer().startGameSession();
 			setupNetwork = true;
+		} else if (!setupNetwork && NetworkHandler.getNetworkClient().getClient().isConnected()) {
+			// determine network has been setup as client
+			setupNetwork = true;
+		}
+		
+		// handle client disconnection from server
+		if (setupNetwork && !NetworkHandler.getNetworkClient().getClient().isConnected() &&
+				!NetworkHandler.getNetworkServer().isServerOnline()) {
+			// return back to room screen displaying message
+			Gdx.app.log("Network", "Disconnected");
+
+			setupNetwork = false;
+			game.nextScreen(ProjectZero.roomScreen, this);		
+		}
+		
+		// host - send selection screen information to clients
+		if (setupNetwork && NetworkHandler.getNetworkServer().isServerOnline() &&
+				NetworkHandler.getNetworkServer().getServer().getConnections().length > 0) {
+			// send information to client
+			NetworkHandler.getNetworkServer().sendSelectionScreenInformation();
 		}
 		
 		// update objects
 		btnBack.update(delta);
-
-		// test function/button
-		btnSendOne.update(delta);
-		if (btnSendOne.isTouched() && NetworkHandler.isClient()) {
-			Gdx.app.log("NETWORK", "SEND MESSAGE");
-			NetworkHandler.sendMessage("Connection Request.");
-		}
 		
 		// determine screen status
 		switch (screenStatus) {
@@ -88,15 +97,16 @@ public class SelectionScreen extends AbstractScreen {
 		}
 		else if (btnBack.isTouched()) {
 			// go back to room
+			setupNetwork = false;
 			game.nextScreen(ProjectZero.roomScreen, this);
 			
 			// disconnect from network
-			if (NetworkHandler.isHost()) {
-				// as host
-				NetworkHandler.endGameSession();
-			} else if (NetworkHandler.isClient()) {
-				// as client
-				NetworkHandler.leaveGameSession();
+			if (NetworkHandler.getNetworkServer().isServerOnline()) {
+				// as host - end game session
+				NetworkHandler.getNetworkServer().endGameSession();
+			} else if (NetworkHandler.getNetworkClient().getClient().isConnected()) {
+				// as client - leave game session
+				NetworkHandler.getNetworkClient().leaveGameSession();
 			}
 		}
 	}
@@ -118,7 +128,7 @@ public class SelectionScreen extends AbstractScreen {
 	
 	private void updateReady(float delta) {
 		// session host - start option
-		if (NetworkHandler.isHost()) {
+		if (NetworkHandler.getNetworkServer().isServerOnline()) {
 			// update objects
 			btnStart.update(delta);
 
@@ -178,18 +188,69 @@ public class SelectionScreen extends AbstractScreen {
 	private void renderSessionTitle(float delta) {
 		// render game session title
 		AssetHandler.getFont(0.4f).draw(batch, "Game Session ID: " + 
-				String.format("%05d", NetworkHandler.getGameSessionID()), 50, 10);
+				String.format("%05d", NetworkHandler.getGameSessionID()), 
+				50, 10);
 		
-		AssetHandler.getFont(0.4f).draw(batch, "Host: " +	NetworkHandler.isHost() + " | " + 
-				"Client: " +	NetworkHandler.isClient(), 60, 25);
+		AssetHandler.getFont(0.4f).draw(batch, 
+				"Host: " + NetworkHandler.getNetworkServer().isServerOnline() + " | " + 
+				"Client: " + NetworkHandler.getNetworkClient().getClient().isConnected(), 
+				60, 25);
 	}
 	
 	private void renderPlayers(float delta) {
 		// render number of players
-		batch.draw(AssetHandler.playerOne, 10, 145, 50, 28);
-		batch.draw(AssetHandler.playerOne, 63, 145, 50, 28);
-		batch.draw(AssetHandler.playerOne, 116, 145, 50, 28);
-		batch.draw(AssetHandler.playerOne, 169, 145, 50, 28);
+		if (NetworkHandler.getListOfPlayers().containsKey(0)) {
+			// number of players = 1 (host)
+			batch.draw(AssetHandler.playerRed, 10, 145, 50, 28);
+		} else {
+
+			batch.draw(AssetHandler.playerNA, 10, 145, 50, 28);
+		}
+		
+		if (NetworkHandler.getListOfPlayers().containsKey(1)) {
+			// number of players = 2
+			batch.draw(AssetHandler.playerBlue, 63, 145, 50, 28);
+		} else {
+
+			batch.draw(AssetHandler.playerNA, 63, 145, 50, 28);
+		}
+		
+		if (NetworkHandler.getListOfPlayers().containsKey(2)) {
+			// number of players = 3
+			batch.draw(AssetHandler.playerGreen, 116, 145, 50, 28);
+		} else {
+
+			batch.draw(AssetHandler.playerNA, 116, 145, 50, 28);
+		}
+		
+		if (NetworkHandler.getListOfPlayers().containsKey(3)) {
+			// number of players = 4
+			batch.draw(AssetHandler.playerYellow, 169, 145, 50, 28);
+		} else {
+
+			batch.draw(AssetHandler.playerNA, 169, 145, 50, 28);
+		}
+		
+		// mark which player is you
+		if (NetworkHandler.getListOfPlayers().containsKey(0) &&
+				NetworkHandler.getListOfPlayers().get(0).contains(AssetHandler.getPlayerID())) {
+			AssetHandler.getFont(0.5f).draw(batch, "Me", 22, 150);
+			
+		} else if (NetworkHandler.getListOfPlayers().containsKey(1) &&
+				NetworkHandler.getListOfPlayers().get(1).contains(AssetHandler.getPlayerID())) {
+			AssetHandler.getFont(0.5f).draw(batch, "Me", 74, 150);
+			
+		} else if (NetworkHandler.getListOfPlayers().containsKey(2) &&
+				NetworkHandler.getListOfPlayers().get(2).contains(AssetHandler.getPlayerID())) {
+			AssetHandler.getFont(0.5f).draw(batch, "Me", 127, 150);
+			
+		} else if (NetworkHandler.getListOfPlayers().containsKey(3) &&
+				NetworkHandler.getListOfPlayers().get(3).contains(AssetHandler.getPlayerID())) {
+			AssetHandler.getFont(0.5f).draw(batch, "Me", 180, 150);
+		}
+			
+		// mark which player is host
+		AssetHandler.getFont(0.25f).draw(batch, "Host", 23, 163);
 	}
 	
 	private void renderTrack(float delta) {
@@ -204,13 +265,6 @@ public class SelectionScreen extends AbstractScreen {
 				btnBack.getPosition().x - btnBack.getRadius(), 
 				btnBack.getPosition().y - btnBack.getRadius(), 
 				btnBack.getRadius() * 2, btnBack.getRadius() * 2);
-		
-		// test button
-		if (NetworkHandler.isClient()) {
-			batch.draw(AssetHandler.button, 
-					btnSendOne.getPosition().x, btnSendOne.getPosition().y, 
-					btnSendOne.getWidth(), btnSendOne.getHeight());					
-		}	
 	}
 	
 	private void renderVehicle(float delta) {
@@ -233,7 +287,7 @@ public class SelectionScreen extends AbstractScreen {
 		batch.draw(AssetHandler.menuReady, 10, 40, 300, 100);
 		
 		// session host - start option
-		if (NetworkHandler.isHost()) {
+		if (NetworkHandler.getNetworkServer().isServerOnline()) {
 			// show start option
 			batch.draw(AssetHandler.buttonStartSession, 
 					btnStart.getPosition().x, btnStart.getPosition().y, 

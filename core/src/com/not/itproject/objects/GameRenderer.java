@@ -40,7 +40,7 @@ public class GameRenderer {
 		
 		// initialize variables
 		camera = new OrthographicCamera();
-		camera.setToOrtho(true, gameWidth , gameHeight);
+		camera.setToOrtho(true, gameWidth, gameHeight);
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer = new ShapeRenderer();

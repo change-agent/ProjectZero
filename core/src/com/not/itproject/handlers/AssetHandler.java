@@ -1,5 +1,7 @@
 package com.not.itproject.handlers;
 
+import java.util.UUID;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Texture;
@@ -23,9 +25,13 @@ public class AssetHandler {
 	public static TextureRegion player, opponent;
 	
 	public static Texture menuTrackTexture, menuVehicleTexture, menuReadyTexture,
-							playerOneTexture;
+							playerRedTexture, playerBlueTexture,
+							playerGreenTexture, playerYellowTexture,
+							playerNATexture, playerAITexture;
 	public static TextureRegion menuTrack, menuVehicle, menuReady,
-							playerOne;
+							playerRed, playerBlue,
+							playerGreen, playerYellow,
+							playerNA, playerAI;
 	
 	public static BitmapFont font;
 	public static Preferences prefs;
@@ -72,8 +78,18 @@ public class AssetHandler {
 		menuVehicleTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		menuReadyTexture = new Texture(Gdx.files.internal("menuReady.png"));
 		menuReadyTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		playerOneTexture = new Texture(Gdx.files.internal("playerOne.png"));
-		playerOneTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		playerRedTexture = new Texture(Gdx.files.internal("players/playerRed.png"));
+		playerRedTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		playerBlueTexture = new Texture(Gdx.files.internal("players/playerBlue.png"));
+		playerBlueTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		playerGreenTexture = new Texture(Gdx.files.internal("players/playerGreen.png"));
+		playerGreenTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		playerYellowTexture = new Texture(Gdx.files.internal("players/playerYellow.png"));
+		playerYellowTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		playerNATexture = new Texture(Gdx.files.internal("players/playerNA.png"));
+		playerNATexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		playerAITexture = new Texture(Gdx.files.internal("players/playerAI.png"));
+		playerAITexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		// load regions
 		logo = new TextureRegion(logoTexture);
@@ -114,8 +130,18 @@ public class AssetHandler {
 		menuVehicle.flip(false, true);
 		menuReady = new TextureRegion(menuReadyTexture);
 		menuReady.flip(false, true);
-		playerOne = new TextureRegion(playerOneTexture);
-		playerOne.flip(false, true);
+		playerRed = new TextureRegion(playerRedTexture);
+		playerRed.flip(false, true);
+		playerBlue = new TextureRegion(playerBlueTexture);
+		playerBlue.flip(false, true);
+		playerGreen = new TextureRegion(playerGreenTexture);
+		playerGreen.flip(false, true);
+		playerYellow = new TextureRegion(playerYellowTexture);
+		playerYellow.flip(false, true);
+		playerNA = new TextureRegion(playerNATexture);
+		playerNA.flip(false, true);
+		playerAI = new TextureRegion(playerAITexture);
+		playerAI.flip(false, true);
 		
 		// load fonts
 		font = new BitmapFont(Gdx.files.internal("fonts/kenvector.fnt"), true);
@@ -133,6 +159,11 @@ public class AssetHandler {
 			// default mute = false
 			setSoundMute(false);
 		}
+		if (!prefs.contains("playerID")) {
+			// generate new playerID
+			prefs.putString("playerID", UUID.randomUUID().toString());
+			prefs.flush();
+		}
 	}
 	
 	public static void setSoundMute(boolean value) {
@@ -144,6 +175,13 @@ public class AssetHandler {
 	public static boolean getSoundMute() {
 		// get sound mute status
 		return prefs.getBoolean("soundMute");
+	}
+
+	// debugging playerID
+	static String debugPlayerID = UUID.randomUUID().toString();
+	public static String getPlayerID() {
+		// return prefs.getString("playerID");
+		return debugPlayerID;
 	}
 	
 	public static BitmapFont getFont(float scale) {
