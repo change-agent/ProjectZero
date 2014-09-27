@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -14,6 +14,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.objects.GameVariables;
+import com.not.itproject.zero.ProjectZero;
 
 
 public class NetworkClient {
@@ -93,6 +94,25 @@ public class NetworkClient {
 						NetworkMessage.SelectionScreenInformation info = (NetworkMessage.SelectionScreenInformation) object;
 						NetworkHandler.setListOfPlayers(info.playerList);
 					}
+					
+					// get game start
+					else if (object instanceof NetworkMessage.GameStartInformation) {
+						// proceed to game screen
+						ProjectZero.selectionScreen.startGame();
+					}
+					
+					// get car information from server
+					else if (object instanceof NetworkMessage.GameCarInformation) {
+						// get info
+						NetworkMessage.GameCarInformation info = (NetworkMessage.GameCarInformation) object;
+						
+						// process information - update player (other players only)
+						if (!AssetHandler.getPlayerID().contains(info.playerID)) {
+							ProjectZero.gameScreen.updatePlayer(info.playerID,
+									info.position, info.velocity, info.rotation);
+						}
+					}
+					
 				} catch (Exception e) {
 					// capture errors
 				}
@@ -123,6 +143,20 @@ public class NetworkClient {
 			request.playerID = AssetHandler.getPlayerID();
 			request.type = type;
 			client.sendTCP(request);
+		} catch (Exception e) {
+			// capture errors
+		}
+	}
+	
+	public void sendGameCarInformation(Vector2 position, Vector2 velocity, float rotation) {
+		try {
+			// send car information
+			NetworkMessage.GameCarInformation info = new NetworkMessage.GameCarInformation();
+			info.playerID = AssetHandler.getPlayerID();
+			info.position = position;
+			info.velocity = velocity;
+			info.rotation = rotation;
+			client.sendTCP(info);
 		} catch (Exception e) {
 			// capture errors
 		}

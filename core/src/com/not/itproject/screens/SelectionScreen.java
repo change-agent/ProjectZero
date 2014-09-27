@@ -38,18 +38,18 @@ public class SelectionScreen extends AbstractScreen {
 
 	public void update(float delta) {
 		/* setup networking */
-		if (!setupNetwork && !NetworkHandler.getNetworkClient().getClient().isConnected()) {
+		if (!setupNetwork && !NetworkHandler.isClient()) {
 			// create a new game session as host
 			NetworkHandler.getNetworkServer().startGameSession();
 			setupNetwork = true;
-		} else if (!setupNetwork && NetworkHandler.getNetworkClient().getClient().isConnected()) {
+		} else if (!setupNetwork && NetworkHandler.isClient()) {
 			// determine network has been setup as client
 			setupNetwork = true;
 		}
 		
 		// handle client disconnection from server
-		if (setupNetwork && !NetworkHandler.getNetworkClient().getClient().isConnected() &&
-				!NetworkHandler.getNetworkServer().isServerOnline()) {
+		if (setupNetwork && !NetworkHandler.isClient() &&
+				!NetworkHandler.isHost()) {
 			// return back to room screen displaying message
 			Gdx.app.log("Network", "Disconnected");
 
@@ -58,7 +58,7 @@ public class SelectionScreen extends AbstractScreen {
 		}
 		
 		// host - send selection screen information to clients
-		if (setupNetwork && NetworkHandler.getNetworkServer().isServerOnline() &&
+		if (setupNetwork && NetworkHandler.isHost() &&
 				NetworkHandler.getNetworkServer().getServer().getConnections().length > 0) {
 			// send information to client
 			NetworkHandler.getNetworkServer().sendSelectionScreenInformation();
@@ -101,10 +101,10 @@ public class SelectionScreen extends AbstractScreen {
 			game.nextScreen(ProjectZero.roomScreen, this);
 			
 			// disconnect from network
-			if (NetworkHandler.getNetworkServer().isServerOnline()) {
+			if (NetworkHandler.isHost()) {
 				// as host - end game session
 				NetworkHandler.getNetworkServer().endGameSession();
-			} else if (NetworkHandler.getNetworkClient().getClient().isConnected()) {
+			} else if (NetworkHandler.isClient()) {
 				// as client - leave game session
 				NetworkHandler.getNetworkClient().leaveGameSession();
 			}
@@ -128,14 +128,15 @@ public class SelectionScreen extends AbstractScreen {
 	
 	private void updateReady(float delta) {
 		// session host - start option
-		if (NetworkHandler.getNetworkServer().isServerOnline()) {
+		if (NetworkHandler.isHost()) {
 			// update objects
 			btnStart.update(delta);
 
 			// check input from user and perform action
 			if (btnStart.isTouched()) {
 				// proceed to game
-				game.nextScreen(ProjectZero.gameScreen, this);
+				NetworkHandler.getNetworkServer().sendGameStart();
+				startGame();
 			}
 		}
 		
@@ -192,8 +193,8 @@ public class SelectionScreen extends AbstractScreen {
 				50, 10);
 		
 		AssetHandler.getFont(0.4f).draw(batch, 
-				"Host: " + NetworkHandler.getNetworkServer().isServerOnline() + " | " + 
-				"Client: " + NetworkHandler.getNetworkClient().getClient().isConnected(), 
+				"Host: " + NetworkHandler.isHost() + " | " + 
+				"Client: " + NetworkHandler.isClient(), 
 				60, 25);
 	}
 	
@@ -287,7 +288,7 @@ public class SelectionScreen extends AbstractScreen {
 		batch.draw(AssetHandler.menuReady, 10, 40, 300, 100);
 		
 		// session host - start option
-		if (NetworkHandler.getNetworkServer().isServerOnline()) {
+		if (NetworkHandler.isHost()) {
 			// show start option
 			batch.draw(AssetHandler.buttonStartSession, 
 					btnStart.getPosition().x, btnStart.getPosition().y, 
@@ -299,6 +300,11 @@ public class SelectionScreen extends AbstractScreen {
 				btnBack.getPosition().y - btnBack.getRadius(), 
 				btnBack.getRadius() * 2, btnBack.getRadius() * 2);
 		
+	}
+	
+	public void startGame() {
+		// proceed to game screen
+		game.nextScreen(ProjectZero.gameScreen, this);
 	}
 	
 	@Override

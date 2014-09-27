@@ -184,7 +184,7 @@ public class GameRenderer {
 	public void renderControls(float delta) {
 		// update/render controls
 		gameInputProcessor.update(delta);
-		gameInputProcessor.render(delta);		
+		gameInputProcessor.render(delta);	
 	}
 	
 	public void dispose() {

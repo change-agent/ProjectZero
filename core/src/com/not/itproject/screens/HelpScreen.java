@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.not.itproject.handlers.AssetHandler;
-import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.objects.SimpleButton;
 import com.not.itproject.objects.SimpleRoundButton;
 import com.not.itproject.zero.ProjectZero;

@@ -1,9 +1,9 @@
 package com.not.itproject.networks;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -11,6 +11,7 @@ import com.esotericsoftware.kryonet.Server;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.objects.GameVariables;
+import com.not.itproject.zero.ProjectZero;
 
 
 public class NetworkServer {
@@ -111,6 +112,22 @@ public class NetworkServer {
 						response.message = "Connection Established.";
 						connection.sendTCP(response);
 					}
+					
+					// get car information from client
+					else if (object instanceof NetworkMessage.GameCarInformation) {
+						// get info
+						NetworkMessage.GameCarInformation info = (NetworkMessage.GameCarInformation) object;
+
+						// process information - update player (other players only)
+						if (!AssetHandler.getPlayerID().contains(info.playerID)) {
+							ProjectZero.gameScreen.updatePlayer(info.playerID,
+									info.position, info.velocity, info.rotation);
+						}
+						
+						// send information to other clients
+						server.sendToAllTCP(info);
+					}
+					
 				} catch (Exception e) {
 					// capture errors
 				}
@@ -137,6 +154,31 @@ public class NetworkServer {
 		try {
 			NetworkMessage.SelectionScreenInformation info = new NetworkMessage.SelectionScreenInformation();
 			info.playerList = NetworkHandler.getListOfPlayers();
+			server.sendToAllTCP(info);
+		} catch (Exception e) {
+			// capture errors
+		}
+	}
+	
+	// send game start information
+	public void sendGameStart() {
+		// send message
+		try {
+			NetworkMessage.GameStartInformation info = new NetworkMessage.GameStartInformation();
+			server.sendToAllTCP(info);
+		} catch (Exception e) {
+			// capture errors
+		}
+	}
+	
+	public void sendGameCarInformation(Vector2 position, Vector2 velocity, float rotation) {
+		try {
+			// send car information
+			NetworkMessage.GameCarInformation info = new NetworkMessage.GameCarInformation();
+			info.playerID = AssetHandler.getPlayerID();
+			info.position = position;
+			info.velocity = velocity;
+			info.rotation = rotation;
 			server.sendToAllTCP(info);
 		} catch (Exception e) {
 			// capture errors

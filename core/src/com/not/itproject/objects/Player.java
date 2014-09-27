@@ -1,17 +1,16 @@
 package com.not.itproject.objects;
 
 import com.badlogic.gdx.physics.box2d.World;
-import com.not.itproject.objects.GameObject.ObjType;
 
 public class Player {
 	private Car car;
+	private String playerID;
 	private int lapNum;
-	private boolean isHit;
 	
 	// main constructor
-	public Player(World worldBox2D, float x, float y, float width, float height, float rotation) {	
+	public Player(World worldBox2D, String playerID, float x, float y, float width, float height, float rotation) {	
 		car = new Car(worldBox2D, x, y, width, height, 0);
-		isHit = false;
+		this.playerID = playerID;
 	}
 	
 	public void update(float delta) {
@@ -22,12 +21,12 @@ public class Player {
 		return car;
 	}
 	
+	public String getPlayerID() {
+		return playerID;
+	}
+	
 	public int getLapNum() {
 		return lapNum;
-	}
-
-	public void setHit(boolean b) {
-		isHit = b;	
 	}
 
 	public void flagUsePower() {
