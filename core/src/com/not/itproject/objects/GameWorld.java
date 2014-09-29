@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
@@ -28,7 +27,6 @@ public class GameWorld {
 	
 	/**------------------- DEBUG CONTACT LISTENER FOR POWER UP TESTING------**/
 	public ContactListener c = new ContactListener() {
-		
 		@Override
 		public void preSolve(Contact contact, Manifold oldManifold) {}
 		@Override
@@ -42,28 +40,19 @@ public class GameWorld {
 			Fixture B = contact.getFixtureB();
 			
 			if(A.isSensor()) {
-				PowerUp power = (PowerUp) A.getBody().getUserData();
-				power.collect();
-				
+				System.out.println("power coolected");
+				PowerUpContainer powerUpContainer = (PowerUpContainer) A.getBody().getUserData();
 				Car car = (Car) B.getBody().getUserData();
-				car.setPower(power);
-				
-				Filter f = new Filter();
-				f.maskBits = (ObjType.POWER.value());
-				A.setFilterData(f);
-				A.getBody().setUserData(power);
+				car.setPower(powerUpContainer.getPowerUp());
+				powerUpContainer.CollectPowerUp();
 			}
+			
 			if(B.isSensor()) {
-				PowerUp power = (PowerUp) B.getBody().getUserData();
-				power.collect();
-				
+				System.out.println("power coolected");
+				PowerUpContainer powerUpContainer = (PowerUpContainer) B.getBody().getUserData();
 				Car car = (Car) A.getBody().getUserData();
-				car.setPower(power);
-				
-				Filter f = new Filter();
-				f.maskBits = (ObjType.POWER.value());
-				B.setFilterData(f);
-				B.getBody().setUserData(power);
+				car.setPower(powerUpContainer.getPowerUp());
+				powerUpContainer.CollectPowerUp();
 			}
 		}
 	};
@@ -102,8 +91,8 @@ public class GameWorld {
 		worldBox2D.setContactListener(c);
 
 		// define player and opponents
-		carWidth = 16 * GameObject.PIXELS_TO_METERS;
-		carHeight = 32 * GameObject.PIXELS_TO_METERS;
+		carWidth = 16;
+		carHeight = 32;
 		
 		// This worlds player will always be at index 0
 		// This makes using powers more transparent and will allow for network data efficiency
@@ -112,10 +101,10 @@ public class GameWorld {
 		players.add(new Player(worldBox2D, gameWidth / 2 + gameWidth / 12, 
 				gameHeight / 2, carWidth, carHeight, 0));
 		
-		staticObjects.add(new Obstacle(worldBox2D, 100, 50, 10 * GameObject.PIXELS_TO_METERS, 10 * GameObject.PIXELS_TO_METERS, 0));
-		staticObjects.add(new Obstacle(worldBox2D, 120, 50, 10 * GameObject.PIXELS_TO_METERS, 10 * GameObject.PIXELS_TO_METERS, 0));
-		staticObjects.add(new Obstacle(worldBox2D, 140, 50, 10 * GameObject.PIXELS_TO_METERS, 10 * GameObject.PIXELS_TO_METERS, 0));
-		staticObjects.add(new PowerUp(worldBox2D, 200, 50, 100 * GameObject.PIXELS_TO_METERS, 100 * GameObject.PIXELS_TO_METERS, 0));
+		staticObjects.add(new Obstacle(worldBox2D, 100, 50, 25, 25, 0));
+		staticObjects.add(new Obstacle(worldBox2D, 120, 50, 25, 25, 0));
+		staticObjects.add(new Obstacle(worldBox2D, 140, 50, 25, 25, 0));
+		staticObjects.add(new PowerUpContainer(worldBox2D, 200, 50, 50, 50, 0));
 	}
 
 	public void update(float delta) {
@@ -141,9 +130,9 @@ public class GameWorld {
 		}
 		
 		for (GameObject staticObj : staticObjects) {
-			if(staticObj.getObjType() == ObjType.POWER){
-				PowerUp power = (PowerUp) staticObj;
-				power.update(delta);
+			if(staticObj.getObjType() == ObjType.POWER_UP_CONTAINER){
+				PowerUpContainer powerUpContainer = (PowerUpContainer) staticObj;
+				powerUpContainer.update(delta);
 			}
 		}
 	}

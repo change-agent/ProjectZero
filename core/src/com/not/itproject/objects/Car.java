@@ -21,8 +21,8 @@ public class Car extends GameObject{
 	private static final float LINEAR_FRICTION = 1.0f;
 	private static final float CHASSIS_DENSITY = 2.0f;
 	private static final float WHEEL_DENSITY = 1.0f;
-	public static final float WHEEL_WIDTH = 2.5f * PIXELS_TO_METERS;
-	public static final float WHEEL_HEIGHT = 4.0f * PIXELS_TO_METERS;
+	public static final float WHEEL_WIDTH = 2.5f;
+	public static final float WHEEL_HEIGHT = 4.0f;
 	
 	/** ----------------------------- VARIABLES ------------------------------ **/
 	// Variable properties ued for car handling
@@ -55,7 +55,7 @@ public class Car extends GameObject{
 		
 		// Create the chassis shape and associated fixture
 		PolygonShape chasisShape = new PolygonShape();
-		chasisShape.setAsBox(width/2, height/2);
+		chasisShape.setAsBox(width/2 * PIXELS_TO_METERS, height/2 * PIXELS_TO_METERS);
 		FixtureDef chassisFixDef = new FixtureDef();
 		chassisFixDef.density = CHASSIS_DENSITY;
 		chassisFixDef.friction = 0;
@@ -78,7 +78,7 @@ public class Car extends GameObject{
 				
 		// Define the wheel shape and fixture
 		PolygonShape wheelShape = new PolygonShape();
-		wheelShape.setAsBox(WHEEL_WIDTH / 2, WHEEL_HEIGHT / 2);
+		wheelShape.setAsBox(WHEEL_WIDTH / 2 * PIXELS_TO_METERS, WHEEL_HEIGHT / 2 * PIXELS_TO_METERS);
 		FixtureDef wheelFixDef = new FixtureDef();
 		wheelFixDef.density = WHEEL_DENSITY;
 		wheelFixDef.friction = LINEAR_FRICTION;

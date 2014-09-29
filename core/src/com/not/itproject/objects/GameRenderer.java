@@ -141,11 +141,11 @@ public class GameRenderer {
 			
 			//Draws static objects (powers and obstacles)
 			for (GameObject staticObj : gameWorld.staticObjects) {
-				if(staticObj.getObjType().value() == GameObject.ObjType.POWER.value())
+				if(staticObj.getObjType().value() == GameObject.ObjType.POWER_UP_CONTAINER.value())
 				{
 					// Only draw a power up if it is not in its cool down period
-					PowerUp power = (PowerUp) staticObj;
-					if(!power.isCoolingDown()) 
+					PowerUpContainer powerUpContainer = (PowerUpContainer) staticObj;
+					if(!powerUpContainer.isCoolingDown()) 
 					{
 						batch.draw(AssetHandler.button, 
 								staticObj.getPosition().x - staticObj.getWidth() / 2, 
