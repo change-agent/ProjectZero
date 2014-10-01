@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -14,15 +15,12 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 public class Car extends GameObject{	
 	/** ----------------------------- CONSTANTS ------------------------------ **/
 	// Static properties used for car handling
-	private static final float LOCK_ANGLE = 45 * DEG_TO_RAD;
-	private static final float STEER_SPEED = 6.0f;
-	private static final float HORSEPOWER = 450.0f;
+	private static final float LOCK_ANGLE = 20 * DEG_TO_RAD;
+	private static final float STEER_SPEED = 1.0f;
 	private static final float DRIFT_COEFF = 0.4f; // Decrease for more skid
 	private static final float LINEAR_FRICTION = 1.0f;
-	private static final float CHASSIS_DENSITY = 2.0f;
-	private static final float WHEEL_DENSITY = 1.0f;
-	public static final float WHEEL_WIDTH = 2.5f;
-	public static final float WHEEL_HEIGHT = 4.0f;
+	private static final float CHASSIS_DENSITY = 3.0f;
+	private static final float WHEEL_DENSITY = 1.2f;
 	
 	/** ----------------------------- VARIABLES ------------------------------ **/
 	// Variable properties ued for car handling
@@ -30,9 +28,13 @@ public class Car extends GameObject{
 	private RevoluteJoint leftFrontWheelJoint, rightFrontWheelJoint;
 	private float enginePower = 0.0f;
 	private float steeringAngle = 0.0f;
+	private float horsepower = 350.0f;
 	private PowerUp power;
 	private boolean hasPower;
 	private boolean usePower;
+	private float wheelWidth = width / 8;
+	private float wheelHeight = height / 8;
+	private Vector2 forwardDir;
 	
 	/** ----------------------------- START CONSTRUCTOR ----------------------- **/
 	// Box2D box used for applying forces and collision handling
@@ -67,18 +69,18 @@ public class Car extends GameObject{
 		chassis.createFixture(chassisFixDef);
 		
 		// Relative position of each wheel from the chassis
-		Vector2 leftFrontWheelPos = new Vector2(-width / 2 + WHEEL_WIDTH / 4,
-				-height / 2 + WHEEL_HEIGHT / 1.5f).scl(PIXELS_TO_METERS);
-		Vector2 leftRearWheelPos = new Vector2(-width / 2 + WHEEL_WIDTH / 4 ,
-				height / 2 - WHEEL_HEIGHT / 1.5f).scl(PIXELS_TO_METERS);
-		Vector2 rightRearWheelPos = new Vector2(width / 2 - WHEEL_WIDTH / 4,
-				height / 2 - WHEEL_HEIGHT / 1.5f).scl(PIXELS_TO_METERS);
-		Vector2 rightFrontWheelPos = new Vector2(width / 2 - WHEEL_WIDTH / 4,
-				-height / 2 + WHEEL_HEIGHT / 1.5f).scl(PIXELS_TO_METERS);
+		Vector2 leftFrontWheelPos = new Vector2(-width / 2 + wheelWidth / 4,
+				-height / 2 + wheelHeight / 1.5f).scl(PIXELS_TO_METERS);
+		Vector2 leftRearWheelPos = new Vector2(-width / 2 + wheelWidth / 4 ,
+				height / 2 - wheelHeight / 1.5f).scl(PIXELS_TO_METERS);
+		Vector2 rightRearWheelPos = new Vector2(width / 2 - wheelWidth / 4,
+				height / 2 - wheelHeight / 1.5f).scl(PIXELS_TO_METERS);
+		Vector2 rightFrontWheelPos = new Vector2(width / 2 - wheelWidth / 4,
+				-height / 2 + wheelHeight / 1.5f).scl(PIXELS_TO_METERS);
 				
 		// Define the wheel shape and fixture
 		PolygonShape wheelShape = new PolygonShape();
-		wheelShape.setAsBox(WHEEL_WIDTH / 2 * PIXELS_TO_METERS, WHEEL_HEIGHT / 2 * PIXELS_TO_METERS);
+		wheelShape.setAsBox(wheelWidth / 2 * PIXELS_TO_METERS, wheelHeight / 2 * PIXELS_TO_METERS);
 		FixtureDef wheelFixDef = new FixtureDef();
 		wheelFixDef.density = WHEEL_DENSITY;
 		wheelFixDef.friction = LINEAR_FRICTION;
@@ -163,12 +165,15 @@ public class Car extends GameObject{
 		leftRearWheel.setUserData(this);
 		rightFrontWheel.setUserData(this);
 		rightRearWheel.setUserData(this);
+		
+		forwardDir = chassis.getWorldVector(new Vector2(0, 1));
 	}
 	/** ----------------------------- END CONSTRUCTOR --------------------------- **/
 	
 	/** ------------------------------ START UPDATE ----------------------------- **/
 	public void update(float delta) {
-		// Kill the orthogonal wheel velocity to make steering more linear vel 
+		// Kill the orthogonal wheel velocity to make steering more linear vel
+		killRightVelocity(chassis);
 		killRightVelocity(leftFrontWheel);
 		killRightVelocity(leftRearWheel);
 		killRightVelocity(rightFrontWheel);
@@ -200,7 +205,7 @@ public class Car extends GameObject{
 		// Prevent too much skidding by killing orthogonal
 		Vector2 currRightNorm = wheel.getWorldVector( new Vector2(1, 0) );
 		Vector2 orhthogAmount = currRightNorm.scl(currRightNorm.dot(wheel.getLinearVelocity()));
-		Vector2 impulse = orhthogAmount.scl(wheel.getMass() * -DRIFT_COEFF);
+		Vector2 impulse = orhthogAmount.scl(0.1f * wheel.getMass() * -DRIFT_COEFF);
 		wheel.applyLinearImpulse(impulse, wheel.getWorldCenter(), true);
 		
 		// Prevent too much spot - rotation by killing the angular velocity
@@ -217,8 +222,8 @@ public class Car extends GameObject{
 	
 	// These methods are used by the input handler to set engine power and steering angle
 	public void powerOnEngine(int direction) {
-		enginePower += direction * HORSEPOWER * 0.05;
-		enginePower = clamp(enginePower, -HORSEPOWER, HORSEPOWER);
+		enginePower += direction * horsepower * 0.05;
+		enginePower = clamp(enginePower, -horsepower, horsepower);
 	}
 	
 	public void setSteeringAngle(float steerAmount) {
@@ -266,6 +271,19 @@ public class Car extends GameObject{
 	/** ---------------------- END POWERUP HANDLING FUNCTIONS ------------------ **/
 	
 	/** -------------------------- UTILITY FUNCTIONS --------------------------- **/
+	public float getChangeInDirection() {
+		Vector2 newForwardDir = chassis.getWorldVector(new Vector2(0, 1));
+		float angleA = newForwardDir.angleRad();
+		float angleB = forwardDir.angleRad();
+		
+		System.out.println(forwardDir.x + " " + forwardDir.y);
+		System.out.println(newForwardDir.x + " " + newForwardDir.y);
+		System.out.println(angleA - angleB);
+		
+		forwardDir.set(newForwardDir);
+		return (angleA - angleB);
+	}
+	
 	// Clamps a float between min and max
 	public float clamp(float val, float min, float max) {
 		if(val < min) {
@@ -287,12 +305,26 @@ public class Car extends GameObject{
 		chassis.setLinearVelocity(velocity);
 	}
 	
-	public void setDensity(float scale) {
-		chassis.getFixtureList().get(0).setDensity(CHASSIS_DENSITY * scale);
-		leftFrontWheel.getFixtureList().get(0).setDensity(CHASSIS_DENSITY * scale);
-		leftRearWheel.getFixtureList().get(0).setDensity(CHASSIS_DENSITY * scale);
-		rightFrontWheel.getFixtureList().get(0).setDensity(CHASSIS_DENSITY * scale);
-		rightRearWheel.getFixtureList().get(0).setDensity(CHASSIS_DENSITY * scale);
+	public void setEnginePower(float scale) {
+		horsepower *= scale;
+	}
+	
+	public void setFriction(float scale) {
+		chassis.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
+		leftFrontWheel.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
+		leftRearWheel.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
+		rightFrontWheel.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
+		rightRearWheel.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
+	}
+	
+	public void setMaskData(short maskBits) {
+		Filter newMask = new Filter();
+		newMask.maskBits = maskBits;
+		chassis.getFixtureList().get(0).setFilterData(newMask);
+		leftFrontWheel.getFixtureList().get(0).setFilterData(newMask);
+		leftRearWheel.getFixtureList().get(0).setFilterData(newMask);
+		rightFrontWheel.getFixtureList().get(0).setFilterData(newMask);
+		rightRearWheel.getFixtureList().get(0).setFilterData(newMask);
 	}
 	/** ------------------------ END UTILITY FUNCTIONS -------------------------- **/
 }

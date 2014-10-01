@@ -13,4 +13,17 @@ public class GameVariables {
 	// in-game variables
 	public final int GAMELAPS = 3;
 	public final static float PPM = 8;
+	
+	public enum PowerType {
+		SPEEDBOOST(5), SPEEDREDUCE(5), STARPOWER(5), ICEROAD(6);
+		
+		private float lifeTime;		
+		PowerType(float lifeTime) {
+			this.lifeTime = lifeTime;
+		}
+		
+		public float getLifeTime() {
+			return this.lifeTime;
+		}
+	};
 }

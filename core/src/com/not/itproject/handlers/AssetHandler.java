@@ -35,7 +35,7 @@ public class AssetHandler {
 	
 	public static BitmapFont font;
 	public static Preferences prefs;
-	
+		
 	public static void load() {
 		/*** load all assets ***/
 		

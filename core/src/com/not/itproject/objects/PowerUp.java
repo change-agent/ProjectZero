@@ -1,20 +1,52 @@
 package com.not.itproject.objects;
 
 import java.util.List;
-import com.badlogic.gdx.math.Vector2;
+import java.util.Random;
 
-public enum PowerUp {
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.not.itproject.objects.GameObject.ObjType;
+import com.not.itproject.objects.GameVariables.PowerType;
+
+public class PowerUp {
 	
-	SPEEDBOOST(5), 
-	SPEEDREDUCE(5);
+	private float lifeTime;
+	private PowerType powerType;
+	private Random rand;
 	
-	private float duration;
-	PowerUp(float duration) {
-		this.duration = duration;
+	public PowerUp() {
+		this.rand = new Random();
+		selectRandomType();
 	}
 	
+	public void printPowerType() {
+		if(this.powerType == PowerType.SPEEDBOOST) {
+			System.out.print("SpeedBoost");
+		}
+		if(this.powerType == PowerType.SPEEDREDUCE) {
+			System.out.print("SpeedReduce");
+		}
+		if(this.powerType == PowerType.ICEROAD) {
+			System.out.print("Ice road");
+		}
+		if(this.powerType == PowerType.STARPOWER) {
+			System.out.print("star power");
+		}
+	}
+	
+	// Sets a random power from the enum type
+	public void selectRandomType() {
+		int enumLength = PowerType.values().length;
+		int randIndex = rand.nextInt(enumLength);
+		powerType = PowerType.values()[randIndex];
+		lifeTime = powerType.getLifeTime();
+	}
+	
+	public PowerType getPowerType() {
+		return powerType;
+	}
+
 	public boolean hasDepeleted(){
-		if(duration <= 0) {
+		if(lifeTime <= 0) {
 			return true;
 		}
 		else {
@@ -22,46 +54,79 @@ public enum PowerUp {
 		}
 	}
 	
-	public void updateDuration(float delta) {
-		this.duration = Math.max(0, duration - delta);
+	public void updateLifeTime(float delta) {
+		this.lifeTime = Math.max(0, lifeTime - delta);
+		System.out.println("buff in stack has: " + lifeTime);
+	}
+	
+	// Returns false is the buff we're trying to add doesn't exist, in which case 
+	// We should apply the power, prevents multiple applications of pre-existing buffs
+	public boolean renewBuff(Player player) {
+		int index = player.buffAlreadyActive(this);
+		if(index >= 0) {
+			player.renewActiveBuff(index, this);
+			return true;
+		}
+		else{
+			player.addBuffToStack(this);
+			return false;
+		}
 	}
 	
 	// Applies power to a specific player
 	public void applyPower(Player player, List<Player> opponents) 
 	{
-		if(this == PowerUp.SPEEDBOOST)
+		if(this.powerType == PowerType.SPEEDBOOST)
 		{
-			Vector2 velocity = player.getCar().getVelocity();
-			player.getCar().setVelocity(velocity.scl(2.0f));
-			System.out.println(velocity.scl(1.2f).x);
-			System.out.println(velocity.scl(1.2f).y);
+			if( renewBuff(player) == false ) {
+				player.getCar().setEnginePower(2.0f);
+			}	
 		}
-		if(this == PowerUp.SPEEDREDUCE)
+		if(this.powerType == PowerType.SPEEDREDUCE)
 		{
 			for (Player opponent : opponents) {
-				Vector2 velocity = opponent.getCar().getVelocity();
 				if(opponent == player) {continue;}
-				opponent.getCar().setVelocity(velocity.scl(0.5f));
+				if( renewBuff(opponent) == false ) {
+					opponent.getCar().setEnginePower(0.50f);
+				}
+			}
+		}
+		if(this.powerType == PowerType.STARPOWER)
+		{
+			if( renewBuff(player) == false ) {
+				player.getCar().setMaskData((short)player.getCar().getObjType().value());
+			}
+		}
+		if(this.powerType == PowerType.ICEROAD)
+		{
+			for (Player opponent : opponents) {
+				if(opponent == player) {continue;}
+				if( renewBuff(opponent) == false ) {
+					opponent.getCar().setFriction(0.2f);
+				}
 			}
 		}
 	}
 	
-	public void reverseApplyPower(Player player, List<Player> opponents) 
+	public void reverseApplyPower(Player player) 
 	{
-		if(this == PowerUp.SPEEDBOOST)
+		if(this.powerType == PowerType.SPEEDBOOST)
 		{
-			Vector2 velocity = player.getCar().getVelocity();
-			player.getCar().setVelocity(velocity.scl(0.5f));
-			System.out.println(velocity.scl(1.2f).x);
-			System.out.println(velocity.scl(1.2f).y);
+			player.getCar().setEnginePower(0.5f);
+			System.out.println("Power reversed!");
 		}
-		if(this == PowerUp.SPEEDREDUCE)
+		if(this.powerType == PowerType.SPEEDREDUCE)
 		{
-			for (Player opponent : opponents) {
-				Vector2 velocity = opponent.getCar().getVelocity();
-				if(opponent == player) {continue;}
-				opponent.getCar().setVelocity(velocity.scl(2.0f));
-			}
+			player.getCar().setEnginePower(2.0f);
+			System.out.println("Power reversed!");
+		}
+		if(this.powerType == PowerType.STARPOWER)
+		{
+			player.getCar().setMaskData((short)0xFFFF);
+		}
+		if(this.powerType == PowerType.ICEROAD)
+		{
+			player.getCar().setFriction(1.0f);
 		}
 	}
 	/** ----------------------------- END METHODS ------------------------- **/

@@ -188,38 +188,38 @@ public class GameInputProcessor {
 			world.pauseGame();
 		}
 		
-		// Use this to test with desktop
-//		if (Gdx.input.isKeyPressed(Keys.A)) {
-//			float steerAngle = -1.0f;
-//			world.getPlayer().getCar().setSteeringAngle(steerAngle);
-//		}
-//		else if (Gdx.input.isKeyPressed(Keys.D)) {
-//			float steerAngle = 1.0f;
-//			world.getPlayer().getCar().setSteeringAngle(steerAngle);
-//		}
-//		else{
-//			world.getPlayer().getCar().zeroSteeringAngle();
-//		}
-//		
-//		// Power on engine if pressed else power off engine
-//		if (Gdx.input.isKeyPressed(Keys.W)) {
-//			world.getPlayer().getCar().powerOnEngine(-1);
-//		}
-//		else if (Gdx.input.isKeyPressed(Keys.S)) {
-//			world.getPlayer().getCar().powerOnEngine(1);
-//		}
-//		else{
-//			world.getPlayer().getCar().powerOffEngine();
-//		}
-//		
-//		// Activate power or menu
-//		if (buttonTwo.isPressed()) {
-//			world.getPlayer().usePower();
-//		}
-//		if (buttonMenu.isPressed()) {
-//			// pause game
-//			world.pauseGame();
-//		}
+		/*// Use this to test with desktop
+		if (Gdx.input.isKeyPressed(Keys.A)) {
+			float steerAngle = -1.0f;
+			world.getPlayer().getCar().setSteeringAngle(steerAngle);
+		}
+		else if (Gdx.input.isKeyPressed(Keys.D)) {
+			float steerAngle = 1.0f;
+			world.getPlayer().getCar().setSteeringAngle(steerAngle);
+		}
+		else{
+			world.getPlayer().getCar().zeroSteeringAngle();
+		}*/
+		
+		// Power on engine if pressed else power off engine
+		if (Gdx.input.isKeyPressed(Keys.W)) {
+			world.getPlayer().getCar().powerOnEngine(-1);
+		}
+		else if (Gdx.input.isKeyPressed(Keys.S)) {
+			world.getPlayer().getCar().powerOnEngine(1);
+		}
+		else{
+			world.getPlayer().getCar().powerOffEngine();
+		}
+		
+		// Activate power or menu
+		if (buttonTwo.isPressed()) {
+			world.getPlayer().flagUsePower();
+		}
+		if (buttonMenu.isPressed()) {
+			// pause game
+			world.pauseGame();
+		}
 
 		// update stage
 		stage.act(delta);

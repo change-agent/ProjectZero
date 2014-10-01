@@ -1,7 +1,5 @@
 package com.not.itproject.objects;
 
-import java.util.Random;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -13,11 +11,10 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class PowerUpContainer extends GameObject
 {
-	private final float SPAWNTIME = 6;
+	private final float SPAWNTIME = 1;
 	private Body body;
 	private PowerUp powerUp;
 	private float cooldown;
-	private Random rand;
 	
 	/** ------------------------- START CONSTRUCTOR --------------------- **/
 	public PowerUpContainer(World worldBox2D, float x, float y, float width,
@@ -26,8 +23,7 @@ public class PowerUpContainer extends GameObject
 		
 		this.cooldown = 0;
 		this.objType = ObjType.POWER_UP_CONTAINER;
-		this.rand = new Random();
-		this.powerUp = selectRandomPowerUp();
+		this.powerUp = new PowerUp();
 		
 		// Define the box2D body for this power
 		BodyDef box = new BodyDef();
@@ -87,6 +83,7 @@ public class PowerUpContainer extends GameObject
 	public void CollectPowerUp() {
 		// Select a dummy power (safer than null)
 		powerUp = null;
+		body.setUserData(this);
 		startCooldown();
 		
 		// mask body to prevent sensory detection
@@ -98,7 +95,8 @@ public class PowerUpContainer extends GameObject
 	// Re-spawns a power once the cool down period is over
 	private void respawn() {
 		//Select new power-up
-		powerUp = selectRandomPowerUp();
+		powerUp = new PowerUp();
+		body.setUserData(this);
 		resetCooldown();
 		
 		// Unmask to allow for sensory detection again
@@ -114,13 +112,6 @@ public class PowerUpContainer extends GameObject
 	
 	public PowerUp getPowerUp() {
 		return powerUp;
-	}
-	
-	// Sets a random power from the enum type
-	private PowerUp selectRandomPowerUp() {
-		int enumLength = PowerUp.values().length;
-		int randIndex = rand.nextInt(enumLength);
-		return PowerUp.values()[randIndex];
 	}
 	/** ----------------------------- END METHODS ------------------------- **/
 }
