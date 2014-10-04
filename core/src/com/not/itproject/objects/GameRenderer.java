@@ -2,9 +2,12 @@ package com.not.itproject.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.CircleMapObject;
+import com.badlogic.gdx.maps.objects.EllipseMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -12,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.zero.ProjectZero;
+import com.sun.corba.se.spi.ior.MakeImmutable;
 
 public class GameRenderer {
 	// declare world variables
@@ -50,20 +54,33 @@ public class GameRenderer {
 		
 		// initialize variables
 		camera = new OrthographicCamera();
-		camera.setToOrtho(true, gameWidth, gameHeight);
-		camera.viewportWidth = gameWidth / GameVariables.PPM;
-		camera.viewportHeight = gameHeight / GameVariables.PPM;
+		camera.setToOrtho(true, gameWidth / 4, gameHeight / 4);
+		camera.update();
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(camera.combined);
-		camera.update();
 		
-		// Load the map
-		String path = Gdx.files.internal("testmap.tmx").file().getAbsolutePath();
-		System.out.println(path);
-		tiledMap = new TmxMapLoader().load(path);
+		// Load the map and set up the obstacles
+		tiledMap = new TmxMapLoader().load("maps/test.tmx");
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+		
+		for(MapObject object : tiledMap.getLayers().get("Obstacles").getObjects()) {
+			if(object instanceof RectangleMapObject) {
+				float x = ((RectangleMapObject) object).getRectangle().x;
+				float y = ((RectangleMapObject) object).getRectangle().y;
+				float width = ((RectangleMapObject) object).getRectangle().width;
+				float height = ((RectangleMapObject) object).getRectangle().height;
+				gameWorld.staticObjects.add(new Obstacle(gameWorld.worldBox2D, x, y, width * 10, height * 10, 0));
+			}
+			else if(object instanceof EllipseMapObject){
+				float x = ((EllipseMapObject) object).getEllipse().x;
+				float y = ((EllipseMapObject) object).getEllipse().y;
+				float width = ((EllipseMapObject) object).getEllipse().width;
+				float height = ((EllipseMapObject) object).getEllipse().height;
+				gameWorld.staticObjects.add(new PowerUpContainer(gameWorld.worldBox2D, x, y, width * 10, height * 10, 0));
+			}
+		}
 		
 		// initialise ready state variables
 		resumeCountDown = 0f;
@@ -78,10 +95,7 @@ public class GameRenderer {
 		// get game state
 		camera.position.set(new Vector3(gameWorld.getPlayer().getCar().getPosition(), 0));
 		camera.update();
-		
         tiledMapRenderer.setView(camera);
-        tiledMapRenderer.render();
-        
 		batch.setProjectionMatrix(camera.combined);
 		
 		if (gameWorld.isReady()) { updateReady(delta); } 
@@ -154,7 +168,9 @@ public class GameRenderer {
 	
 	public void renderRunning(float delta) {
 		// render running state
+        tiledMapRenderer.render();
 		batch.begin();
+			
 			// Draws players
 			for (Player players : gameWorld.players) {
 				batch.draw(AssetHandler.opponent, 
@@ -162,7 +178,7 @@ public class GameRenderer {
 						players.getCar().getPosition().y - players.getCar().getHeight() / 2, 
 						players.getCar().getWidth()/2, players.getCar().getHeight()/2, 
 						players.getCar().getWidth(), players.getCar().getHeight(), 
-						1.2f, 1.2f, players.getCar().getRotation());
+						1.5f, 1.5f, players.getCar().getRotation());
 			}
 			
 			//Draws static objects (powers and obstacles)
@@ -173,21 +189,21 @@ public class GameRenderer {
 					PowerUpContainer powerUpContainer = (PowerUpContainer) staticObj;
 					if(!powerUpContainer.isCoolingDown()) 
 					{
-						batch.draw(AssetHandler.button, 
+						batch.draw(AssetHandler.powerUp, 
 								staticObj.getPosition().x - staticObj.getWidth() / 2, 
 								staticObj.getPosition().y - staticObj.getHeight() / 2, 
 								0, 0, 
 								staticObj.getWidth(), staticObj.getHeight(), 
-								1, 1, staticObj.getRotation());
+								1.5f, 1.5f, staticObj.getRotation());
 					}
 				}
 				else{
-					batch.draw(AssetHandler.button, 
+					batch.draw(AssetHandler.obstacle, 
 							staticObj.getPosition().x - staticObj.getWidth() / 2, 
 							staticObj.getPosition().y - staticObj.getHeight() / 2, 
 							0, 0, 
 							staticObj.getWidth(), staticObj.getHeight(), 
-							1, 1, staticObj.getRotation());
+							1.5f, 1.5f, staticObj.getRotation());
 				}
 			}
 		batch.end();

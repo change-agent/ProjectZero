@@ -100,11 +100,6 @@ public class GameWorld {
 				gameHeight / 2, carWidth, carHeight, 0));
 		players.add(new Player(worldBox2D, gameWidth / 2 + gameWidth / 12, 
 				gameHeight / 2, carWidth, carHeight, 0));
-		
-		staticObjects.add(new Obstacle(worldBox2D, 100, 50, 25, 25, 0));
-		staticObjects.add(new Obstacle(worldBox2D, 120, 50, 25, 25, 0));
-		staticObjects.add(new Obstacle(worldBox2D, 140, 50, 25, 25, 0));
-		staticObjects.add(new PowerUpContainer(worldBox2D, 200, 50, 50, 50, 0));
 	}
 
 	public void update(float delta) {

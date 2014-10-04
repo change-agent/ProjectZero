@@ -79,7 +79,7 @@ public class PowerUp {
 		if(this.powerType == PowerType.SPEEDBOOST)
 		{
 			if( renewBuff(player) == false ) {
-				player.getCar().setEnginePower(2.0f);
+				player.getCar().setEnginePower(1.5f);
 			}	
 		}
 		if(this.powerType == PowerType.SPEEDREDUCE)
@@ -94,7 +94,7 @@ public class PowerUp {
 		if(this.powerType == PowerType.STARPOWER)
 		{
 			if( renewBuff(player) == false ) {
-				player.getCar().setMaskData((short)player.getCar().getObjType().value());
+				player.getCar().setMaskData((short)~0xFFFF);
 			}
 		}
 		if(this.powerType == PowerType.ICEROAD)
@@ -112,7 +112,7 @@ public class PowerUp {
 	{
 		if(this.powerType == PowerType.SPEEDBOOST)
 		{
-			player.getCar().setEnginePower(0.5f);
+			player.getCar().setEnginePower(1/(1.5f));
 			System.out.println("Power reversed!");
 		}
 		if(this.powerType == PowerType.SPEEDREDUCE)

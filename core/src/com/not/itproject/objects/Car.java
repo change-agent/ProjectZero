@@ -15,12 +15,12 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 public class Car extends GameObject{	
 	/** ----------------------------- CONSTANTS ------------------------------ **/
 	// Static properties used for car handling
-	private static final float LOCK_ANGLE = 20 * DEG_TO_RAD;
-	private static final float STEER_SPEED = 1.0f;
-	private static final float DRIFT_COEFF = 0.4f; // Decrease for more skid
-	private static final float LINEAR_FRICTION = 1.0f;
-	private static final float CHASSIS_DENSITY = 3.0f;
-	private static final float WHEEL_DENSITY = 1.2f;
+	private static final float LOCK_ANGLE = 15 * DEG_TO_RAD;
+	private static final float STEER_SPEED = 0.01f;
+	private static final float DRIFT_COEFF = 0.2f; // Decrease for more skid
+	private static final float LINEAR_FRICTION = 2.0f;
+	private static final float CHASSIS_DENSITY = 3.5f;
+	private static final float WHEEL_DENSITY = 1.8f;
 	
 	/** ----------------------------- VARIABLES ------------------------------ **/
 	// Variable properties ued for car handling
@@ -28,7 +28,7 @@ public class Car extends GameObject{
 	private RevoluteJoint leftFrontWheelJoint, rightFrontWheelJoint;
 	private float enginePower = 0.0f;
 	private float steeringAngle = 0.0f;
-	private float horsepower = 350.0f;
+	private float horsepower = 600.0f;
 	private PowerUp power;
 	private boolean hasPower;
 	private boolean usePower;
@@ -53,7 +53,7 @@ public class Car extends GameObject{
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set( new Vector2(x, y) );
 		bodyDef.linearDamping = 1.0f;
-		bodyDef.angularDamping = 2.0f;
+		bodyDef.angularDamping = 4.0f;
 		
 		// Create the chassis shape and associated fixture
 		PolygonShape chasisShape = new PolygonShape();
@@ -91,7 +91,7 @@ public class Car extends GameObject{
 		BodyDef leftFrontWheelBodyDef = new BodyDef();
 		leftFrontWheelBodyDef.type = BodyType.DynamicBody;
 		leftFrontWheelBodyDef.linearDamping = 1.0f;
-		leftFrontWheelBodyDef.angularDamping = 2.0f;
+		leftFrontWheelBodyDef.angularDamping = 4.0f;
 		leftFrontWheelBodyDef.position.set(
 				chassis.getPosition().add(leftFrontWheelPos));
 		this.leftFrontWheel = worldBox2D.createBody(leftFrontWheelBodyDef);
@@ -100,7 +100,7 @@ public class Car extends GameObject{
 		BodyDef rightFrontWheelBodyDef = new BodyDef();
 		rightFrontWheelBodyDef.type = BodyType.DynamicBody;
 		rightFrontWheelBodyDef.linearDamping = 1.0f;
-		rightFrontWheelBodyDef.angularDamping = 2.0f;
+		rightFrontWheelBodyDef.angularDamping = 4.0f;
 		rightFrontWheelBodyDef.position.set(
 				chassis.getPosition().add(rightFrontWheelPos));
 		this.rightFrontWheel = worldBox2D.createBody(rightFrontWheelBodyDef);
@@ -126,7 +126,7 @@ public class Car extends GameObject{
 				chassis, leftFrontWheel, leftFrontWheel.getWorldCenter());
 		leftFrontJointDef.enableMotor = true;
 		leftFrontJointDef.enableLimit = true;
-		leftFrontJointDef.maxMotorTorque = 200;
+		leftFrontJointDef.maxMotorTorque = 125;
 		leftFrontJointDef.lowerAngle = -1 * LOCK_ANGLE;
 		leftFrontJointDef.upperAngle = LOCK_ANGLE;
 		
@@ -135,7 +135,7 @@ public class Car extends GameObject{
 				chassis, rightFrontWheel, rightFrontWheel.getWorldCenter());
 		rightFrontJointDef.enableMotor = true;
 		rightFrontJointDef.enableLimit = true;
-		rightFrontJointDef.maxMotorTorque = 200;
+		rightFrontJointDef.maxMotorTorque = 125;
 		rightFrontJointDef.lowerAngle = -1 * LOCK_ANGLE;
 		rightFrontJointDef.upperAngle = LOCK_ANGLE;
 		
@@ -183,8 +183,8 @@ public class Car extends GameObject{
 		float leftTurnSpeed, rightTurnSpeed;
 		leftTurnSpeed = steeringAngle - leftFrontWheelJoint.getJointAngle();
 		rightTurnSpeed = steeringAngle - rightFrontWheelJoint.getJointAngle();
-		leftFrontWheelJoint.setMotorSpeed(STEER_SPEED * leftTurnSpeed); 
-		rightFrontWheelJoint.setMotorSpeed(STEER_SPEED * rightTurnSpeed);
+		leftFrontWheelJoint.setMotorSpeed(STEER_SPEED * delta * leftTurnSpeed); 
+		rightFrontWheelJoint.setMotorSpeed(STEER_SPEED * delta * rightTurnSpeed);
 		leftFrontWheelJoint.setLimits(steeringAngle, steeringAngle);
 		rightFrontWheelJoint.setLimits(steeringAngle, steeringAngle);
 		
