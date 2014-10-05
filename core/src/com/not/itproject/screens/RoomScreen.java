@@ -67,16 +67,6 @@ public class RoomScreen extends AbstractScreen {
 		}
 	}
 
-	private void autoDetectSessions(float delta) {
-//		// auto detecting game sessions
-//		elapsedNetworkRefresh += delta;
-//		if (!NetworkHandler.getNetworkClient().getClient().isConnected() && 
-//				elapsedNetworkRefresh > refreshDelay) {
-//			detectGameSessions();
-//			elapsedNetworkRefresh = 0;
-//		}	
-	}
-	
 	public void update(float delta) {
 		// setup networking
 		if (!setupNetwork) {
@@ -85,9 +75,6 @@ public class RoomScreen extends AbstractScreen {
 			detectGameSessions();
 			setupNetwork = true;
 		}
-		
-//		// auto detecting game sessions
-//		autoDetectSessions(delta);
 		
 		// determine screen status
 		switch (screenStatus) {
@@ -120,7 +107,7 @@ public class RoomScreen extends AbstractScreen {
 					NetworkHandler.getNetworkClient().connectToGameSession(i);
 					
 					// determine whether connection success
-					if (NetworkHandler.getNetworkClient().getClient().isConnected()) {
+					if (NetworkHandler.isClient()) {
 						game.nextScreen(ProjectZero.selectionScreen, this);
 					}
 				}

@@ -33,6 +33,19 @@ public class NetworkHandler {
 		client.dispose();
 	}
 	
+	
+	/** 
+	 * @return whether the user is host or client
+	 */
+	
+	public static boolean isHost() {
+		return server.isServerOnline();
+	}
+
+	public static boolean isClient() {
+		return client.getClient().isConnected();
+	}
+	
 	/**
 	 * @return the server
 	 */

@@ -167,7 +167,7 @@ public class Car extends GameObject{
 	/** ----------------------------- END CONSTRUCTOR --------------------------- **/
 	
 	/** ------------------------------ START UPDATE ----------------------------- **/
-	public void update(float delta) {
+	public void update(float delta) {		
 		// Kill the orthogonal wheel velocity to make steering more linear vel 
 		killRightVelocity(leftFrontWheel);
 		killRightVelocity(leftRearWheel);
@@ -191,6 +191,15 @@ public class Car extends GameObject{
 		// Update the sprite position and rotation based on chassis
 		position = chassis.getPosition();
 		rotation = chassis.getAngle() * RAD_TO_DEG;
+	}
+	
+	public void applyMovement(Vector2 position, Vector2 velocity, float rotation) {	
+		// apply movement via position and velocity
+		if (!worldBox2D.isLocked()) {
+			// box2d world is not locked
+			chassis.setTransform(position, rotation * DEG_TO_RAD);
+			chassis.setLinearVelocity(velocity);
+		}
 	}
 	/** ----------------------------- END UPDATE -------------------------------- **/
 	
@@ -281,6 +290,14 @@ public class Car extends GameObject{
 	
 	public Vector2 getVelocity() {
 		return chassis.getLinearVelocity();
+	}
+	
+	public float getEnginePower() {
+		return enginePower;
+	}
+	
+	public float getSteeringAngle() {
+		return steeringAngle;
 	}
 	
 	public void setVelocity(Vector2 velocity) {

@@ -41,7 +41,7 @@ public class TestFramework extends Game {
 		font.setColor(Color.BLACK);
 		
 		// define player
-		player = new Player(null, playerX, playerY, playerWidth, playerHeight, rotation);
+		player = new Player(null, "playerID", playerX, playerY, playerWidth, playerHeight, rotation);
 		
 		// perform tests
 		Gdx.app.log("Project Zero", "Testing Framework");

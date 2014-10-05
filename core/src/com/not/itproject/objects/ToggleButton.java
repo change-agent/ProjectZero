@@ -1,9 +1,5 @@
 package com.not.itproject.objects;
 
-import com.badlogic.gdx.Gdx;
-import com.not.itproject.zero.ProjectZero;
-
-
 public class ToggleButton extends SimpleButton {
 	// declare variables
 	boolean isToggleOn;
