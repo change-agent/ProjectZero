@@ -24,7 +24,7 @@ public class Obstacle extends GameObject {
 		
 		// Define the box2d shape attached to body
 		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(width/2, height/2);
+		boxShape.setAsBox(width/2 * PIXELS_TO_METERS, height/2 * PIXELS_TO_METERS);
 		
 		// Give the shape a fixture for physics handling
 		FixtureDef boxFixDef = new FixtureDef();

@@ -15,14 +15,14 @@ public class AssetHandler {
 							toggleButtonSoundOffTexture, toggleButtonSoundOnTexture,
 							buttonLoadGameTexture, buttonNewGameTexture, buttonLoadTexture,
 							buttonNextTexture, buttonReadyTexture, buttonStartSessionTexture,
-							buttonBackTexture, buttonRefreshTexture;
+							buttonBackTexture, buttonRefreshTexture, powerUpTexture, obstacleTexture;
 	public static Texture playerTexture, opponentTexture;
 	public static TextureRegion logo, button, buttonStart, buttonTutorial,
 							toggleButtonSoundOff, toggleButtonSoundOn,
 							buttonLoadGame, buttonNewGame, buttonLoad,
 							buttonNext, buttonReady, buttonStartSession,
 							buttonBack, buttonRefresh;
-	public static TextureRegion player, opponent;
+	public static TextureRegion player, opponent, powerUp, obstacle;
 	
 	public static Texture menuTrackTexture, menuVehicleTexture, menuReadyTexture,
 							playerRedTexture, playerBlueTexture,
@@ -35,7 +35,7 @@ public class AssetHandler {
 	
 	public static BitmapFont font;
 	public static Preferences prefs;
-	
+		
 	public static void load() {
 		/*** load all assets ***/
 		
@@ -90,6 +90,10 @@ public class AssetHandler {
 		playerNATexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		playerAITexture = new Texture(Gdx.files.internal("players/playerAI.png"));
 		playerAITexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		powerUpTexture = new Texture(Gdx.files.internal("power.png"));
+		powerUpTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		obstacleTexture = new Texture(Gdx.files.internal("tnt.png"));
+		obstacleTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		// load regions
 		logo = new TextureRegion(logoTexture);
@@ -120,6 +124,10 @@ public class AssetHandler {
 		player.flip(false, true);
 		opponent = new TextureRegion(opponentTexture);
 		opponent.flip(false, true);
+		powerUp = new TextureRegion(powerUpTexture);
+		powerUp.flip(false, true);
+		obstacle = new TextureRegion(obstacleTexture);
+		obstacle.flip(false, true);
 		buttonBack = new TextureRegion(buttonBackTexture);
 		buttonBack.flip(false, true);
 		buttonRefresh = new TextureRegion(buttonRefreshTexture);

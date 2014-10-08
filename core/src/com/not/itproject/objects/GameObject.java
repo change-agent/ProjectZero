@@ -22,7 +22,7 @@ public class GameObject {
 	protected enum ObjType {
 		CAR((short)0x0001), 
 		OBSTACLE((short)0x0002), 
-		POWER((short)0x0004);
+		POWER_UP_CONTAINER((short)0x0004);
 		
 		public short value;
 		ObjType(short value) {this.value = value;}
@@ -35,11 +35,10 @@ public class GameObject {
 			float width, float height, float rotation) 
 	{
 		position = new Vector2(x, y);
-		this.width = width;
-		this.height = height;
+		this.width = width * PIXELS_TO_METERS;
+		this.height = height * PIXELS_TO_METERS;
 		this.rotation = rotation;
 		this.worldBox2D = worldBox2D;
-		this.rotation = rotation;
 	}
 	/** ---------------------- END CONSTRUCTOR --------------------------- **/
 
