@@ -3,8 +3,6 @@ package com.not.itproject.objects;
 import java.util.List;
 import java.util.Random;
 
-import com.badlogic.gdx.physics.box2d.Filter;
-import com.not.itproject.objects.GameObject.ObjType;
 import com.not.itproject.objects.GameVariables.PowerType;
 
 public class PowerUp {

@@ -59,6 +59,11 @@ public class ProjectZero extends Game {
 		setScreen(next);
 	}
 	
+	public static void log(String message) {
+		// log message into console
+		Gdx.app.log(GAME_NAME, message);
+	}
+	
 	public void dispose() {
 		// release all assets
 		AssetHandler.release();

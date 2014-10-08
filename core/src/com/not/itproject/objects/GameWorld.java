@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.not.itproject.handlers.AssetHandler;
+import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.objects.GameObject.ObjType;
 import com.not.itproject.zero.ProjectZero;
 
@@ -93,13 +95,16 @@ public class GameWorld {
 		// define player and opponents
 		carWidth = 16;
 		carHeight = 32;
-		
+	}
+
+	// create objects into the world
+	public void initialiseGameWorld() {
 		// This worlds player will always be at index 0
 		// This makes using powers more transparent and will allow for network data efficiency
-		players.add(new Player(worldBox2D, gameWidth / 2 - gameWidth / 12, 
-				gameHeight / 2, carWidth, carHeight, 0));
-		players.add(new Player(worldBox2D, gameWidth / 2 + gameWidth / 12, 
-				gameHeight / 2, carWidth, carHeight, 0));
+		for (int i=0; i<NetworkHandler.getListOfPlayers().size(); i++) {
+			players.add(new Player(worldBox2D, NetworkHandler.getListOfPlayers().get(i), 
+					gameWidth / 2 + i*carWidth*2, gameHeight / 2, carWidth, carHeight, 0));
+		}
 	}
 
 	public void update(float delta) {
@@ -134,7 +139,16 @@ public class GameWorld {
 	
 	// Get the player that is playing on the current device
 	public Player getPlayer() {
-		return players.get(0);
+		return getPlayerByID(AssetHandler.getPlayerID());
+	}
+	
+	public Player getPlayerByID(String playerID) {
+		for (int i=0; i<players.size(); i++) {
+			if (players.get(i).getPlayerID().contains(playerID)) {
+				return players.get(i);
+			}
+		}
+		return null;
 	}
 
 	// *** Game state functions ***// 

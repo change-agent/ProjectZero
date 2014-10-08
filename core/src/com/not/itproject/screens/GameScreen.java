@@ -2,11 +2,8 @@ package com.not.itproject.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
-import com.badlogic.gdx.scenes.scene2d.ui.Touchpad.TouchpadStyle;
+import com.badlogic.gdx.math.Vector2;
+import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.objects.GameInputProcessor;
 import com.not.itproject.objects.GameRenderer;
 import com.not.itproject.objects.GameWorld;
@@ -17,6 +14,7 @@ public class GameScreen extends AbstractScreen {
 	GameWorld gameWorld;
 	GameRenderer gameRenderer;
 	GameInputProcessor gameInputProcessor;
+	boolean isInitialised;
 	
 	// main constructor
 	public GameScreen(ProjectZero game) {
@@ -29,12 +27,45 @@ public class GameScreen extends AbstractScreen {
 		gameRenderer = new GameRenderer(gameWorld, gameInputProcessor);
          
         Gdx.input.setInputProcessor(gameInputProcessor.getStage());
+        isInitialised = false;
 	}
 
 	public void update(float delta) {
+		// initialise world
+		if (!isInitialised) {
+			gameWorld.initialiseGameWorld();
+			isInitialised = true;
+		} else {
+			// send updates to network
+			sendNetworkUpdates();
+		}
+		
 		// update world
 		gameWorld.update(delta);	
 		gameRenderer.update(delta);
+	}
+	
+	public void updatePlayer(String playerID, Vector2 position, Vector2 velocity, float rotation) {
+		// update player with new values
+		gameWorld.getPlayerByID(playerID).getCar().applyMovement(position, velocity, rotation);
+	}
+	
+	public void sendNetworkUpdates() {
+		// send updates to network
+		if (NetworkHandler.isHost()) {
+			// as host - send information about car
+			NetworkHandler.getNetworkServer().sendGameCarInformation(
+					gameWorld.getPlayer().getCar().getPosition(), 
+					gameWorld.getPlayer().getCar().getVelocity(), 
+					gameWorld.getPlayer().getCar().getRotation());
+		} else if (NetworkHandler.isClient()) {
+			// as client - send information about car
+			NetworkHandler.getNetworkClient().sendGameCarInformation(
+					gameWorld.getPlayer().getCar().getPosition(), 
+					gameWorld.getPlayer().getCar().getVelocity(), 
+					gameWorld.getPlayer().getCar().getRotation());
+			
+		} 
 	}
 	
 	@Override

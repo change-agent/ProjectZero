@@ -15,14 +15,15 @@ public class AssetHandler {
 							toggleButtonSoundOffTexture, toggleButtonSoundOnTexture,
 							buttonLoadGameTexture, buttonNewGameTexture, buttonLoadTexture,
 							buttonNextTexture, buttonReadyTexture, buttonStartSessionTexture,
-							buttonBackTexture, buttonRefreshTexture, powerUpTexture, obstacleTexture;
+							buttonBackTexture, buttonRefreshTexture, powerUpTexture, obstacleTexture,
+							btnResumeGameTexture, btnOptionTexture, btnSaveExitTexture;
 	public static Texture playerTexture, opponentTexture;
 	public static TextureRegion logo, button, buttonStart, buttonTutorial,
 							toggleButtonSoundOff, toggleButtonSoundOn,
 							buttonLoadGame, buttonNewGame, buttonLoad,
 							buttonNext, buttonReady, buttonStartSession,
-							buttonBack, buttonRefresh;
-	public static TextureRegion player, opponent, powerUp, obstacle;
+							buttonBack, buttonRefresh ,player, opponent, powerUp, obstacle,
+							btnOption, btnResumeGame, btnSaveExit;
 	
 	public static Texture menuTrackTexture, menuVehicleTexture, menuReadyTexture,
 							playerRedTexture, playerBlueTexture,
@@ -90,10 +91,19 @@ public class AssetHandler {
 		playerNATexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		playerAITexture = new Texture(Gdx.files.internal("players/playerAI.png"));
 		playerAITexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
 		powerUpTexture = new Texture(Gdx.files.internal("power.png"));
 		powerUpTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		obstacleTexture = new Texture(Gdx.files.internal("tnt.png"));
 		obstacleTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+		btnResumeGameTexture = new Texture(Gdx.files.internal("btnResumeGame.png"));
+		btnResumeGameTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		btnOptionTexture = new Texture(Gdx.files.internal("btnOption.png"));
+		btnOptionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		btnSaveExitTexture = new Texture(Gdx.files.internal("btnSaveExit.png"));
+		btnSaveExitTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
 
 		// load regions
 		logo = new TextureRegion(logoTexture);
@@ -116,6 +126,12 @@ public class AssetHandler {
 		buttonLoad.flip(false, true);
 		buttonNext = new TextureRegion(buttonNextTexture);
 		buttonNext.flip(false, true);
+		btnResumeGame = new TextureRegion(btnResumeGameTexture);
+		btnResumeGame.flip(false, true);
+		btnOption = new TextureRegion(btnOptionTexture);
+		btnOption.flip(false, true);
+		btnSaveExit = new TextureRegion(btnSaveExitTexture);
+		btnSaveExit.flip(false, true);
 		buttonReady = new TextureRegion(buttonReadyTexture);
 		buttonReady.flip(false, true);
 		buttonStartSession = new TextureRegion(buttonStartSessionTexture);
@@ -202,7 +218,8 @@ public class AssetHandler {
 		logoTexture.dispose();
 		buttonTexture.dispose(); buttonStartTexture.dispose(); buttonTutorialTexture.dispose();
 		toggleButtonSoundOffTexture.dispose(); toggleButtonSoundOnTexture.dispose();
-		buttonLoadGameTexture.dispose(); buttonNewGameTexture.dispose(); buttonLoadTexture.dispose();
+		buttonLoadGameTexture.dispose(); buttonNewGameTexture.dispose(); buttonLoadTexture.dispose(); 
+		btnResumeGameTexture.dispose(); btnOptionTexture.dispose(); btnSaveExitTexture.dispose();
 	}
 	
 }

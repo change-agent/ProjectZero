@@ -8,13 +8,16 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Player {
 	private Car car;
+	private String playerID;
 	private int lapNum;
 	private List<PowerUp> activeBuffs;
 	
 	// main constructor
-	public Player(World worldBox2D, float x, float y, float width, float height, float rotation) {	
+	public Player(World worldBox2D, String playerID, float x, float y, float width, float height, float rotation)
+	{	
 		this.car = new Car(worldBox2D, x, y, width, height, 0);
 		this.activeBuffs = new ArrayList<PowerUp>(GameVariables.PowerType.values().length);
+		this.playerID = playerID;
 	}
 		
 	public void update(float delta) {
@@ -61,6 +64,10 @@ public class Player {
 		
 	public Car getCar() {
 		return car;
+	}
+	
+	public String getPlayerID() {
+		return playerID;
 	}
 	
 	public int getLapNum() {

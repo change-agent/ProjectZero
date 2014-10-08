@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.CircleMapObject;
 import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -37,6 +36,8 @@ public class GameRenderer {
 	
 	// paused menu variables
 	SimpleButton btnResumeGame;
+	SimpleButton btnOption;
+	SimpleButton btnSaveExit;
 	
 	// main constructor
 	public GameRenderer(GameWorld gameWorld, GameInputProcessor gameInputProcessor) {
@@ -88,7 +89,11 @@ public class GameRenderer {
 		// initialise paused menu variables
 		int btnWidth = 120; // assign for main buttons
 		btnResumeGame = new SimpleButton((int)(gameWidth * 1/2) - btnWidth/2, 
+				(int)(gameHeight/2 -35), btnWidth, 30);
+		btnSaveExit = new SimpleButton((int)(gameWidth * 1/2) - btnWidth/2, 
 				(int)(gameHeight/2), btnWidth, 30);
+		btnOption = new SimpleButton((int)(gameWidth * 1/2) - btnWidth/2,
+				(int)(gameHeight/2 +35), btnWidth, 30);
 	}
 	
 	public void update(float delta) {
@@ -212,9 +217,15 @@ public class GameRenderer {
 	public void renderPaused(float delta) {
 		// render paused controls/buttons
 		batch.begin();
-		batch.draw(AssetHandler.button, 
+		batch.draw(AssetHandler.btnResumeGame, 
 				btnResumeGame.getPosition().x, btnResumeGame.getPosition().y, 
 				btnResumeGame.getWidth(), btnResumeGame.getHeight());
+		batch.draw(AssetHandler.btnOption, 
+				btnOption.getPosition().x, btnOption.getPosition().y, 
+				btnOption.getWidth(), btnOption.getHeight());
+		batch.draw(AssetHandler.btnSaveExit, 
+				btnSaveExit.getPosition().x, btnSaveExit.getPosition().y, 
+				btnSaveExit.getWidth(), btnSaveExit.getHeight());
 		batch.end();
 	}
 	
@@ -226,7 +237,7 @@ public class GameRenderer {
 	public void renderControls(float delta) {
 		// update/render controls
 		gameInputProcessor.update(delta);
-		gameInputProcessor.render(delta);		
+		gameInputProcessor.render(delta);	
 	}
 	
 	public void dispose() {
