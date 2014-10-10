@@ -2,6 +2,8 @@ package com.not.itproject.networks;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,8 +110,8 @@ public class NetworkClient {
 						
 						// process information - update player (other players only)
 						if (!AssetHandler.getPlayerID().contains(info.playerID)) {
-							ProjectZero.gameScreen.updatePlayer(info.playerID,
-									info.position, info.velocity, info.rotation);
+							// add message to queue
+							ProjectZero.gameScreen.getGameWorld().addToNetworkQueue(info);
 						}
 					}
 					
@@ -153,6 +155,8 @@ public class NetworkClient {
 			// send car information
 			NetworkMessage.GameCarInformation info = new NetworkMessage.GameCarInformation();
 			info.playerID = AssetHandler.getPlayerID();
+			Calendar c = new GregorianCalendar();
+			info.timestamp = c.getTime();
 			info.position = position;
 			info.velocity = velocity;
 			info.rotation = rotation;

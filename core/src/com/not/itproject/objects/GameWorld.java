@@ -1,7 +1,12 @@
 package com.not.itproject.objects;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
+import com.not.itproject.networks.NetworkMessage;
 import com.not.itproject.objects.GameObject.ObjType;
 import com.not.itproject.zero.ProjectZero;
 
@@ -25,7 +31,7 @@ public class GameWorld {
 	public GameVariables gameVariables;
 	public float carWidth;
 	public float carHeight;
-	
+	private Queue<NetworkMessage.GameCarInformation> networkUpdates;
 	
 	/**------------------- DEBUG CONTACT LISTENER FOR POWER UP TESTING------**/
 	public ContactListener c = new ContactListener() {
@@ -91,10 +97,14 @@ public class GameWorld {
 		//Initialize box2D world object
 		worldBox2D = new World(new Vector2(0.0f, 0.0f), false);
 		worldBox2D.setContactListener(c);
+		//worldBox2D.setContinuousPhysics(true);
 
 		// define player and opponents
 		carWidth = 16;
 		carHeight = 32;
+		
+		// define network update queue
+		networkUpdates = new ConcurrentLinkedQueue<NetworkMessage.GameCarInformation>();
 	}
 
 	// create objects into the world
@@ -112,6 +122,23 @@ public class GameWorld {
 		// This updates the box2d world
 		// Adjust last two params for performance increase
 		worldBox2D.step(delta, 4, 4);
+		
+		// process network updates to box2d world
+		while (networkUpdates.size() != 0) {
+			// go through queues
+			NetworkMessage.GameCarInformation info = networkUpdates.remove();	
+			
+			// add a check for threshold of timestamp
+			Calendar c = new GregorianCalendar();
+//			ProjectZero.log("Delay - " + (((Calendar)(c.getTime()).get(Calendar.SECOND) - info.timestamp.get(Calendar.SECOND)) / 1000));
+			ProjectZero.log("Current Time: " + c.getTime());
+			ProjectZero.log("Message Time: " + info.timestamp);
+			
+			// update players according
+			ProjectZero.gameScreen.updatePlayer(info.playerID,
+			info.position, info.velocity, info.rotation);
+	
+		}
 		
 		// update players and check for win
 		for (Player player : players) {
@@ -149,6 +176,12 @@ public class GameWorld {
 			}
 		}
 		return null;
+	}
+	
+	// functions for network update queue
+	public void addToNetworkQueue(NetworkMessage.GameCarInformation obj) {
+		// add to queue
+		networkUpdates.add(obj);
 	}
 
 	// *** Game state functions ***// 

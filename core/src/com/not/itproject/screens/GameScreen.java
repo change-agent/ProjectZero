@@ -50,6 +50,14 @@ public class GameScreen extends AbstractScreen {
 		gameWorld.getPlayerByID(playerID).getCar().applyMovement(position, velocity, rotation);
 	}
 	
+	public GameWorld getGameWorld() {
+		return gameWorld;
+	}
+	
+	public GameRenderer getGameRenderer() {
+		return gameRenderer;
+	}
+	
 	public void sendNetworkUpdates() {
 		// send updates to network
 		if (NetworkHandler.isHost()) {

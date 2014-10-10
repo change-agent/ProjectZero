@@ -1,6 +1,8 @@
 package com.not.itproject.networks;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -120,8 +122,8 @@ public class NetworkServer {
 
 						// process information - update player (other players only)
 						if (!AssetHandler.getPlayerID().contains(info.playerID)) {
-							ProjectZero.gameScreen.updatePlayer(info.playerID,
-									info.position, info.velocity, info.rotation);
+							// add message to queue
+							ProjectZero.gameScreen.getGameWorld().addToNetworkQueue(info);
 						}
 						
 						// send information to other clients
@@ -176,6 +178,8 @@ public class NetworkServer {
 			// send car information
 			NetworkMessage.GameCarInformation info = new NetworkMessage.GameCarInformation();
 			info.playerID = AssetHandler.getPlayerID();
+			Calendar c = new GregorianCalendar();
+			info.timestamp = c.getTime();
 			info.position = position;
 			info.velocity = velocity;
 			info.rotation = rotation;

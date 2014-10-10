@@ -26,6 +26,7 @@ public class NetworkMessage {
 	
 	public static class GameCarInformation {
 		public String playerID;
+		public Date timestamp;
 		public Vector2 position;
 		public Vector2 velocity;
 		public float rotation;
