@@ -244,6 +244,19 @@ public class Car extends GameObject{
 		enginePower /= 1.04;
 	}
 	
+	public void powerOffEngine(boolean powerOff) {
+		// Completely kills the engine
+		if (powerOff) { 
+			enginePower = 0; 
+			Vector2 zeroVector = new Vector2(0, 0);
+			chassis.setLinearVelocity(zeroVector);
+			leftFrontWheel.setLinearVelocity(zeroVector); 
+			rightFrontWheel.setLinearVelocity(zeroVector); 
+			leftRearWheel.setLinearVelocity(zeroVector); 
+			rightRearWheel.setLinearVelocity(zeroVector);
+		}
+	}
+	
 	public void zeroSteeringAngle() {
 		steeringAngle = 0;
 	}

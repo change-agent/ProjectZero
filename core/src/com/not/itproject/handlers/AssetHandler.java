@@ -16,23 +16,30 @@ public class AssetHandler {
 							buttonLoadGameTexture, buttonNewGameTexture, buttonLoadTexture,
 							buttonNextTexture, buttonReadyTexture, buttonStartSessionTexture,
 							buttonBackTexture, buttonRefreshTexture, powerUpTexture, obstacleTexture,
-							btnResumeGameTexture, btnOptionTexture, btnSaveExitTexture;
+							buttonResumeGameTexture, buttonOptionTexture, buttonSaveExitTexture,
+							buttonOkayTexture, buttonYesTexture, buttonNoTexture;
 	public static Texture playerTexture, opponentTexture;
 	public static TextureRegion logo, button, buttonStart, buttonTutorial,
 							toggleButtonSoundOff, toggleButtonSoundOn,
 							buttonLoadGame, buttonNewGame, buttonLoad,
 							buttonNext, buttonReady, buttonStartSession,
 							buttonBack, buttonRefresh ,player, opponent, powerUp, obstacle,
-							btnOption, btnResumeGame, btnSaveExit;
+							buttonOption, buttonResumeGame, buttonSaveExit,
+							buttonOkay, buttonYes, buttonNo;
 	
 	public static Texture menuTrackTexture, menuVehicleTexture, menuReadyTexture,
 							playerRedTexture, playerBlueTexture,
 							playerGreenTexture, playerYellowTexture,
-							playerNATexture, playerAITexture;
+							playerNATexture, playerAITexture,
+							bannerBlackTexture, bannerWhiteTexture;
 	public static TextureRegion menuTrack, menuVehicle, menuReady,
 							playerRed, playerBlue,
 							playerGreen, playerYellow,
-							playerNA, playerAI;
+							playerNA, playerAI,
+							bannerBlack, bannerWhite;
+	
+	public static Texture backgroundUniversalTexture, backgroundErrorTexture;
+	public static TextureRegion backgroundUniversal, backgroundError;
 	
 	public static BitmapFont font;
 	public static Preferences prefs;
@@ -91,19 +98,28 @@ public class AssetHandler {
 		playerNATexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		playerAITexture = new Texture(Gdx.files.internal("players/playerAI.png"));
 		playerAITexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bannerBlackTexture = new Texture(Gdx.files.internal("banner-black.png"));
+		bannerBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bannerWhiteTexture = new Texture(Gdx.files.internal("banner-white.png"));
+		bannerWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		powerUpTexture = new Texture(Gdx.files.internal("power.png"));
 		powerUpTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		obstacleTexture = new Texture(Gdx.files.internal("tnt.png"));
 		obstacleTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		btnResumeGameTexture = new Texture(Gdx.files.internal("btnResumeGame.png"));
-		btnResumeGameTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		btnOptionTexture = new Texture(Gdx.files.internal("btnOption.png"));
-		btnOptionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		btnSaveExitTexture = new Texture(Gdx.files.internal("btnSaveExit.png"));
-		btnSaveExitTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
+		buttonResumeGameTexture = new Texture(Gdx.files.internal("buttonResumeGame.png"));
+		buttonResumeGameTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		buttonOptionTexture = new Texture(Gdx.files.internal("buttonOptions.png"));
+		buttonOptionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		buttonSaveExitTexture = new Texture(Gdx.files.internal("buttonSaveExit.png"));
+		buttonSaveExitTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		buttonOkayTexture = new Texture(Gdx.files.internal("buttonOkay.png"));
+		buttonOkayTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		buttonYesTexture = new Texture(Gdx.files.internal("buttonYes.png"));
+		buttonYesTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		buttonNoTexture = new Texture(Gdx.files.internal("buttonNo.png"));
+		buttonNoTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		// load regions
 		logo = new TextureRegion(logoTexture);
@@ -126,16 +142,23 @@ public class AssetHandler {
 		buttonLoad.flip(false, true);
 		buttonNext = new TextureRegion(buttonNextTexture);
 		buttonNext.flip(false, true);
-		btnResumeGame = new TextureRegion(btnResumeGameTexture);
-		btnResumeGame.flip(false, true);
-		btnOption = new TextureRegion(btnOptionTexture);
-		btnOption.flip(false, true);
-		btnSaveExit = new TextureRegion(btnSaveExitTexture);
-		btnSaveExit.flip(false, true);
+		buttonResumeGame = new TextureRegion(buttonResumeGameTexture);
+		buttonResumeGame.flip(false, true);
+		buttonOption = new TextureRegion(buttonOptionTexture);
+		buttonOption.flip(false, true);
+		buttonSaveExit = new TextureRegion(buttonSaveExitTexture);
+		buttonSaveExit.flip(false, true);
 		buttonReady = new TextureRegion(buttonReadyTexture);
 		buttonReady.flip(false, true);
 		buttonStartSession = new TextureRegion(buttonStartSessionTexture);
 		buttonStartSession.flip(false, true);
+		buttonOkay = new TextureRegion(buttonOkayTexture);
+		buttonOkay.flip(false, true);
+		buttonYes = new TextureRegion(buttonYesTexture);
+		buttonYes.flip(false, true);
+		buttonNo= new TextureRegion(buttonNoTexture);
+		buttonNo.flip(false, true);
+		
 		player = new TextureRegion(playerTexture);
 		player.flip(false, true);
 		opponent = new TextureRegion(opponentTexture);
@@ -166,12 +189,33 @@ public class AssetHandler {
 		playerNA.flip(false, true);
 		playerAI = new TextureRegion(playerAITexture);
 		playerAI.flip(false, true);
+		bannerBlack = new TextureRegion(bannerBlackTexture);
+		bannerBlack.flip(false, true);
+		bannerWhite = new TextureRegion(bannerWhiteTexture);
+		bannerWhite.flip(false, true);
+		
+		// load components
+		loadBackgrounds();
 		
 		// load fonts
 		font = new BitmapFont(Gdx.files.internal("fonts/kenvector.fnt"), true);
 		
 		// load preferences/settings
 		loadSettings();
+	}
+	
+	private static void loadBackgrounds() {
+		// load backgrounds
+		backgroundUniversalTexture = new Texture(Gdx.files.internal("backgrounds/backgroundUniversal.png"));
+		backgroundUniversalTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		backgroundErrorTexture = new Texture(Gdx.files.internal("backgrounds/backgroundError.png"));
+		backgroundErrorTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+		// load regions
+		backgroundUniversal = new TextureRegion(backgroundUniversalTexture);
+		backgroundUniversal.flip(false, true);
+		backgroundError = new TextureRegion(backgroundErrorTexture);
+		backgroundError.flip(false, true);
 	}
 	
 	public static void loadSettings() {
@@ -219,7 +263,8 @@ public class AssetHandler {
 		buttonTexture.dispose(); buttonStartTexture.dispose(); buttonTutorialTexture.dispose();
 		toggleButtonSoundOffTexture.dispose(); toggleButtonSoundOnTexture.dispose();
 		buttonLoadGameTexture.dispose(); buttonNewGameTexture.dispose(); buttonLoadTexture.dispose(); 
-		btnResumeGameTexture.dispose(); btnOptionTexture.dispose(); btnSaveExitTexture.dispose();
+		
+		// TODO: RELEASE ALL ASSETS
 	}
 	
 }

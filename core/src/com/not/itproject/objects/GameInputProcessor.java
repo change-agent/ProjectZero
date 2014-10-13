@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad.TouchpadStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.not.itproject.handlers.NetworkHandler;
+import com.not.itproject.networks.NetworkMessage;
 
 public class GameInputProcessor {
 	// declare variables
@@ -83,7 +85,6 @@ public class GameInputProcessor {
 		// create new TouchPad with the created style
 		touchpad = new Touchpad(5, touchpadStyle);
 		touchpad.setPosition(8, 8);
-
 	}
 	
 	public void createButtons() {
@@ -156,68 +157,82 @@ public class GameInputProcessor {
 	}
 
 	public void update(float delta) {
-		// get controls
-		if (touchpad.getKnobPercentX() < 0 || touchpad.getKnobPercentX() > 0) {
-			float steerAngle = touchpad.getKnobPercentX();
-			world.getPlayer().getCar().setSteeringAngle(steerAngle);
-		}
-		else{
-			world.getPlayer().getCar().zeroSteeringAngle();
-		}
-
-		// Power on engine if pressed else power off engine
-		if (buttonTwo.isPressed()) {
-			world.getPlayer().getCar().powerOnEngine(1);
-		}
-		else if (buttonOne.isPressed()) {
-			world.getPlayer().getCar().powerOnEngine(-1);
-		}
-		else{
-			world.getPlayer().getCar().powerOffEngine();
+		// only update controls if game is running
+		if (world.isRunning()) {
+			
+			// get controls
+			if (touchpad.getKnobPercentX() < 0 || touchpad.getKnobPercentX() > 0) {
+				float steerAngle = touchpad.getKnobPercentX();
+				world.getPlayer().getCar().setSteeringAngle(steerAngle);
+			}
+			else {
+				world.getPlayer().getCar().zeroSteeringAngle();
+			}
+			
+	
+			// Power on engine if pressed else power off engine
+			if (buttonTwo.isPressed()) {
+				world.getPlayer().getCar().powerOnEngine(1);
+			}
+			else if (buttonOne.isPressed()) {
+				world.getPlayer().getCar().powerOnEngine(-1);
+			}
+			else{
+				world.getPlayer().getCar().powerOffEngine();
+			}
+			
+			// Activate power or menu
+			if (buttonThree.isPressed()) {
+				world.getPlayer().flagUsePower();
+			}
+			if (buttonMenu.isPressed()) {
+				// pause game
+				world.pauseGame();
+			}
+			
+			/*// Use this to test with desktop
+			if (Gdx.input.isKeyPressed(Keys.A)) {
+				float steerAngle = -1.0f;
+				world.getPlayer().getCar().setSteeringAngle(steerAngle);
+			}
+			else if (Gdx.input.isKeyPressed(Keys.D)) {
+				float steerAngle = 1.0f;
+				world.getPlayer().getCar().setSteeringAngle(steerAngle);
+			}
+			else{
+				world.getPlayer().getCar().zeroSteeringAngle();
+			}*/
+			
+			// Power on engine if pressed else power off engine
+			if (Gdx.input.isKeyPressed(Keys.W)) {
+				world.getPlayer().getCar().powerOnEngine(-1);
+			}
+			else if (Gdx.input.isKeyPressed(Keys.S)) {
+				world.getPlayer().getCar().powerOnEngine(1);
+			}
+			else{
+				world.getPlayer().getCar().powerOffEngine();
+			}
+			
+			// Activate power or menu
+			if (buttonTwo.isPressed()) {
+				world.getPlayer().flagUsePower();
+			}
+			if (buttonMenu.isPressed()) {				
+				// pause game
+				world.pauseGame();
+				
+				// send network message
+				if (NetworkHandler.isHost()) {
+					// as host - send information about game state
+					NetworkHandler.getNetworkServer().sendGameStateInformation(NetworkMessage.GameState.PAUSE);
+				} else if (NetworkHandler.isClient()) {
+					// as client - send information about game state
+					NetworkHandler.getNetworkClient().sendGameStateInformation(NetworkMessage.GameState.PAUSE);
+				} 
+			}
 		}
 		
-		// Activate power or menu
-		if (buttonThree.isPressed()) {
-			world.getPlayer().flagUsePower();
-		}
-		if (buttonMenu.isPressed()) {
-			// pause game
-			world.pauseGame();
-		}
-		
-		/*// Use this to test with desktop
-		if (Gdx.input.isKeyPressed(Keys.A)) {
-			float steerAngle = -1.0f;
-			world.getPlayer().getCar().setSteeringAngle(steerAngle);
-		}
-		else if (Gdx.input.isKeyPressed(Keys.D)) {
-			float steerAngle = 1.0f;
-			world.getPlayer().getCar().setSteeringAngle(steerAngle);
-		}
-		else{
-			world.getPlayer().getCar().zeroSteeringAngle();
-		}*/
-		
-		// Power on engine if pressed else power off engine
-		if (Gdx.input.isKeyPressed(Keys.W)) {
-			world.getPlayer().getCar().powerOnEngine(-1);
-		}
-		else if (Gdx.input.isKeyPressed(Keys.S)) {
-			world.getPlayer().getCar().powerOnEngine(1);
-		}
-		else{
-			world.getPlayer().getCar().powerOffEngine();
-		}
-		
-		// Activate power or menu
-		if (buttonTwo.isPressed()) {
-			world.getPlayer().flagUsePower();
-		}
-		if (buttonMenu.isPressed()) {
-			// pause game
-			world.pauseGame();
-		}
-
 		// update stage
 		stage.act(delta);
 	}

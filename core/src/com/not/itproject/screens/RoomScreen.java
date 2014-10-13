@@ -105,11 +105,6 @@ public class RoomScreen extends AbstractScreen {
 				if (btnGameSessions.get(i).isTouched()) {
 					// connect to game session
 					NetworkHandler.getNetworkClient().connectToGameSession(i);
-					
-					// determine whether connection success
-					if (NetworkHandler.isClient()) {
-						game.nextScreen(ProjectZero.selectionScreen, this);
-					}
 				}
 			}
 		}
@@ -162,7 +157,7 @@ public class RoomScreen extends AbstractScreen {
 	@Override
 	public void render(float delta) {
 		// clear screen
-		Gdx.graphics.getGL20().glClearColor(0.65f, 1f, 0.85f, 0.85f);
+		Gdx.graphics.getGL20().glClearColor(1f, 1f, 1f, 1f);
 		Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		// update objects
@@ -173,6 +168,10 @@ public class RoomScreen extends AbstractScreen {
 			case WAITING:
 				// render room (waiting) screen
 				batch.begin();
+				
+				// draw background
+				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+						gameWidth, gameHeight);
 				renderWaiting(delta);
 				batch.end();
 				break;
@@ -180,6 +179,10 @@ public class RoomScreen extends AbstractScreen {
 			case LOAD:
 				// render load screen
 				batch.begin();
+				
+				// draw background
+				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+						gameWidth, gameHeight);
 				renderLoad(delta);
 				batch.end();
 				break;
@@ -233,6 +236,14 @@ public class RoomScreen extends AbstractScreen {
 				btnBack.getRadius() * 2, btnBack.getRadius() * 2);
 	}	
 
+	public void enterGameSession() {
+		// determine whether connection success
+		if (NetworkHandler.isClient()) {
+			// enter game session
+			game.nextScreen(ProjectZero.selectionScreen, this);			
+		}
+	}
+	
 	@Override
 	public void resize(int width, int height) {
 	}

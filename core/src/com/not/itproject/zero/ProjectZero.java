@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.screens.AbstractScreen;
+import com.not.itproject.screens.ErrorScreen;
 import com.not.itproject.screens.GameScreen;
 import com.not.itproject.screens.HelpScreen;
 import com.not.itproject.screens.MainScreen;
@@ -26,6 +27,7 @@ public class ProjectZero extends Game {
 	public static RoomScreen roomScreen;
 	public static SelectionScreen selectionScreen;
 	public static GameScreen gameScreen;
+	public static ErrorScreen errorScreen;
 	public static AbstractScreen previousScreen;
 
 	@Override
@@ -46,6 +48,7 @@ public class ProjectZero extends Game {
 		roomScreen = new RoomScreen(this);
 		selectionScreen = new SelectionScreen(this);
 		gameScreen = new GameScreen(this);
+		errorScreen = new ErrorScreen(this);
         
 		// proceed to splash screen
 		setScreen(splashScreen);

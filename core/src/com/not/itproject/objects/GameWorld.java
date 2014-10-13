@@ -1,9 +1,6 @@
 package com.not.itproject.objects;
 
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -91,13 +88,11 @@ public class GameWorld {
 		gameHeight = screenHeight / (screenWidth / gameWidth);
 		
 		// initialize variables
-//		gameStatus = GameState.READY;
-		gameStatus = GameState.RUNNING;
+		gameStatus = GameState.READY;
 		
 		//Initialize box2D world object
 		worldBox2D = new World(new Vector2(0.0f, 0.0f), false);
 		worldBox2D.setContactListener(c);
-		//worldBox2D.setContinuousPhysics(true);
 
 		// define player and opponents
 		carWidth = 16;
@@ -126,18 +121,17 @@ public class GameWorld {
 		// process network updates to box2d world
 		while (networkUpdates.size() != 0) {
 			// go through queues
-			NetworkMessage.GameCarInformation info = networkUpdates.remove();	
+			NetworkMessage.GameCarInformation info = networkUpdates.remove();
 			
-			// add a check for threshold of timestamp
-			Calendar c = new GregorianCalendar();
+			// add a check for threshold of timestamp (time difference)
+//			Calendar c = new GregorianCalendar();
 //			ProjectZero.log("Delay - " + (((Calendar)(c.getTime()).get(Calendar.SECOND) - info.timestamp.get(Calendar.SECOND)) / 1000));
-			ProjectZero.log("Current Time: " + c.getTime());
-			ProjectZero.log("Message Time: " + info.timestamp);
+//			ProjectZero.log("Current Time: " + c.getTime());
+//			ProjectZero.log("Message Time: " + info.timestamp);
 			
 			// update players according
 			ProjectZero.gameScreen.updatePlayer(info.playerID,
-			info.position, info.velocity, info.rotation);
-	
+					info.position, info.velocity, info.rotation);
 		}
 		
 		// update players and check for win
@@ -220,18 +214,43 @@ public class GameWorld {
 	public void startGame() {
 		// game start
 		gameStatus = GameState.RUNNING;
+
+		// send network message to players
 	}
 	
 	public void resumeGame() {
+		// stop movement of car
+		ProjectZero.gameScreen.getGameWorld().getPlayer().getCar().powerOffEngine(true);
+		ProjectZero.gameScreen.getGameWorld().getPlayer().getCar().zeroSteeringAngle();
+		
 		// game resume - countdown
 		gameStatus = GameState.READY;
 	}
 	
 	public void pauseGame() {
+		// stop movement of car
+		ProjectZero.gameScreen.getGameWorld().getPlayer().getCar().powerOffEngine(true);
+		ProjectZero.gameScreen.getGameWorld().getPlayer().getCar().zeroSteeringAngle();
+		
 		// game paused
 		gameStatus = GameState.PAUSED;
 	}
 
+	public void endGame() {
+		// game end
+		//// TO-DO RESET ALL VARIABLES
+	}
+	
+	public void loadGame(/* VALUES TO LOAD */) {
+		// game - load
+		//// TO-DO LOAD ALL VARIABLES
+	}
+	
+	public void saveGame() {
+		// game - save
+		//// TO-DO SAVE ALL VARIABLES
+	}
+	
 	// Deletes resources after game has been closed
 	public void dispose() {
 		

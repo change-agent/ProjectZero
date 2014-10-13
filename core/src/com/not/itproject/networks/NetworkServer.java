@@ -50,6 +50,10 @@ public class NetworkServer {
 
 			// if all ports are taken - return error
 			if (nextPort >= GameVariables.VALID_TCP_PORTS.length) {
+				// display error message
+				ProjectZero.errorScreen.displayError(ProjectZero.roomScreen, 
+						"Error", "Unable to create game session." + "\r\n" + 
+						"Maximum game sessions reached.");
 				break;
 			}
 		} while (!isServerOnline);
@@ -79,14 +83,30 @@ public class NetworkServer {
 
 						switch (request.type) {
 							case JOIN:
+								boolean playerAdded = false;
 								// add player ID to list of players
-								for (int i=0; i<4 ; i++) {
+								for (int i=0; i<GameVariables.MAX_PLAYERS; i++) {
 									// check if key exists
 									if (!NetworkHandler.getListOfPlayers().containsKey(i)) {
 										// add player
 										NetworkHandler.getListOfPlayers().put(i, request.playerID);
+										playerAdded = true;
 										break;
 									}
+								}
+								
+								// check to see if player was added
+								if (playerAdded) {
+									// send response
+									NetworkMessage.ConnectionResponse response = new NetworkMessage.ConnectionResponse();
+									response.type = NetworkMessage.ResponseStatus.SUCCESS;
+									connection.sendTCP(response);
+								} 
+								else {
+									// send response
+									NetworkMessage.ConnectionResponse response = new NetworkMessage.ConnectionResponse();
+									response.type = NetworkMessage.ResponseStatus.FAILURE;
+									connection.sendTCP(response);
 								}
 								break;
 								
@@ -108,11 +128,6 @@ public class NetworkServer {
 								}
 								break;
 						}
-
-						// send response
-						NetworkMessage.ConnectionResponse response = new NetworkMessage.ConnectionResponse();
-						response.message = "Connection Established.";
-						connection.sendTCP(response);
 					}
 					
 					// get car information from client
@@ -124,6 +139,25 @@ public class NetworkServer {
 						if (!AssetHandler.getPlayerID().contains(info.playerID)) {
 							// add message to queue
 							ProjectZero.gameScreen.getGameWorld().addToNetworkQueue(info);
+						}
+						
+						// send information to other clients
+						server.sendToAllTCP(info);
+					}
+					
+					// get game state information from client
+					else if (object instanceof NetworkMessage.GameStateInformation) {
+						// get info
+						NetworkMessage.GameStateInformation info = (NetworkMessage.GameStateInformation) object;
+
+						// determine what action to perform
+						if (info.state == NetworkMessage.GameState.PAUSE) {							
+							// pause game
+							ProjectZero.gameScreen.getGameWorld().pauseGame();
+						}
+						else if (info.state == NetworkMessage.GameState.RESUME) {
+							// resume game
+							ProjectZero.gameScreen.getGameWorld().resumeGame();
 						}
 						
 						// send information to other clients
@@ -183,6 +217,17 @@ public class NetworkServer {
 			info.position = position;
 			info.velocity = velocity;
 			info.rotation = rotation;
+			server.sendToAllTCP(info);
+		} catch (Exception e) {
+			// capture errors
+		}
+	}
+
+	public void sendGameStateInformation(NetworkMessage.GameState state) {
+		try {
+			// send game state information
+			NetworkMessage.GameStateInformation info = new NetworkMessage.GameStateInformation();
+			info.state = state;
 			server.sendToAllTCP(info);
 		} catch (Exception e) {
 			// capture errors

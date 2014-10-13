@@ -88,7 +88,18 @@ public class NetworkClient {
 					// connection response
 					if (object instanceof NetworkMessage.ConnectionResponse) {
 						NetworkMessage.ConnectionResponse response = (NetworkMessage.ConnectionResponse) object;
-						Gdx.app.log("Network", "Received: " + response.message);
+						if (response.type == NetworkMessage.ResponseStatus.SUCCESS) {
+							// proceed with joining
+							ProjectZero.roomScreen.enterGameSession();
+						} 	
+						else if (response.type == NetworkMessage.ResponseStatus.FAILURE) {
+							// disconnect from server
+							leaveGameSession();
+							
+							// display error message
+							ProjectZero.errorScreen.displayError(ProjectZero.roomScreen, 
+									"Error", "Unable to join game session.");
+						}
 					}
 					
 					// get selection screen info
@@ -100,7 +111,7 @@ public class NetworkClient {
 					// get game start
 					else if (object instanceof NetworkMessage.GameStartInformation) {
 						// proceed to game screen
-						ProjectZero.selectionScreen.startGame();
+						ProjectZero.selectionScreen.startGame(); 
 					}
 					
 					// get car information from server
@@ -115,6 +126,22 @@ public class NetworkClient {
 						}
 					}
 					
+					// get game state information from client
+					else if (object instanceof NetworkMessage.GameStateInformation) {
+						// get info
+						NetworkMessage.GameStateInformation info = (NetworkMessage.GameStateInformation) object;
+
+						// determine what action to perform
+						if (info.state == NetworkMessage.GameState.PAUSE) {							
+							// pause game
+							ProjectZero.gameScreen.getGameWorld().pauseGame();
+						}
+						else if (info.state == NetworkMessage.GameState.RESUME) {							
+							// resume game
+							ProjectZero.gameScreen.getGameWorld().resumeGame();
+						}
+					}
+					
 				} catch (Exception e) {
 					// capture errors
 				}
@@ -123,7 +150,7 @@ public class NetworkClient {
 	}
 	
 	// leave current game session
-	public void leaveGameSession() {
+	public static void leaveGameSession() {
 		// end leave message
 		sendConnectionRequest(NetworkMessage.RequestStatus.LEAVE);
 		
@@ -135,10 +162,17 @@ public class NetworkClient {
 		
 		// clear list of players
 		NetworkHandler.clearListOfPlayers();
+
+		// re-initialise variables
+		listOfServers = new HashMap<Integer, InetAddress>();
+		
+		// re-initialise client
+		client = new Client();
+		client.start();
 	}
 	
 	// send messages
-	public void sendConnectionRequest(NetworkMessage.RequestStatus type) {
+	public static void sendConnectionRequest(NetworkMessage.RequestStatus type) {
 		try {
 			// send join request
 			NetworkMessage.ConnectionRequest request = new NetworkMessage.ConnectionRequest();
@@ -160,6 +194,17 @@ public class NetworkClient {
 			info.position = position;
 			info.velocity = velocity;
 			info.rotation = rotation;
+			client.sendTCP(info);
+		} catch (Exception e) {
+			// capture errors
+		}
+	}
+
+	public void sendGameStateInformation(NetworkMessage.GameState state) {
+		try {
+			// send game state information
+			NetworkMessage.GameStateInformation info = new NetworkMessage.GameStateInformation();
+			info.state = state;
 			client.sendTCP(info);
 		} catch (Exception e) {
 			// capture errors

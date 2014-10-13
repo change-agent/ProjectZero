@@ -52,9 +52,7 @@ public class SelectionScreen extends AbstractScreen {
 				!NetworkHandler.isHost()) {
 			// return back to room screen displaying message
 			Gdx.app.log("Network", "Disconnected");
-
 			setupNetwork = false;
-			game.nextScreen(ProjectZero.roomScreen, this);		
 		}
 		
 		// host - send selection screen information to clients
@@ -149,17 +147,23 @@ public class SelectionScreen extends AbstractScreen {
 	@Override
 	public void render(float delta) {
 		// clear screen
-		Gdx.graphics.getGL20().glClearColor(1f, 1f, 0.85f, 0.85f);
+		Gdx.graphics.getGL20().glClearColor(1f, 1f, 1f, 1f);
 		Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		// update objects
 		update(delta);
+		
 		
 		// determine screen status
 		switch (screenStatus) {
 			case TRACK:
 				// render track selection screen
 				batch.begin();
+				
+				// draw background
+				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+						gameWidth, gameHeight);
+				
 				renderSessionTitle(delta);
 				renderTrack(delta);		
 				renderPlayers(delta);
@@ -169,6 +173,11 @@ public class SelectionScreen extends AbstractScreen {
 			case VEHICLE:
 				// render vehicle selection screenHostHostHost
 				batch.begin();
+				
+				// draw background
+				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+						gameWidth, gameHeight);
+				
 				renderSessionTitle(delta);
 				renderVehicle(delta);		
 				renderPlayers(delta);
@@ -178,6 +187,11 @@ public class SelectionScreen extends AbstractScreen {
 			case READY:
 				// render ready screen
 				batch.begin();
+				
+				// draw background
+				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+						gameWidth, gameHeight);
+				
 				renderSessionTitle(delta);
 				renderReady(delta);		
 				renderPlayers(delta);
@@ -187,6 +201,10 @@ public class SelectionScreen extends AbstractScreen {
 	}
 	
 	private void renderSessionTitle(float delta) {
+		// render banner
+		batch.draw(AssetHandler.bannerWhite, 0, 3, 0, 0, 
+				gameWidth, 35, 1, 1, 0);
+		
 		// render game session title
 		AssetHandler.getFont(0.4f).draw(batch, "Game Session ID: " + 
 				String.format("%05d", NetworkHandler.getGameSessionID()), 

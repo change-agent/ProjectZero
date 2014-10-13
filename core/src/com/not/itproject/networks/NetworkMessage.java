@@ -6,7 +6,9 @@ import java.util.Map;
 import com.badlogic.gdx.math.Vector2;
 
 public class NetworkMessage {
-	enum RequestStatus {JOIN, LEAVE};
+	public enum RequestStatus {JOIN, LEAVE};
+	public enum ResponseStatus {SUCCESS, FAILURE};
+	public enum GameState {RESUME, PAUSE, EXIT};
 	
 	public static class ConnectionRequest {
 		public String playerID;
@@ -15,7 +17,7 @@ public class NetworkMessage {
 	}
 	
 	public static class ConnectionResponse {
-		public String message;
+		public ResponseStatus type;
 	}
 	
 	public static class SelectionScreenInformation {
@@ -30,5 +32,9 @@ public class NetworkMessage {
 		public Vector2 position;
 		public Vector2 velocity;
 		public float rotation;
+	}
+	
+	public static class GameStateInformation {
+		public GameState state;
 	}
 }

@@ -52,7 +52,7 @@ public class MainScreen extends AbstractScreen {
 			game.nextScreen(ProjectZero.helpScreen, this);
 			
 			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME, "How-to-play button is pre9ssed.");
+			Gdx.app.log(ProjectZero.GAME_NAME, "How-to-play button is pressed.");
 			
 		} else if (btnSoundToggle.isTouched()) {
 			// toggle sound mute
@@ -67,7 +67,7 @@ public class MainScreen extends AbstractScreen {
 	@Override
 	public void render(float delta) {
 		// clear screen
-		Gdx.graphics.getGL20().glClearColor(0.65f, 0.65f, 0.85f, 0.85f);
+		Gdx.graphics.getGL20().glClearColor(1f, 1f, 1f, 1f);
 		Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		// update objects
@@ -75,6 +75,12 @@ public class MainScreen extends AbstractScreen {
 		
 		// render screen
 		batch.begin();
+		
+		// draw background
+		batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+				gameWidth, gameHeight);
+		
+		// draw components
 		batch.draw(AssetHandler.buttonStart, 
 				btnStart.getPosition().x, btnStart.getPosition().y, 
 				btnStart.getWidth(), btnStart.getHeight());
