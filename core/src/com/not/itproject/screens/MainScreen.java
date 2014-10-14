@@ -45,21 +45,21 @@ public class MainScreen extends AbstractScreen {
 			game.nextScreen(ProjectZero.roomScreen, this);
 			
 			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME, "Start button is pressed.");
+			ProjectZero.log("Start button is pressed.");
 			
 		} else if (btnHowToPlay.isTouched()) {
 			// proceed to next screen
 			game.nextScreen(ProjectZero.helpScreen, this);
 			
 			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME, "How-to-play button is pressed.");
+			ProjectZero.log("How-to-play button is pressed.");
 			
 		} else if (btnSoundToggle.isTouched()) {
 			// toggle sound mute
 			AssetHandler.setSoundMute(btnSoundToggle.isToggleOn());
 			
 			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME, "Sound button is toggled. " + 
+			ProjectZero.log("Sound button is toggled. " + 
 					"Toggle on: " + btnSoundToggle.isToggleOn());
 		}
 	}

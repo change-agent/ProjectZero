@@ -38,7 +38,7 @@ public class NetworkServer {
 				server.bind(GameVariables.VALID_TCP_PORTS[nextPort],
 						GameVariables.VALID_UDP_PORTS[nextPort]);
 				NetworkHandler.setGameSessionID(nextPort);
-				Gdx.app.log("Port", "Number: " + nextPort);
+				ProjectZero.log("Port - Number: " + nextPort);
 				setServerOnline(true);
 
 			} catch (IOException e) {
@@ -63,6 +63,9 @@ public class NetworkServer {
 		NetworkHandler.getListOfPlayers().put(
 				NetworkHandler.getListOfPlayers().size(), 
 				AssetHandler.getPlayerID());
+		NetworkHandler.getListOfPlayerStatus().put(
+				AssetHandler.getPlayerID(),
+				NetworkMessage.SelectionState.PENDING);
 
 		// handle incoming connections
 		defineServerListener();
@@ -83,15 +86,19 @@ public class NetworkServer {
 
 						switch (request.type) {
 							case JOIN:
+								// check to see if session has started
 								boolean playerAdded = false;
-								// add player ID to list of players
-								for (int i=0; i<GameVariables.MAX_PLAYERS; i++) {
-									// check if key exists
-									if (!NetworkHandler.getListOfPlayers().containsKey(i)) {
-										// add player
-										NetworkHandler.getListOfPlayers().put(i, request.playerID);
-										playerAdded = true;
-										break;
+								if (!NetworkHandler.getGameStart()) {
+									// add player ID to list of players - if game not started
+									for (int i=0; i<GameVariables.MAX_PLAYERS; i++) {
+										// check if key exists
+										if (!NetworkHandler.getListOfPlayers().containsKey(i)) {
+											// add player
+											NetworkHandler.getListOfPlayers().put(i, request.playerID);
+											NetworkHandler.getListOfPlayerStatus().put(request.playerID, NetworkMessage.SelectionState.PENDING);
+											playerAdded = true;
+											break;
+										}
 									}
 								}
 								
@@ -121,6 +128,8 @@ public class NetworkServer {
 										// remove player
 										foundKey = true;
 										NetworkHandler.getListOfPlayers().remove(
+												key);
+										NetworkHandler.getListOfPlayerStatus().remove(
 												key);
 									}
 									key++;
@@ -164,6 +173,15 @@ public class NetworkServer {
 						server.sendToAllTCP(info);
 					}
 					
+					// get selection screen player status
+					else if (object instanceof NetworkMessage.SelectionPlayerStatusInformation) {
+						// get info
+						NetworkMessage.SelectionPlayerStatusInformation info = (NetworkMessage.SelectionPlayerStatusInformation) object;
+						
+						// add state to player
+						NetworkHandler.getListOfPlayerStatus().put(info.playerID, info.state);
+					}
+					
 				} catch (Exception e) {
 					// capture errors
 				}
@@ -176,12 +194,9 @@ public class NetworkServer {
 		// close connection
 		server.close();
 		setServerOnline(false);
-		
-		// reset game session ID
-		NetworkHandler.setGameSessionID(-1);
-		
-		// clear list of players
-		NetworkHandler.clearListOfPlayers();
+				
+		// reset networkHandler
+		NetworkHandler.reinitialise();
 	}
 
 	// send (track/vehicle) selection screen
@@ -190,6 +205,7 @@ public class NetworkServer {
 		try {
 			NetworkMessage.SelectionScreenInformation info = new NetworkMessage.SelectionScreenInformation();
 			info.playerList = NetworkHandler.getListOfPlayers();
+			info.playerStatusList = NetworkHandler.getListOfPlayerStatus();
 			server.sendToAllTCP(info);
 		} catch (Exception e) {
 			// capture errors

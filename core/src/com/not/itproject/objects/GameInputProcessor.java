@@ -29,8 +29,6 @@ public class GameInputProcessor {
 	Button buttonOne;
 	Button buttonTwo;
 	Button buttonThree;
-	ButtonStyle buttonStyle;
-	Skin buttonSkin;
 	Drawable touchButtonUp;
 	Drawable touchButtonDown;
 
@@ -81,7 +79,9 @@ public class GameInputProcessor {
 		// apply the Drawables to the TouchPad Style
 		touchpadStyle.background = touchBackground;
 		touchpadStyle.knob = touchKnob;
-
+		touchpadStyle.knob.setMinWidth(35);
+		touchpadStyle.knob.setMinHeight(35);
+		
 		// create new TouchPad with the created style
 		touchpad = new Touchpad(5, touchpadStyle);
 		touchpad.setPosition(8, 8);
@@ -89,17 +89,19 @@ public class GameInputProcessor {
 	
 	public void createButtons() {
 		// create a button skin
-		buttonSkin = new Skin();
-		buttonSkin.add("touchButtonOneUp", new Texture(Gdx.files.internal("controls/touchButton.png")));
-		buttonSkin.add("touchButtonTwoUp", new Texture(Gdx.files.internal("controls/touchButton.png")));
-		buttonSkin.add("touchButtonThreeUp", new Texture(Gdx.files.internal("controls/touchButton.png")));
-		buttonSkin.add("touchButtonOneDown", new Texture(Gdx.files.internal("controls/touchButton.png")));
-		buttonSkin.add("touchButtonTwoDown", new Texture(Gdx.files.internal("controls/touchButton.png")));
-		buttonSkin.add("touchButtonThreeDown", new Texture(Gdx.files.internal("controls/touchButton.png")));
+		Skin buttonSkin = new Skin();
+		buttonSkin.add("touchButtonOneUp", new Texture(Gdx.files.internal("controls/buttonAccelerate.png")));
+		buttonSkin.add("touchButtonOneDown", new Texture(Gdx.files.internal("controls/buttonAccelerate.png")));
+		buttonSkin.add("touchButtonTwoUp", new Texture(Gdx.files.internal("controls/buttonDecelerate.png")));
+		buttonSkin.add("touchButtonTwoDown", new Texture(Gdx.files.internal("controls/buttonDecelerate.png")));
+		buttonSkin.add("touchButtonThreeUp", new Texture(Gdx.files.internal("controls/buttonSpecial.png")));
+		buttonSkin.add("touchButtonThreeDown", new Texture(Gdx.files.internal("controls/buttonSpecial.png")));
 		buttonSkin.add("buttonMenu", new Texture(Gdx.files.internal("controls/buttonMenu.png")));
 
 		// create button style
-		buttonStyle = new ButtonStyle();
+		ButtonStyle buttonOneStyle = new ButtonStyle();
+		ButtonStyle buttonTwoStyle = new ButtonStyle();
+		ButtonStyle buttonThreeStyle = new ButtonStyle();
 		buttonMenuStyle = new ButtonStyle();
 
 		/** create button one **/
@@ -107,33 +109,33 @@ public class GameInputProcessor {
 		touchButtonDown = buttonSkin.getDrawable("touchButtonOneDown");
 		
 		// apply the drawables to the button style
-		buttonStyle.up = touchButtonUp;
-		buttonStyle.down = touchButtonDown;
+		buttonOneStyle.up = touchButtonUp;
+		buttonOneStyle.down = touchButtonDown;
 
 		// create button
-		buttonOne = new Button(buttonStyle);
+		buttonOne = new Button(buttonOneStyle);
 
 		/** create button two **/
 		touchButtonUp = buttonSkin.getDrawable("touchButtonTwoUp");
 		touchButtonDown = buttonSkin.getDrawable("touchButtonTwoDown");
 		
 		// apply the drawables to the button style
-		buttonStyle.up = touchButtonUp;
-		buttonStyle.down = touchButtonDown;
+		buttonTwoStyle.up = touchButtonUp;
+		buttonTwoStyle.down = touchButtonDown;
 
 		// create button		
-		buttonTwo = new Button(buttonStyle);
+		buttonTwo = new Button(buttonTwoStyle);
 
 		/** create button three **/
 		touchButtonUp = buttonSkin.getDrawable("touchButtonThreeUp");
 		touchButtonDown = buttonSkin.getDrawable("touchButtonThreeDown");
 		
 		// apply the drawables to the button style
-		buttonStyle.up = touchButtonUp;
-		buttonStyle.down = touchButtonDown;
+		buttonThreeStyle.up = touchButtonUp;
+		buttonThreeStyle.down = touchButtonDown;
 
 		// create button
-		buttonThree = new Button(buttonStyle);
+		buttonThree = new Button(buttonThreeStyle);
 
 		/** create button menu **/
 		touchButtonUp = buttonSkin.getDrawable("buttonMenu");
@@ -148,6 +150,9 @@ public class GameInputProcessor {
 		
 		// determine button size
 		buttonMenu.setSize(70, 25);
+		buttonOne.setSize(35, 35);
+		buttonTwo.setSize(35, 35);
+		buttonThree.setSize(35, 35);
 		
 		// determine button locations
 		buttonOne.setPosition(220, 10);

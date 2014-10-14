@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.not.itproject.objects.GameVariables;
 import com.not.itproject.objects.Player;
 
 public class TestFramework extends Game {
@@ -41,7 +42,8 @@ public class TestFramework extends Game {
 		font.setColor(Color.BLACK);
 		
 		// define player
-		player = new Player(null, "playerID", playerX, playerY, playerWidth, playerHeight, rotation);
+		player = new Player(null, "playerID", GameVariables.PlayerColour.RED, 
+				playerX, playerY, playerWidth, playerHeight, rotation);
 		
 		// perform tests
 		Gdx.app.log("Project Zero", "Testing Framework");

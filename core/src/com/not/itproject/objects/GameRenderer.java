@@ -3,6 +3,7 @@ package com.not.itproject.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.EllipseMapObject;
@@ -34,7 +35,10 @@ public class GameRenderer {
 	
 	// renderer state variables
 	private float resumeCountDown;
+	private float VIEWPORT_FACTOR = 4.0f;
 	private boolean isViewportScaled;
+	private float rotation = 0.0f;
+	private float diffRotation = 0.0f;
 	
 	// paused menu variables
 	SimpleButton btnResumeGame;
@@ -142,9 +146,27 @@ public class GameRenderer {
 	private void updateRunning(float delta) {
 		// update running state
 		camera.position.set(new Vector3(gameWorld.getPlayer().getCar().getPosition(), 0));
+//		cameraRotation(delta);		
 		camera.update();
         tiledMapRenderer.setView(camera);
 		batch.setProjectionMatrix(camera.combined);
+	}
+	
+	private void cameraRotation(float delta) {
+		// rotate camera according to player
+		diffRotation = Math.abs(rotation - gameWorld.getPlayer().getCar().getRotation());
+		if (diffRotation >= 1) {
+			if (rotation < gameWorld.getPlayer().getCar().getRotation()) {
+				// rotation by difference and delta
+				camera.rotate(diffRotation * delta);
+				rotation += diffRotation * delta;
+			}
+			else if (rotation > gameWorld.getPlayer().getCar().getRotation()) {
+				// rotation by difference and delta
+				camera.rotate(-diffRotation * delta);
+				rotation -= diffRotation * delta;
+			}
+		}
 	}
 	
 	private void updatePaused(float delta) {
@@ -209,45 +231,15 @@ public class GameRenderer {
 		// render ready state
         tiledMapRenderer.render();
 		batch.begin();
+
+		// draw players
+		renderPlayers(delta);
 		
-			// Draws players
-			for (Player players : gameWorld.players) {
-				batch.draw(AssetHandler.opponent, 
-						players.getCar().getPosition().x - players.getCar().getWidth() / 2, 
-						players.getCar().getPosition().y - players.getCar().getHeight() / 2, 
-						players.getCar().getWidth()/2, players.getCar().getHeight()/2, 
-						players.getCar().getWidth(), players.getCar().getHeight(), 
-						1.5f, 1.5f, players.getCar().getRotation());
-			}
+		// draw obstacles
+		renderObstacles(delta);
 			
-			//Draws static objects (powers and obstacles)
-			for (GameObject staticObj : gameWorld.staticObjects) {
-				if(staticObj.getObjType().value() == GameObject.ObjType.POWER_UP_CONTAINER.value())
-				{
-					// Only draw a power up if it is not in its cool down period
-					PowerUpContainer powerUpContainer = (PowerUpContainer) staticObj;
-					if(!powerUpContainer.isCoolingDown()) 
-					{
-						batch.draw(AssetHandler.powerUp, 
-								staticObj.getPosition().x - staticObj.getWidth() / 2, 
-								staticObj.getPosition().y - staticObj.getHeight() / 2, 
-								0, 0, 
-								staticObj.getWidth(), staticObj.getHeight(), 
-								1.5f, 1.5f, staticObj.getRotation());
-					}
-				}
-				else{
-					batch.draw(AssetHandler.obstacle, 
-							staticObj.getPosition().x - staticObj.getWidth() / 2, 
-							staticObj.getPosition().y - staticObj.getHeight() / 2, 
-							0, 0, 
-							staticObj.getWidth(), staticObj.getHeight(), 
-							1.5f, 1.5f, staticObj.getRotation());
-				}
-			}
-			
-			// draw countdown
-			renderCountDown(resumeCountDown);
+		// draw countdown
+		renderCountDown(resumeCountDown);
 		batch.end();
 	}
 	
@@ -288,44 +280,14 @@ public class GameRenderer {
 	
 	public void renderRunning(float delta) {
 		// render running state
-        tiledMapRenderer.render();
+		tiledMapRenderer.render();
 		batch.begin();
-			
-			// Draws players
-			for (Player players : gameWorld.players) {
-				batch.draw(AssetHandler.opponent, 
-						players.getCar().getPosition().x - players.getCar().getWidth() / 2, 
-						players.getCar().getPosition().y - players.getCar().getHeight() / 2, 
-						players.getCar().getWidth()/2, players.getCar().getHeight()/2, 
-						players.getCar().getWidth(), players.getCar().getHeight(), 
-						1.5f, 1.5f, players.getCar().getRotation());
-			}
-			
-			//Draws static objects (powers and obstacles)
-			for (GameObject staticObj : gameWorld.staticObjects) {
-				if(staticObj.getObjType().value() == GameObject.ObjType.POWER_UP_CONTAINER.value())
-				{
-					// Only draw a power up if it is not in its cool down period
-					PowerUpContainer powerUpContainer = (PowerUpContainer) staticObj;
-					if(!powerUpContainer.isCoolingDown()) 
-					{
-						batch.draw(AssetHandler.powerUp, 
-								staticObj.getPosition().x - staticObj.getWidth() / 2, 
-								staticObj.getPosition().y - staticObj.getHeight() / 2, 
-								0, 0, 
-								staticObj.getWidth(), staticObj.getHeight(), 
-								1.5f, 1.5f, staticObj.getRotation());
-					}
-				}
-				else{
-					batch.draw(AssetHandler.obstacle, 
-							staticObj.getPosition().x - staticObj.getWidth() / 2, 
-							staticObj.getPosition().y - staticObj.getHeight() / 2, 
-							0, 0, 
-							staticObj.getWidth(), staticObj.getHeight(), 
-							1.5f, 1.5f, staticObj.getRotation());
-				}
-			}
+
+		// draw players
+		renderPlayers(delta);
+
+		// draw obstacles
+		renderObstacles(delta);
 		batch.end();
 	}
 
@@ -365,11 +327,69 @@ public class GameRenderer {
 		gameInputProcessor.render(delta);	
 	}
 	
+	private void renderPlayers(float delta) {
+		// Draws players
+		TextureRegion playerImage = null;
+		for (Player player : gameWorld.players) {
+			// determine player colour
+			switch (player.getPlayerColour()) {
+				case RED:
+					playerImage = AssetHandler.carRed;
+					break;
+				case BLUE:
+					playerImage = AssetHandler.carBlue;
+					break;
+				case GREEN:
+					playerImage = AssetHandler.carGreen;
+					break;
+				case YELLOW:
+					playerImage = AssetHandler.carYellow;
+					break;
+			}
+			
+			// render player
+			batch.draw(playerImage, 
+					player.getCar().getPosition().x - player.getCar().getWidth() / 2, 
+					player.getCar().getPosition().y - player.getCar().getHeight() / 2, 
+					player.getCar().getWidth()/2, player.getCar().getHeight()/2, 
+					player.getCar().getWidth(), player.getCar().getHeight(), 
+					1.5f, 1.5f, player.getCar().getRotation());
+		}
+	}
+	
+	private void renderObstacles(float delta) {
+		//Draws static objects (powers and obstacles)
+		for (GameObject staticObj : gameWorld.staticObjects) {
+			if(staticObj.getObjType().value() == GameObject.ObjType.POWER_UP_CONTAINER.value())
+			{
+				// Only draw a power up if it is not in its cool down period
+				PowerUpContainer powerUpContainer = (PowerUpContainer) staticObj;
+				if(!powerUpContainer.isCoolingDown()) 
+				{
+					batch.draw(AssetHandler.powerUp, 
+							staticObj.getPosition().x - staticObj.getWidth() / 2, 
+							staticObj.getPosition().y - staticObj.getHeight() / 2, 
+							0, 0, 
+							staticObj.getWidth(), staticObj.getHeight(), 
+							1.5f, 1.5f, staticObj.getRotation());
+				}
+			}
+			else{
+				batch.draw(AssetHandler.obstacle, 
+						staticObj.getPosition().x - staticObj.getWidth() / 2, 
+						staticObj.getPosition().y - staticObj.getHeight() / 2, 
+						0, 0, 
+						staticObj.getWidth(), staticObj.getHeight(), 
+						1.5f, 1.5f, staticObj.getRotation());
+			}
+		}
+	}
+	
 	public void scaleViewport(boolean scale) {
 		// determine whether to scale viewport depending on ingame or not
 		if (scale == true) {
 			// in game - requires scaling
-			camera.setToOrtho(true, gameWidth / 4, gameHeight / 4);
+			camera.setToOrtho(true, gameWidth / VIEWPORT_FACTOR, gameHeight / VIEWPORT_FACTOR);
 			camera.update();
 		} else if (scale == false) {
 			// restore to default

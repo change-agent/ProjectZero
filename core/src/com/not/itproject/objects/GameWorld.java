@@ -17,6 +17,7 @@ import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.networks.NetworkMessage;
 import com.not.itproject.objects.GameObject.ObjType;
+import com.not.itproject.objects.GameVariables.PlayerColour;
 import com.not.itproject.zero.ProjectZero;
 
 public class GameWorld {
@@ -40,12 +41,18 @@ public class GameWorld {
 		public void endContact(Contact contact) {}
 		
 		@Override
-		public void beginContact(Contact contact) {
+		public void beginContact(Contact contact) {			
 			Fixture A = contact.getFixtureA();
 			Fixture B = contact.getFixtureB();
 			
+			if (getPlayer().getCar().equals((Car) B.getBody().getUserData()) ||
+					getPlayer().getCar().equals((Car) B.getBody().getUserData())) {
+				// tactile feedback
+				AssetHandler.vibrate(50);
+			}
+			
 			if(A.isSensor()) {
-				System.out.println("power coolected");
+				System.out.println("Power Collected");
 				PowerUpContainer powerUpContainer = (PowerUpContainer) A.getBody().getUserData();
 				Car car = (Car) B.getBody().getUserData();
 				car.setPower(powerUpContainer.getPowerUp());
@@ -53,7 +60,7 @@ public class GameWorld {
 			}
 			
 			if(B.isSensor()) {
-				System.out.println("power coolected");
+				System.out.println("Power Collected");
 				PowerUpContainer powerUpContainer = (PowerUpContainer) B.getBody().getUserData();
 				Car car = (Car) A.getBody().getUserData();
 				car.setPower(powerUpContainer.getPowerUp());
@@ -106,8 +113,27 @@ public class GameWorld {
 	public void initialiseGameWorld() {
 		// This worlds player will always be at index 0
 		// This makes using powers more transparent and will allow for network data efficiency
+		PlayerColour colour = null;
 		for (int i=0; i<NetworkHandler.getListOfPlayers().size(); i++) {
-			players.add(new Player(worldBox2D, NetworkHandler.getListOfPlayers().get(i), 
+			switch (i) {
+				case 0:
+					// first player is red
+					colour = GameVariables.PlayerColour.RED;
+					break;
+				case 1:
+					// second player is blue
+					colour = GameVariables.PlayerColour.BLUE;
+					break;
+				case 2:
+					// third player is blue
+					colour = GameVariables.PlayerColour.GREEN;
+					break;
+				case 3:
+					// fourth player is blue
+					colour = GameVariables.PlayerColour.YELLOW;
+					break;
+			}
+			players.add(new Player(worldBox2D, NetworkHandler.getListOfPlayers().get(i), colour,
 					gameWidth / 2 + i*carWidth*2, gameHeight / 2, carWidth, carHeight, 0));
 		}
 	}

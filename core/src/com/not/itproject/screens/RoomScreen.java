@@ -115,15 +115,12 @@ public class RoomScreen extends AbstractScreen {
 			screenStatus = RoomState.LOAD;
 			
 			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME,
-					"Load Game button is pressed.");
+			ProjectZero.log("Load Game button is pressed.");
 
 		} else if (btnNewGame.isTouched()) {
 			// debug log to console
-			setupNetwork = false;
 			game.nextScreen(ProjectZero.selectionScreen, this);
-			Gdx.app.log(ProjectZero.GAME_NAME,
-					"New Game button is pressed.");
+			ProjectZero.log("New Game button is pressed.");
 			
 		} else if (btnBack.isTouched()) {
 			// proceed back to main menu
@@ -144,8 +141,7 @@ public class RoomScreen extends AbstractScreen {
 		// check input from user and perform action
 		if (btnLoad.isTouched()) {
 			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME,
-					"Load button is pressed.");
+			ProjectZero.log("Load button is pressed.");
 
 		} else if (btnBack.isTouched()) {
 			// proceed back to waiting

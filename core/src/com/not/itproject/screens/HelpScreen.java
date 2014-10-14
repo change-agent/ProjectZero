@@ -83,7 +83,7 @@ public class HelpScreen extends AbstractScreen {
 		if (btnBack.isTouched()) {
 			game.nextScreen(ProjectZero.mainScreen, this);
 			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME, "Back button is pressed.");
+			ProjectZero.log("Back button is pressed.");
 			
 		}
 		
@@ -94,7 +94,7 @@ public class HelpScreen extends AbstractScreen {
 				if (btnNext.isTouched()) {
 					nextHelpPage();
 					// debug log to console
-					Gdx.app.log(ProjectZero.GAME_NAME, "Next page button is pressed.");
+					ProjectZero.log("Next page button is pressed.");
 					
 				}
 				break;
@@ -104,12 +104,12 @@ public class HelpScreen extends AbstractScreen {
 				if (btnPrevious.isTouched()) {
 					previousHelpPage();
 					// debug log to console
-					Gdx.app.log(ProjectZero.GAME_NAME, "Previous page button is pressed.");
+					ProjectZero.log("Previous page button is pressed.");
 					
 				} else if (btnNext.isTouched()) {
 					nextHelpPage();
 					// debug log to console
-					Gdx.app.log(ProjectZero.GAME_NAME, "Next page button is pressed.");
+					ProjectZero.log("Next page button is pressed.");
 					
 				}
 				break;
@@ -119,7 +119,7 @@ public class HelpScreen extends AbstractScreen {
 				if (btnPrevious.isTouched()) {
 					previousHelpPage();
 					// debug log to console
-					Gdx.app.log(ProjectZero.GAME_NAME, "Previous page button is pressed.");
+					ProjectZero.log("Previous page button is pressed.");
 					
 				}
 				break;

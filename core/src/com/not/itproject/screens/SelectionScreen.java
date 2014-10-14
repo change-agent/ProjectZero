@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
+import com.not.itproject.networks.NetworkMessage;
 import com.not.itproject.objects.SimpleButton;
 import com.not.itproject.objects.SimpleRoundButton;
 import com.not.itproject.zero.ProjectZero;
@@ -14,17 +15,27 @@ public class SelectionScreen extends AbstractScreen {
 	SimpleButton btnReady;
 	SimpleButton btnStart;
 	SimpleRoundButton btnBack;
+	SimpleRoundButton btnNavigateLeft;
+	SimpleRoundButton btnNavigateRight;
 	SelectionState screenStatus;
-	enum SelectionState { TRACK, VEHICLE, READY };
+	TrackType selectedTrack;
+	VehicleType selectedVehicle;
+	public enum SelectionState 	{ TRACK, VEHICLE, READY };
+	public enum TrackType 		{ NONE, TRACK_ONE }; 
+		//{ TRACK_ONE, TRACK_TWO, TRACK_THREE };		// core to implement multiple tracks
+	public enum VehicleType		{ NONE, VEHICLE_ONE }; 
+		//{ VEHICLE_ONE, VEHICLE_TWO, VEHICLE_THREE };	// core to implement multiple vehicles
 	private boolean setupNetwork = false;
 	
 	// main constructor
 	public SelectionScreen(ProjectZero game) {
-		// define super
+		// define super 
 		super(game);
 		
 		// initialise variables
 		screenStatus = SelectionState.TRACK;
+		selectedTrack = TrackType.NONE;
+		selectedVehicle = VehicleType.NONE;
 		int btnWidth = 80; // assign for main buttons
 		int btnOffset = 10;
 		btnNext = new SimpleButton((int)(gameWidth * 4/5) - btnWidth/2 + btnOffset, 
@@ -34,6 +45,8 @@ public class SelectionScreen extends AbstractScreen {
 		btnStart = new SimpleButton((int)(gameWidth * 4/5) - btnWidth/2 + btnOffset, 
 				(int)(gameHeight * 4/5), btnWidth, 30);
 		btnBack = new SimpleRoundButton(20, 20, 15);
+		btnNavigateLeft = new SimpleRoundButton(32, 95, 12);
+		btnNavigateRight = new SimpleRoundButton(200, 95, 12);
 	}
 
 	public void update(float delta) {
@@ -51,7 +64,7 @@ public class SelectionScreen extends AbstractScreen {
 		if (setupNetwork && !NetworkHandler.isClient() &&
 				!NetworkHandler.isHost()) {
 			// return back to room screen displaying message
-			Gdx.app.log("Network", "Disconnected");
+			ProjectZero.log("Network - Disconnected");
 			setupNetwork = false;
 		}
 		
@@ -84,6 +97,8 @@ public class SelectionScreen extends AbstractScreen {
 	private void updateTrack(float delta) {
 		// update objects
 		btnNext.update(delta);
+		btnNavigateLeft.update(delta);
+		btnNavigateRight.update(delta);
 
 		// check input from user and perform action
 		if (btnNext.isTouched()) {
@@ -91,13 +106,9 @@ public class SelectionScreen extends AbstractScreen {
 			screenStatus = SelectionState.VEHICLE;
 
 			// debug log to console
-			Gdx.app.log(ProjectZero.GAME_NAME, "Next button is pressed.");
+			ProjectZero.log("Next button is pressed.");
 		}
 		else if (btnBack.isTouched()) {
-			// go back to room
-			setupNetwork = false;
-			game.nextScreen(ProjectZero.roomScreen, this);
-			
 			// disconnect from network
 			if (NetworkHandler.isHost()) {
 				// as host - end game session
@@ -106,17 +117,34 @@ public class SelectionScreen extends AbstractScreen {
 				// as client - leave game session
 				NetworkHandler.getNetworkClient().leaveGameSession();
 			}
+			
+			// go back to room
+			setupNetwork = false;
+			game.nextScreen(ProjectZero.roomScreen, this);
 		}
 	}
 	
 	private void updateVehicle(float delta) {
 		// update objects
 		btnReady.update(delta);
+		btnNavigateLeft.update(delta);
+		btnNavigateRight.update(delta);
 
 		// check input from user and perform action
 		if (btnReady.isTouched()) {
 			// proceed to next state
 			screenStatus = SelectionState.READY;
+			
+			// client - send ready state
+			if (NetworkHandler.isClient() && 
+					screenStatus == SelectionState.READY) {
+				// send information to server
+				NetworkHandler.getNetworkClient().sendSelectionScreenReadyInformation(NetworkMessage.SelectionState.READY);
+			}
+			else if (NetworkHandler.isHost()) {
+				// set host as ready
+				NetworkHandler.getListOfPlayerStatus().put(AssetHandler.getPlayerID(), NetworkMessage.SelectionState.READY);
+			}
 		}
 		else if (btnBack.isTouched()) {
 			// proceed to previous state
@@ -126,7 +154,7 @@ public class SelectionScreen extends AbstractScreen {
 	
 	private void updateReady(float delta) {
 		// session host - start option
-		if (NetworkHandler.isHost()) {
+		if (NetworkHandler.isHost() && allPlayersReady()) {
 			// update objects
 			btnStart.update(delta);
 
@@ -141,6 +169,17 @@ public class SelectionScreen extends AbstractScreen {
 		if (btnBack.isTouched()) {
 			// proceed to previous state
 			screenStatus = SelectionState.VEHICLE;
+
+			// client - send pending state
+			if (NetworkHandler.isClient() && 
+					screenStatus != SelectionState.READY) {
+				// send information to server
+				NetworkHandler.getNetworkClient().sendSelectionScreenReadyInformation(NetworkMessage.SelectionState.PENDING);
+			}
+			else if (NetworkHandler.isHost()) {
+				// set host as pending
+				NetworkHandler.getListOfPlayerStatus().put(AssetHandler.getPlayerID(), NetworkMessage.SelectionState.PENDING);
+			}
 		}
 	}
 	
@@ -153,7 +192,6 @@ public class SelectionScreen extends AbstractScreen {
 		// update objects
 		update(delta);
 		
-		
 		// determine screen status
 		switch (screenStatus) {
 			case TRACK:
@@ -164,9 +202,9 @@ public class SelectionScreen extends AbstractScreen {
 				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
 						gameWidth, gameHeight);
 				
-				renderSessionTitle(delta);
 				renderTrack(delta);		
 				renderPlayers(delta);
+				renderSessionTitle(delta);
 				batch.end();
 				break;
 				
@@ -178,9 +216,9 @@ public class SelectionScreen extends AbstractScreen {
 				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
 						gameWidth, gameHeight);
 				
-				renderSessionTitle(delta);
 				renderVehicle(delta);		
 				renderPlayers(delta);
+				renderSessionTitle(delta);
 				batch.end();				
 				break;
 				
@@ -192,9 +230,9 @@ public class SelectionScreen extends AbstractScreen {
 				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
 						gameWidth, gameHeight);
 				
-				renderSessionTitle(delta);
 				renderReady(delta);		
 				renderPlayers(delta);
+				renderSessionTitle(delta);
 				batch.end();
 				break;
 		}
@@ -206,14 +244,37 @@ public class SelectionScreen extends AbstractScreen {
 				gameWidth, 35, 1, 1, 0);
 		
 		// render game session title
-		AssetHandler.getFont(0.4f).draw(batch, "Game Session ID: " + 
+		AssetHandler.getFont(0.5f).draw(batch, "Game Session ID: " + 
 				String.format("%05d", NetworkHandler.getGameSessionID()), 
-				50, 10);
+				50, 15);
 		
-		AssetHandler.getFont(0.4f).draw(batch, 
-				"Host: " + NetworkHandler.isHost() + " | " + 
-				"Client: " + NetworkHandler.isClient(), 
-				60, 25);
+		// determine message to display
+		String message = null;
+		switch (screenStatus) {
+			case TRACK:
+				message = "Select a track:";
+				break;
+			case VEHICLE:
+				message = "Select a vehicle:";
+				break;
+			case READY:
+				message = "Awaiting other players";
+				break;
+		}
+		
+		// if all players are ready
+		if (allPlayersReady()) {
+			message = "All players ready!";
+		}
+		
+		// render message
+		AssetHandler.getFont(0.35f).draw(batch, message, 22, 50);
+		
+		// draw back button
+		batch.draw(AssetHandler.buttonBack, 
+				btnBack.getPosition().x - btnBack.getRadius(), 
+				btnBack.getPosition().y - btnBack.getRadius(), 
+				btnBack.getRadius() * 2, btnBack.getRadius() * 2);
 	}
 	
 	private void renderPlayers(float delta) {
@@ -270,35 +331,78 @@ public class SelectionScreen extends AbstractScreen {
 			
 		// mark which player is host
 		AssetHandler.getFont(0.25f).draw(batch, "Host", 23, 163);
+		
+		// mark which player is ready
+		if (NetworkHandler.getListOfPlayers().containsKey(0) &&
+				NetworkHandler.getListOfPlayerStatus().get(
+						NetworkHandler.getListOfPlayers().get(0)) 
+						== (NetworkMessage.SelectionState.READY)) {
+			// show ready badge
+			batch.draw(AssetHandler.playerReady, 10, 145, 50, 28);
+		}
+		if (NetworkHandler.getListOfPlayers().containsKey(1) &&
+				NetworkHandler.getListOfPlayerStatus().get(
+						NetworkHandler.getListOfPlayers().get(1)) 
+						== (NetworkMessage.SelectionState.READY)) {
+			// show ready badge
+			batch.draw(AssetHandler.playerReady, 63, 145, 50, 28);
+		}
+		if (NetworkHandler.getListOfPlayers().containsKey(2) &&
+				NetworkHandler.getListOfPlayerStatus().get(
+						NetworkHandler.getListOfPlayers().get(2)) 
+						== (NetworkMessage.SelectionState.READY)) {
+			// show ready badge
+			batch.draw(AssetHandler.playerReady, 116, 145, 50, 28);
+		}
+		if (NetworkHandler.getListOfPlayers().containsKey(3) &&
+				NetworkHandler.getListOfPlayerStatus().get(
+						NetworkHandler.getListOfPlayers().get(3)) 
+						== (NetworkMessage.SelectionState.READY)) {
+			// show ready badge
+			batch.draw(AssetHandler.playerReady, 169, 145, 50, 28);
+		}
 	}
 	
 	private void renderTrack(float delta) {
 		// render track menu
 		batch.draw(AssetHandler.menuTrack, 10, 40, 300, 100);
+		batch.draw(AssetHandler.navigateLeft, 
+				btnNavigateLeft.getPosition().x - btnNavigateLeft.getRadius(), 
+				btnNavigateLeft.getPosition().y - btnNavigateLeft.getRadius(), 
+				btnNavigateLeft.getRadius() * 2, btnNavigateLeft.getRadius() * 2);
+		batch.draw(AssetHandler.navigateRight, 
+				btnNavigateRight.getPosition().x - btnNavigateRight.getRadius(), 
+				btnNavigateRight.getPosition().y - btnNavigateRight.getRadius(), 
+				btnNavigateRight.getRadius() * 2, btnNavigateRight.getRadius() * 2);
 		
 		// render track state
 		batch.draw(AssetHandler.buttonNext, 
 				btnNext.getPosition().x, btnNext.getPosition().y, 
 				btnNext.getWidth(), btnNext.getHeight());
-		batch.draw(AssetHandler.buttonBack, 
-				btnBack.getPosition().x - btnBack.getRadius(), 
-				btnBack.getPosition().y - btnBack.getRadius(), 
-				btnBack.getRadius() * 2, btnBack.getRadius() * 2);
 	}
-	
+
 	private void renderVehicle(float delta) {
 		// render vehicle menu
 		batch.draw(AssetHandler.menuVehicle, 10, 40, 300, 100);
+		batch.draw(AssetHandler.navigateLeft, 
+				btnNavigateLeft.getPosition().x - btnNavigateLeft.getRadius(), 
+				btnNavigateLeft.getPosition().y - btnNavigateLeft.getRadius(), 
+				btnNavigateLeft.getRadius() * 2, btnNavigateLeft.getRadius() * 2);
+		batch.draw(AssetHandler.navigateRight, 
+				btnNavigateRight.getPosition().x - btnNavigateRight.getRadius(), 
+				btnNavigateRight.getPosition().y - btnNavigateRight.getRadius(), 
+				btnNavigateRight.getRadius() * 2, btnNavigateRight.getRadius() * 2);
 		
 		// render vehicle state
 		batch.draw(AssetHandler.buttonReady, 
 				btnReady.getPosition().x, btnReady.getPosition().y, 
 				btnReady.getWidth(), btnReady.getHeight());
-		batch.draw(AssetHandler.buttonBack, 
-				btnBack.getPosition().x - btnBack.getRadius(), 
-				btnBack.getPosition().y - btnBack.getRadius(), 
-				btnBack.getRadius() * 2, btnBack.getRadius() * 2);
 		
+		// render vehicle
+		batch.draw(AssetHandler.carRed, 148, 50, 
+				AssetHandler.carRed.getRegionWidth()*0.05f/2, AssetHandler.carRed.getRegionHeight()*0.05f/2, 
+				AssetHandler.carRed.getRegionWidth(), AssetHandler.carRed.getRegionHeight(), 
+				0.10f, 0.10f, 90);		
 	}
 
 	private void renderReady(float delta) {
@@ -306,23 +410,33 @@ public class SelectionScreen extends AbstractScreen {
 		batch.draw(AssetHandler.menuReady, 10, 40, 300, 100);
 		
 		// session host - start option
-		if (NetworkHandler.isHost()) {
+		if (NetworkHandler.isHost() && allPlayersReady()) {
 			// show start option
 			batch.draw(AssetHandler.buttonStartSession, 
 					btnStart.getPosition().x, btnStart.getPosition().y, 
 					btnStart.getWidth(), btnStart.getHeight());
 		}
 		
-		batch.draw(AssetHandler.buttonBack, 
-				btnBack.getPosition().x - btnBack.getRadius(), 
-				btnBack.getPosition().y - btnBack.getRadius(), 
-				btnBack.getRadius() * 2, btnBack.getRadius() * 2);
-		
 	}
 	
 	public void startGame() {
+		// mark game start
+		NetworkHandler.setGameStart(true);
+		
 		// proceed to game screen
 		game.nextScreen(ProjectZero.gameScreen, this);
+	}
+	
+	private boolean allPlayersReady() {
+		boolean result = true;
+		for (NetworkMessage.SelectionState status : NetworkHandler.getListOfPlayerStatus().values()) {
+			// determine if all players are ready
+			if (status != NetworkMessage.SelectionState.READY) {
+				result = false;
+				break;
+			}
+		}
+		return result;
 	}
 	
 	@Override

@@ -7,7 +7,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
@@ -24,6 +23,7 @@ public class NetworkClient {
 	private static Client client;
 	private static Listener clientListener;
 	private static Map<Integer, InetAddress> listOfServers;
+	private static final int DISCOVER_TIMEOUT = 200;
 	
 	// main constructor
 	public NetworkClient() {
@@ -49,7 +49,7 @@ public class NetworkClient {
 		// iterate through valid UDP ports
 		for (int i=0; i<GameVariables.VALID_UDP_PORTS.length; i++) {
 			// try obtain address
-			serverAddress = client.discoverHost(GameVariables.VALID_UDP_PORTS[i], 50);
+			serverAddress = client.discoverHost(GameVariables.VALID_UDP_PORTS[i], DISCOVER_TIMEOUT);
 			if (serverAddress != null) { listOfServers.put(i, serverAddress); }
 		}
 	}
@@ -106,6 +106,8 @@ public class NetworkClient {
 					else if (object instanceof NetworkMessage.SelectionScreenInformation) {
 						NetworkMessage.SelectionScreenInformation info = (NetworkMessage.SelectionScreenInformation) object;
 						NetworkHandler.setListOfPlayers(info.playerList);
+						NetworkHandler.setListOfPlayerStatus(info.playerStatusList);
+						ProjectZero.log("Keys: " + info.playerStatusList.keySet());
 					}
 					
 					// get game start
@@ -157,14 +159,8 @@ public class NetworkClient {
 		// close connection
 		client.close();
 		
-		// reset game session ID
-		NetworkHandler.setGameSessionID(-1);
-		
-		// clear list of players
-		NetworkHandler.clearListOfPlayers();
-
-		// re-initialise variables
-		listOfServers = new HashMap<Integer, InetAddress>();
+		// reset networkHandler
+		NetworkHandler.reinitialise();
 		
 		// re-initialise client
 		client = new Client();
@@ -204,6 +200,19 @@ public class NetworkClient {
 		try {
 			// send game state information
 			NetworkMessage.GameStateInformation info = new NetworkMessage.GameStateInformation();
+			info.state = state;
+			client.sendTCP(info);
+		} catch (Exception e) {
+			// capture errors
+		}
+	}
+
+	// send (ready state) selection screen
+	public void sendSelectionScreenReadyInformation(NetworkMessage.SelectionState state) {
+		// send information
+		try {
+			NetworkMessage.SelectionPlayerStatusInformation info = new NetworkMessage.SelectionPlayerStatusInformation();
+			info.playerID = AssetHandler.getPlayerID();
 			info.state = state;
 			client.sendTCP(info);
 		} catch (Exception e) {

@@ -7,7 +7,7 @@ public class GameVariables {
 	// networking variables
 	public final static int[] VALID_UDP_PORTS = {54777, 54778, 54779};
 	public final static int[] VALID_TCP_PORTS = {54555, 54556, 54557};
-	public final static int MAX_PLAYERS = 1;
+	public final static int MAX_PLAYERS = 4;
 	
 	// large range of ports to support more game sessions
 	/*
@@ -18,6 +18,7 @@ public class GameVariables {
 	*/
 	
 	// in-game variables
+	public enum PlayerColour {RED, BLUE, GREEN, YELLOW};
 	public final int GAMELAPS = 3;
 	public final static float PPM = 8;
 	
