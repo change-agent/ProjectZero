@@ -22,7 +22,8 @@ public class GameObject {
 	protected enum ObjType {
 		CAR((short)0x0001), 
 		OBSTACLE((short)0x0002), 
-		POWER_UP_CONTAINER((short)0x0004);
+		CHECKPOINT((short)0x0004), 
+		POWER_UP_CONTAINER((short)0x0008);
 		
 		public short value;
 		ObjType(short value) {this.value = value;}

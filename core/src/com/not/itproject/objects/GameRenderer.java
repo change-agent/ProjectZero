@@ -12,7 +12,9 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.networks.NetworkMessage;
@@ -30,7 +32,6 @@ public class GameRenderer {
 	private float gameWidth, gameHeight;
 	
 	// Map rendering
-	TiledMap tiledMap;
 	TiledMapRenderer tiledMapRenderer;
 	
 	// renderer state variables
@@ -66,6 +67,7 @@ public class GameRenderer {
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(camera.combined);
+		tiledMapRenderer = new OrthogonalTiledMapRenderer(gameWorld.getTiledMap());
 		
 		// initialise ready state variables
 		resumeCountDown = 0f;
@@ -73,27 +75,6 @@ public class GameRenderer {
 		
 		// set viewport - no scaling
 		scaleViewport(false);
-		
-		// Load the map and set up the obstacles
-		tiledMap = new TmxMapLoader().load("maps/test.tmx");
-		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-		
-		for(MapObject object : tiledMap.getLayers().get("Obstacles").getObjects()) {
-			if(object instanceof RectangleMapObject) {
-				float x = ((RectangleMapObject) object).getRectangle().x;
-				float y = ((RectangleMapObject) object).getRectangle().y;
-				float width = ((RectangleMapObject) object).getRectangle().width;
-				float height = ((RectangleMapObject) object).getRectangle().height;
-				gameWorld.staticObjects.add(new Obstacle(gameWorld.worldBox2D, x, y, width * 10, height * 10, 0));
-			}
-			else if(object instanceof EllipseMapObject){
-				float x = ((EllipseMapObject) object).getEllipse().x;
-				float y = ((EllipseMapObject) object).getEllipse().y;
-				float width = ((EllipseMapObject) object).getEllipse().width;
-				float height = ((EllipseMapObject) object).getEllipse().height;
-				gameWorld.staticObjects.add(new PowerUpContainer(gameWorld.worldBox2D, x, y, width * 10, height * 10, 0));
-			}
-		}
 		
 		// initialise paused menu variables
 		int btnWidth = 120; // assign for main buttons
@@ -145,28 +126,10 @@ public class GameRenderer {
 	
 	private void updateRunning(float delta) {
 		// update running state
-		camera.position.set(new Vector3(gameWorld.getPlayer().getCar().getPosition(), 0));
-//		cameraRotation(delta);		
+		camera.position.set(clampCameraPosition(gameWorld.getPlayer().getCar().getPosition()), 0);
 		camera.update();
         tiledMapRenderer.setView(camera);
 		batch.setProjectionMatrix(camera.combined);
-	}
-	
-	private void cameraRotation(float delta) {
-		// rotate camera according to player
-		diffRotation = Math.abs(rotation - gameWorld.getPlayer().getCar().getRotation());
-		if (diffRotation >= 1) {
-			if (rotation < gameWorld.getPlayer().getCar().getRotation()) {
-				// rotation by difference and delta
-				camera.rotate(diffRotation * delta);
-				rotation += diffRotation * delta;
-			}
-			else if (rotation > gameWorld.getPlayer().getCar().getRotation()) {
-				// rotation by difference and delta
-				camera.rotate(-diffRotation * delta);
-				rotation -= diffRotation * delta;
-			}
-		}
 	}
 	
 	private void updatePaused(float delta) {
@@ -371,7 +334,7 @@ public class GameRenderer {
 							staticObj.getPosition().y - staticObj.getHeight() / 2, 
 							0, 0, 
 							staticObj.getWidth(), staticObj.getHeight(), 
-							1.5f, 1.5f, staticObj.getRotation());
+							1.0f, 1.0f, staticObj.getRotation());
 				}
 			}
 			else{
@@ -380,7 +343,7 @@ public class GameRenderer {
 						staticObj.getPosition().y - staticObj.getHeight() / 2, 
 						0, 0, 
 						staticObj.getWidth(), staticObj.getHeight(), 
-						1.5f, 1.5f, staticObj.getRotation());
+						1.0f, 1.0f, staticObj.getRotation());
 			}
 		}
 	}
@@ -400,5 +363,24 @@ public class GameRenderer {
 	
 	public void dispose() {
 		
+	}
+	
+	private Vector2 clampCameraPosition(Vector2 cameraPosition) 
+	{
+		Vector2 newCameraPosition = new Vector2();
+		newCameraPosition.set(cameraPosition);
+		if( newCameraPosition.x - camera.viewportWidth / 2 <= 0 ) {
+			newCameraPosition.x = camera.viewportWidth / 2;
+		}
+		else if(newCameraPosition.x + camera.viewportWidth / 2 >= gameWorld.getMapWidth()) {
+			newCameraPosition.x = gameWorld.getMapWidth() - camera.viewportWidth / 2;
+		}
+		if( newCameraPosition.y - camera.viewportHeight / 2 <= 0 ) {
+			newCameraPosition.y = camera.viewportHeight / 2;
+		}
+		else if(newCameraPosition.y + camera.viewportHeight / 2 >= gameWorld.getMapHeight()) {
+			newCameraPosition.y = gameWorld.getMapHeight() - camera.viewportHeight / 2;
+		}
+		return newCameraPosition;
 	}
 }

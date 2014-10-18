@@ -3,6 +3,7 @@ package com.not.itproject.objects;
 import java.util.List;
 import java.util.Random;
 
+import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.objects.GameVariables.PowerType;
 
 public class PowerUp {
@@ -74,6 +75,7 @@ public class PowerUp {
 	// Applies power to a specific player
 	public void applyPower(Player player, List<Player> opponents) 
 	{
+		AssetHandler.usePower.play();
 		if(this.powerType == PowerType.SPEEDBOOST)
 		{
 			if( renewBuff(player) == false ) {

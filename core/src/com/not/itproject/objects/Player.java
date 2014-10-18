@@ -1,8 +1,10 @@
 package com.not.itproject.objects;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.not.itproject.objects.GameVariables.PlayerColour;
@@ -13,16 +15,21 @@ public class Player {
 	private PlayerColour playerColour;
 	private int lapNum;
 	private List<PowerUp> activeBuffs;
+	private HashMap<String, Checkpoint> checkpoints;
+
 	
 	// main constructor
-	public Player(World worldBox2D, String playerID, PlayerColour colour, float x, float y, float width, float height, float rotation)
+	public Player(World worldBox2D, String playerID, PlayerColour colour, float x, float y, 
+			float width, float height, float rotation)
 	{	
-		this.car = new Car(worldBox2D, x, y, width, height, 0);
+		this.car = new Car(worldBox2D, this, x, y, width, height, 0);
 		this.activeBuffs = new ArrayList<PowerUp>(GameVariables.PowerType.values().length);
 		this.playerID = playerID;
 		this.playerColour = colour;
+		this.checkpoints = new HashMap<String, Checkpoint>();
 	}
-		
+	
+	// ---------------- Effect Buffer -----------------------//
 	public void update(float delta) {
 		car.update(delta);
 		Iterator<PowerUp> iter = activeBuffs.iterator();
@@ -35,15 +42,6 @@ public class Player {
 			else{
 				buff.updateLifeTime(delta);
 			}
-		}
-		printBuffStack();
-	}
-	
-	private void printBuffStack() {
-		for (PowerUp buff : activeBuffs) {
-			System.out.print("1. ");
-			buff.printPowerType();
-			System.out.print("\n");
 		}
 	}
 	
@@ -64,7 +62,8 @@ public class Player {
 	public void renewActiveBuff(int index, PowerUp buff) {
 		activeBuffs.set(index, buff);
 	}
-		
+	
+	// --------------------- Getter and setters ----------------- //	
 	public Car getCar() {
 		return car;
 	}
@@ -83,5 +82,25 @@ public class Player {
 
 	public void flagUsePower() {
 		getCar().setUsePower();
+	}
+	
+	// --------------- Checkpoint handling functions ------------- //
+
+	public Set<String> getCheckpoints() 
+	{
+		return checkpoints.keySet();
+	}
+	
+	public void addCheckpoint(String name, Checkpoint checkpoint)
+	{
+		checkpoints.put(name, checkpoint);
+	}
+
+	public void clearCheckpoints() {
+		checkpoints.clear();		
+	}
+	
+	public void incrementLap() {
+		lapNum++;
 	}
 }

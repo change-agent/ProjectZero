@@ -3,6 +3,7 @@ package com.not.itproject.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.zero.ProjectZero;
 
 public class SimpleButton {
@@ -26,6 +27,10 @@ public class SimpleButton {
 		// check if pressed
 		isTouched = pressed((int) (Gdx.input.getX() * ProjectZero.RATIO), 
 				(int) (Gdx.input.getY() * ProjectZero.RATIO));
+		if(isTouched)
+		{
+			AssetHandler.buttonClick.play();
+		}
 	}
 	
 	public boolean pressed(int x, int y) {

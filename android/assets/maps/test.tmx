@@ -7,134 +7,144 @@
   <image source="preview.jpg" width="1024" height="768"/>
  </tileset>
  <layer name="Grass" width="15" height="15">
+  <properties>
+   <property name="Friction" value="1.5"/>
+  </properties>
   <data encoding="base64" compression="zlib">
    eJwLYGBgCBjFo3gUDxgGADAIRlE=
   </data>
  </layer>
  <layer name="Road" width="15" height="15">
+  <properties>
+   <property name="Friction" value="1.0"/>
+  </properties>
   <data encoding="base64" compression="zlib">
    eJxjYBg44MkMwauIpJGBMjN2M7EBNTS1bAT0Itu5hkR7m/HIr4SaCaKxuQGff0lxA7p/QcALai42e2FyMBod4PMTPjlcboEBdP+iqyVkNjJIRlNLbJpaicVeegMAVnkZQQ==
   </data>
  </layer>
  <objectgroup name="Obstacles">
-  <object x="243.042" y="70.6667" width="2.66667" height="2.66667"/>
-  <object x="242.667" y="83.6667" width="2.66667" height="2.66667"/>
-  <object x="400.589" y="74.334" width="2.66667" height="2.66667" rotation="27.1531"/>
-  <object x="394.322" y="85.7301" width="2.66667" height="2.66667" rotation="27.1531"/>
-  <object x="382.794" y="138.752" width="2.66667" height="2.66667" rotation="-46.8566"/>
-  <object x="397.898" y="150.541" width="2.66667" height="2.66667" rotation="-46.8566"/>
-  <object x="395.667" y="389.667" width="2.66667" height="2.66667"/>
-  <object x="362.667" y="405.167" width="2.66667" height="2.66667"/>
-  <object x="332.667" y="391.667" width="2.66667" height="2.66667"/>
-  <object x="301.917" y="405.917" width="2.66667" height="2.66667"/>
-  <object x="78.6667" y="345.667" width="2.66667" height="2.66667"/>
-  <object x="145.167" y="246.667" width="2.66667" height="2.66667"/>
-  <object x="128.417" y="272.667" width="2.66667" height="2.66667"/>
-  <object x="45.6667" y="204.917" width="2.66667" height="2.66667"/>
-  <object x="45.6667" y="132.167" width="2.66667" height="2.66667"/>
-  <object x="306.667" y="143.167" width="2.66667" height="2.66667"/>
-  <object x="374.167" y="262.917" width="2.66667" height="2.66667"/>
-  <object x="400.667" y="275.417" width="2.66667" height="2.66667"/>
-  <object x="297.167" y="264.917" width="2.66667" height="2.66667"/>
-  <object x="310.917" y="289.167" width="2.66667" height="2.66667"/>
-  <object x="301.818" y="70.1818" width="2.54545" height="2.72727">
+  <object name="1" x="400.589" y="74.334" width="2.66667" height="2.66667" rotation="27.1531"/>
+  <object name="2" x="394.322" y="85.7301" width="2.66667" height="2.66667" rotation="27.1531"/>
+  <object name="3" x="382.794" y="138.752" width="2.66667" height="2.66667" rotation="-46.8566"/>
+  <object name="4" x="397.898" y="150.541" width="2.66667" height="2.66667" rotation="-46.8566"/>
+  <object name="5" x="395.667" y="389.667" width="2.66667" height="2.66667"/>
+  <object name="6" x="362.667" y="405.167" width="2.66667" height="2.66667"/>
+  <object name="7" x="332.667" y="391.667" width="2.66667" height="2.66667"/>
+  <object name="8" x="301.917" y="405.917" width="2.66667" height="2.66667"/>
+  <object name="9" x="78.6667" y="345.667" width="2.66667" height="2.66667"/>
+  <object name="10" x="145.167" y="246.667" width="2.66667" height="2.66667"/>
+  <object name="11" x="128.417" y="272.667" width="2.66667" height="2.66667"/>
+  <object name="12" x="45.6667" y="204.917" width="2.66667" height="2.66667"/>
+  <object name="13" x="45.6667" y="132.167" width="2.66667" height="2.66667"/>
+  <object name="14" x="306.667" y="143.167" width="2.66667" height="2.66667"/>
+  <object name="15" x="374.167" y="262.917" width="2.66667" height="2.66667"/>
+  <object name="16" x="400.667" y="275.417" width="2.66667" height="2.66667"/>
+  <object name="17" x="297.167" y="264.917" width="2.66667" height="2.66667"/>
+  <object name="18" x="310.917" y="289.167" width="2.66667" height="2.66667"/>
+  <object name="19" x="346" y="148.318" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="302" y="76.6364" width="2.54545" height="2.72727">
+  <object name="20" x="345.636" y="135.136" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="302.182" y="83.3636" width="2.54545" height="2.72727">
+  <object name="21" x="345.818" y="141.591" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="346" y="148.318" width="2.54545" height="2.72727">
+  <object name="22" x="368.77" y="211.109" width="2.54545" height="2.72727" rotation="-41.0635">
    <ellipse/>
   </object>
-  <object x="345.636" y="135.136" width="2.54545" height="2.72727">
+  <object name="23" x="359.836" y="201.409" width="2.54545" height="2.72727" rotation="-41.0635">
    <ellipse/>
   </object>
-  <object x="345.818" y="141.591" width="2.54545" height="2.72727">
+  <object name="24" x="364.213" y="206.157" width="2.54545" height="2.72727" rotation="-41.0635">
    <ellipse/>
   </object>
-  <object x="368.77" y="211.109" width="2.54545" height="2.72727" rotation="-41.0635">
+  <object name="25" x="367.966" y="339.017" width="2.54545" height="2.72727" rotation="28.0096">
    <ellipse/>
   </object>
-  <object x="359.836" y="201.409" width="2.54545" height="2.72727" rotation="-41.0635">
+  <object name="26" x="373.836" y="327.209" width="2.54545" height="2.72727" rotation="28.0096">
    <ellipse/>
   </object>
-  <object x="364.213" y="206.157" width="2.54545" height="2.72727" rotation="-41.0635">
+  <object name="27" x="370.965" y="332.993" width="2.54545" height="2.72727" rotation="28.0096">
    <ellipse/>
   </object>
-  <object x="367.966" y="339.017" width="2.54545" height="2.72727" rotation="28.0096">
+  <object name="28" x="210.182" y="404.5" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="373.836" y="327.209" width="2.54545" height="2.72727" rotation="28.0096">
+  <object name="29" x="209.818" y="391.318" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="370.965" y="332.993" width="2.54545" height="2.72727" rotation="28.0096">
+  <object name="30" x="210" y="397.773" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="210.182" y="404.5" width="2.54545" height="2.72727">
+  <object name="31" x="199.637" y="404.5" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="209.818" y="391.318" width="2.54545" height="2.72727">
+  <object name="32" x="199.273" y="391.318" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="210" y="397.773" width="2.54545" height="2.72727">
+  <object name="33" x="199.455" y="397.773" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="199.637" y="404.5" width="2.54545" height="2.72727">
+  <object name="34" x="76.869" y="304.866" width="2.54545" height="2.72727" rotation="-299.128">
    <ellipse/>
   </object>
-  <object x="199.273" y="391.318" width="2.54545" height="2.72727">
+  <object name="35" x="88.2066" y="298.132" width="2.54545" height="2.72727" rotation="-299.128">
    <ellipse/>
   </object>
-  <object x="199.455" y="397.773" width="2.54545" height="2.72727">
+  <object name="36" x="82.6569" y="301.433" width="2.54545" height="2.72727" rotation="-299.128">
    <ellipse/>
   </object>
-  <object x="76.869" y="304.866" width="2.54545" height="2.72727" rotation="-299.128">
+  <object name="37" x="105.301" y="212.388" width="2.54545" height="2.72727" rotation="-40.8869">
    <ellipse/>
   </object>
-  <object x="88.2066" y="298.132" width="2.54545" height="2.72727" rotation="-299.128">
+  <object name="38" x="96.3972" y="202.661" width="2.54545" height="2.72727" rotation="-40.8869">
    <ellipse/>
   </object>
-  <object x="82.6569" y="301.433" width="2.54545" height="2.72727" rotation="-299.128">
+  <object name="39" x="100.76" y="207.421" width="2.54545" height="2.72727" rotation="-40.8869">
    <ellipse/>
   </object>
-  <object x="105.301" y="212.388" width="2.54545" height="2.72727" rotation="-40.8869">
+  <object name="40" x="172.576" y="82.8939" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="96.3972" y="202.661" width="2.54545" height="2.72727" rotation="-40.8869">
+  <object name="41" x="172.212" y="69.7121" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="100.76" y="207.421" width="2.54545" height="2.72727" rotation="-40.8869">
+  <object name="42" x="172.394" y="76.1667" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="172.576" y="82.8939" width="2.54545" height="2.72727">
+  <object name="43" x="154.545" y="70.0455" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="172.212" y="69.7121" width="2.54545" height="2.72727">
+  <object name="44" x="154.727" y="76.5001" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="172.394" y="76.1667" width="2.54545" height="2.72727">
+  <object name="45" x="154.909" y="83.2273" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="154.545" y="70.0455" width="2.54545" height="2.72727">
+  <object name="46" x="134.545" y="70.3788" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="154.727" y="76.5001" width="2.54545" height="2.72727">
+  <object name="47" x="134.727" y="76.8334" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="154.909" y="83.2273" width="2.54545" height="2.72727">
+  <object name="48" x="134.909" y="83.5606" width="2.54545" height="2.72727">
    <ellipse/>
   </object>
-  <object x="134.545" y="70.3788" width="2.54545" height="2.72727">
-   <ellipse/>
-  </object>
-  <object x="134.727" y="76.8334" width="2.54545" height="2.72727">
-   <ellipse/>
-  </object>
-  <object x="134.909" y="83.5606" width="2.54545" height="2.72727">
-   <ellipse/>
-  </object>
+ </objectgroup>
+ <objectgroup name="Checkpoints">
+  <object name="4" x="288" y="45" width="1.66667" height="63.3333"/>
+  <object name="3" x="343" y="237.667" width="120" height="1.66667"/>
+  <object name="2" x="397" y="300.667" width="1.33333" height="66.6667"/>
+  <object name="1" x="170" y="355" width="2" height="88.3333"/>
+  <object name="5" x="77.3333" y="233" width="137.333" height="2"/>
+ </objectgroup>
+ <objectgroup name="Starting position">
+  <object name="1" x="266" y="70.5455" width="3.63636" height="3.09091"/>
+  <object name="2" x="265.636" y="84.3636" width="3.81818" height="2.90909"/>
+  <object name="3" x="253.273" y="84.0171" width="3.81818" height="2.90909"/>
+  <object name="4" x="253.637" y="70.1989" width="3.63636" height="3.09091"/>
+  <object name="5" x="239.381" y="83.8921" width="3.81818" height="2.90909"/>
+  <object name="6" x="239.745" y="70.0739" width="3.63636" height="3.09091"/>
  </objectgroup>
 </map>

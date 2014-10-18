@@ -6,6 +6,11 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.EllipseMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -29,6 +34,15 @@ public class GameWorld {
 	public GameVariables gameVariables;
 	public float carWidth;
 	public float carHeight;
+	
+	// Map rendering
+	TiledMap tiledMap;
+	int mapHeight;
+	int mapWidth;
+	int tileHeight;
+	int tileWidth;
+	
+	// Network handling
 	private Queue<NetworkMessage.GameCarInformation> networkUpdates;
 	
 	/**------------------- DEBUG CONTACT LISTENER FOR POWER UP TESTING------**/
@@ -51,20 +65,65 @@ public class GameWorld {
 				AssetHandler.vibrate(50);
 			}
 			
-			if(A.isSensor()) {
-				System.out.println("Power Collected");
-				PowerUpContainer powerUpContainer = (PowerUpContainer) A.getBody().getUserData();
+			if(A.isSensor()) 
+			{
+				GameObject gameObject = (GameObject) A.getBody().getUserData();
 				Car car = (Car) B.getBody().getUserData();
-				car.setPower(powerUpContainer.getPowerUp());
-				powerUpContainer.CollectPowerUp();
+				if(gameObject.getObjType() == GameObject.ObjType.CHECKPOINT)
+				{
+					// Handle the checkpoint detection
+					Checkpoint checkpoint = (Checkpoint)gameObject;
+					car.getOwner().addCheckpoint(checkpoint.getId(), checkpoint);
+					if(car.getOwner().getCheckpoints().size() == checkpoints.size()
+							&& checkpoint.getId().compareToIgnoreCase("1") == 0)
+					{
+						car.getOwner().clearCheckpoints();
+						car.getOwner().incrementLap();
+						System.out.println(car.getOwner().getLapNum());
+					}
+				}
+				else
+				{	
+					// Handle the power up collection
+					if(car.getOwner().getPlayerID() == getPlayer().getPlayerID())
+					{
+						AssetHandler.powerUpCollected.play();
+					}
+					PowerUpContainer powerUpContainer = (PowerUpContainer) gameObject;
+					car.setPower(powerUpContainer.getPowerUp());
+					powerUpContainer.CollectPowerUp();
+				}
 			}
 			
-			if(B.isSensor()) {
-				System.out.println("Power Collected");
-				PowerUpContainer powerUpContainer = (PowerUpContainer) B.getBody().getUserData();
+			else if(B.isSensor()) 
+			{
+				GameObject gameObject = (GameObject) B.getBody().getUserData();
 				Car car = (Car) A.getBody().getUserData();
-				car.setPower(powerUpContainer.getPowerUp());
-				powerUpContainer.CollectPowerUp();
+				if(gameObject.getObjType() == GameObject.ObjType.CHECKPOINT)
+				{
+					// Handle the checkpoint detection
+					Checkpoint checkpoint = (Checkpoint)gameObject;
+					car.getOwner().addCheckpoint(checkpoint.getId(), checkpoint);
+					if(car.getOwner().getCheckpoints().size() == checkpoints.size() 
+							&& checkpoint.getId().compareToIgnoreCase("1") == 0)
+					{
+						car.getOwner().clearCheckpoints();
+						car.getOwner().incrementLap();
+						System.out.println(car.getOwner().getLapNum());
+					}
+				}
+				else
+				{	
+					// Handle the power up collection
+					PowerUpContainer powerUpContainer = (PowerUpContainer) gameObject;
+					car.setPower(powerUpContainer.getPowerUp());
+					powerUpContainer.CollectPowerUp();
+				}
+			}
+			else 
+			{	
+				// TODO => this will pay sounds for all players
+				AssetHandler.crash.play();
 			}
 		}
 	};
@@ -74,6 +133,7 @@ public class GameWorld {
 	// List of players called 'opponents' are all other players
 	public List<Player> players;
 	public List<GameObject> staticObjects;
+	public List<Checkpoint> checkpoints;
 	
 	// Box2D world in which our objects will be created in and handled by
 	public World worldBox2D;
@@ -89,6 +149,7 @@ public class GameWorld {
 		gameVariables = new GameVariables();
 		players = new ArrayList<Player>();
 		staticObjects = new ArrayList<GameObject>();
+		checkpoints = new ArrayList<Checkpoint>();
 
 		// calculate ratio used for object placement
 		gameWidth = ProjectZero.GAME_WIDTH;
@@ -104,6 +165,40 @@ public class GameWorld {
 		// define player and opponents
 		carWidth = 16;
 		carHeight = 32;
+		
+		// Load the map and set up the obstacles
+		tiledMap = new TmxMapLoader().load("maps/test.tmx");
+		tileHeight = tiledMap.getProperties().get("tileheight", Integer.class);
+		tileWidth = tiledMap.getProperties().get("tilewidth", Integer.class);
+		mapHeight = tiledMap.getProperties().get("height", Integer.class) * tileHeight; 
+		mapWidth = tiledMap.getProperties().get("width", Integer.class) * tileWidth;
+		
+		for(MapObject object : tiledMap.getLayers().get("Obstacles").getObjects()) {
+			if(object instanceof RectangleMapObject) {
+				float x = ((RectangleMapObject) object).getRectangle().x;
+				float y = ((RectangleMapObject) object).getRectangle().y;
+				float width = ((RectangleMapObject) object).getRectangle().width;
+				float height = ((RectangleMapObject) object).getRectangle().height;
+				staticObjects.add(new Obstacle(worldBox2D, x, y, width * 15, height * 15, 0));
+			}
+			else if(object instanceof EllipseMapObject){
+				float x = ((EllipseMapObject) object).getEllipse().x;
+				float y = ((EllipseMapObject) object).getEllipse().y;
+				float width = ((EllipseMapObject) object).getEllipse().width;
+				float height = ((EllipseMapObject) object).getEllipse().height;
+				staticObjects.add(new PowerUpContainer(worldBox2D, x, y, width * 15, height * 15, 0));
+			}
+		}
+		for(MapObject object : tiledMap.getLayers().get("Checkpoints").getObjects()) {
+			if(object instanceof RectangleMapObject) {
+				float x = ((RectangleMapObject) object).getRectangle().x;
+				float y = ((RectangleMapObject) object).getRectangle().y;
+				float width = ((RectangleMapObject) object).getRectangle().width;
+				float height = ((RectangleMapObject) object).getRectangle().height;
+				String id = ((RectangleMapObject) object).getName();
+				checkpoints.add(new Checkpoint(worldBox2D, x, y, width * 15, height * 15, 0, id));
+			}
+		}
 		
 		// define network update queue
 		networkUpdates = new ConcurrentLinkedQueue<NetworkMessage.GameCarInformation>();
@@ -189,6 +284,20 @@ public class GameWorld {
 		return getPlayerByID(AssetHandler.getPlayerID());
 	}
 	
+	// ----------------- Tiled map getters and setters --------- //
+	public TiledMap getTiledMap() {
+		return tiledMap;
+	}
+	
+	public int getMapHeight() {
+		return mapHeight;
+	}
+	
+	public int getMapWidth() {
+		return mapWidth;
+	}
+	
+	// ----------------- Network functions ---------------------//
 	public Player getPlayerByID(String playerID) {
 		for (int i=0; i<players.size(); i++) {
 			if (players.get(i).getPlayerID().contains(playerID)) {
@@ -204,6 +313,7 @@ public class GameWorld {
 		networkUpdates.add(obj);
 	}
 
+	// ------------ Gamestate functions ----------------------//
 	// *** Game state functions ***// 
 	public GameState getGameState() {
 		return gameStatus;

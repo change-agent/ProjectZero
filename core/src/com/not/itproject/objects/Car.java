@@ -15,11 +15,11 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 public class Car extends GameObject{	
 	/** ----------------------------- CONSTANTS ------------------------------ **/
 	// Static properties used for car handling
-	private static final float LOCK_ANGLE = 15 * DEG_TO_RAD;
-	private static final float STEER_SPEED = 0.01f;
+	private static final float LOCK_ANGLE = 35 * DEG_TO_RAD;
+	private static final float STEER_SPEED = 0.8f;
 	private static final float DRIFT_COEFF = 0.2f; // Decrease for more skid
 	private static final float LINEAR_FRICTION = 2.0f;
-	private static final float CHASSIS_DENSITY = 3.5f;
+	private static final float CHASSIS_DENSITY = 3.0f;
 	private static final float WHEEL_DENSITY = 1.8f;
 	
 	/** ----------------------------- VARIABLES ------------------------------ **/
@@ -34,11 +34,11 @@ public class Car extends GameObject{
 	private boolean usePower;
 	private float wheelWidth = width / 8;
 	private float wheelHeight = height / 8;
-	private Vector2 forwardDir;
+	private Player owner;
 	
 	/** ----------------------------- START CONSTRUCTOR ----------------------- **/
 	// Box2D box used for applying forces and collision handling
-	public Car(World worldBox2D, float x, float y, 
+	public Car(World worldBox2D, Player owner, float x, float y, 
 			float width, float height, float rotation) {
 		super(worldBox2D, x, y, width, height, rotation);
 	
@@ -47,13 +47,14 @@ public class Car extends GameObject{
 		this.hasPower = false;
 		this.objType = ObjType.CAR;
 		this.usePower = false;
+		this.owner = owner;
 		
 		// Set up the physics body
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set( new Vector2(x, y) );
 		bodyDef.linearDamping = 1.0f;
-		bodyDef.angularDamping = 4.0f;
+		bodyDef.angularDamping = 2.0f;
 		
 		// Create the chassis shape and associated fixture
 		PolygonShape chasisShape = new PolygonShape();
@@ -91,7 +92,7 @@ public class Car extends GameObject{
 		BodyDef leftFrontWheelBodyDef = new BodyDef();
 		leftFrontWheelBodyDef.type = BodyType.DynamicBody;
 		leftFrontWheelBodyDef.linearDamping = 1.0f;
-		leftFrontWheelBodyDef.angularDamping = 4.0f;
+		leftFrontWheelBodyDef.angularDamping = 2.0f;
 		leftFrontWheelBodyDef.position.set(
 				chassis.getPosition().add(leftFrontWheelPos));
 		this.leftFrontWheel = worldBox2D.createBody(leftFrontWheelBodyDef);
@@ -100,7 +101,7 @@ public class Car extends GameObject{
 		BodyDef rightFrontWheelBodyDef = new BodyDef();
 		rightFrontWheelBodyDef.type = BodyType.DynamicBody;
 		rightFrontWheelBodyDef.linearDamping = 1.0f;
-		rightFrontWheelBodyDef.angularDamping = 4.0f;
+		rightFrontWheelBodyDef.angularDamping = 2.0f;
 		rightFrontWheelBodyDef.position.set(
 				chassis.getPosition().add(rightFrontWheelPos));
 		this.rightFrontWheel = worldBox2D.createBody(rightFrontWheelBodyDef);
@@ -165,8 +166,6 @@ public class Car extends GameObject{
 		leftRearWheel.setUserData(this);
 		rightFrontWheel.setUserData(this);
 		rightRearWheel.setUserData(this);
-		
-		forwardDir = chassis.getWorldVector(new Vector2(0, 1));
 	}
 	/** ----------------------------- END CONSTRUCTOR --------------------------- **/
 	
@@ -183,8 +182,8 @@ public class Car extends GameObject{
 		float leftTurnSpeed, rightTurnSpeed;
 		leftTurnSpeed = steeringAngle - leftFrontWheelJoint.getJointAngle();
 		rightTurnSpeed = steeringAngle - rightFrontWheelJoint.getJointAngle();
-		leftFrontWheelJoint.setMotorSpeed(STEER_SPEED * delta * leftTurnSpeed); 
-		rightFrontWheelJoint.setMotorSpeed(STEER_SPEED * delta * rightTurnSpeed);
+		leftFrontWheelJoint.setMotorSpeed(delta * leftTurnSpeed); 
+		rightFrontWheelJoint.setMotorSpeed(delta * rightTurnSpeed);
 		leftFrontWheelJoint.setLimits(steeringAngle, steeringAngle);
 		rightFrontWheelJoint.setLimits(steeringAngle, steeringAngle);
 		
@@ -214,11 +213,11 @@ public class Car extends GameObject{
 		// Prevent too much skidding by killing orthogonal
 		Vector2 currRightNorm = wheel.getWorldVector( new Vector2(1, 0) );
 		Vector2 orhthogAmount = currRightNorm.scl(currRightNorm.dot(wheel.getLinearVelocity()));
-		Vector2 impulse = orhthogAmount.scl(0.1f * wheel.getMass() * -DRIFT_COEFF);
+		Vector2 impulse = orhthogAmount.scl(0.2f * wheel.getMass() * -DRIFT_COEFF);
 		wheel.applyLinearImpulse(impulse, wheel.getWorldCenter(), true);
 		
 		// Prevent too much spot - rotation by killing the angular velocity
-		float angleImpulse = 0.1f * wheel.getInertia() * -DRIFT_COEFF;
+		float angleImpulse = 0.8f * wheel.getInertia() * -DRIFT_COEFF;
 		wheel.applyAngularImpulse(wheel.getAngularVelocity() * angleImpulse, true);
 	}
 	
@@ -236,12 +235,12 @@ public class Car extends GameObject{
 	}
 	
 	public void setSteeringAngle(float steerAmount) {
-		steeringAngle = steerAmount * LOCK_ANGLE;
+		steeringAngle = STEER_SPEED * steerAmount * LOCK_ANGLE;
 	}
 	
 	public void powerOffEngine() {
 		// Kills the engine slowly to give the effect of drag slow-down
-		enginePower /= 1.04;
+		enginePower /= 1.004;
 	}
 	
 	public void powerOffEngine(boolean powerOff) {
@@ -292,20 +291,7 @@ public class Car extends GameObject{
 	}
 	/** ---------------------- END POWERUP HANDLING FUNCTIONS ------------------ **/
 	
-	/** -------------------------- UTILITY FUNCTIONS --------------------------- **/
-	public float getChangeInDirection() {
-		Vector2 newForwardDir = chassis.getWorldVector(new Vector2(0, 1));
-		float angleA = newForwardDir.angleRad();
-		float angleB = forwardDir.angleRad();
-		
-		System.out.println(forwardDir.x + " " + forwardDir.y);
-		System.out.println(newForwardDir.x + " " + newForwardDir.y);
-		System.out.println(angleA - angleB);
-		
-		forwardDir.set(newForwardDir);
-		return (angleA - angleB);
-	}
-	
+	/** -------------------------- UTILITY FUNCTIONS --------------------------- **/	
 	// Clamps a float between min and max
 	public float clamp(float val, float min, float max) {
 		if(val < min) {
@@ -339,6 +325,9 @@ public class Car extends GameObject{
 		horsepower *= scale;
 	}
 	
+	public Player getOwner() {
+		return owner;
+	}
 	public void setFriction(float scale) {
 		chassis.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
 		leftFrontWheel.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
