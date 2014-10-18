@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -48,6 +49,12 @@ public class AssetHandler {
 	
 	public static BitmapFont font;
 	public static Preferences prefs;
+	
+	public static Sound music;
+	public static Sound crash;
+	public static Sound buttonClick;
+	public static Sound powerUpCollected;
+	public static Sound usePower;
 		
 	public static void load() {
 		/*** load all assets ***/
@@ -58,6 +65,7 @@ public class AssetHandler {
 		loadVehicles();
 		loadObjects();
 		loadUncategorised();
+		loadSounds();
 		
 		// load fonts
 		font = new BitmapFont(Gdx.files.internal("fonts/kenvector.fnt"), true);
@@ -272,6 +280,16 @@ public class AssetHandler {
 		bannerWhite.flip(false, true);
 	}
 	
+	public static void loadSounds() {
+		music = Gdx.audio.newSound(Gdx.files.internal("sounds/theme.wav"));
+		crash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash.wav"));
+		powerUpCollected = Gdx.audio.newSound(Gdx.files.internal("sounds/powerUp.wav"));
+		buttonClick = Gdx.audio.newSound(Gdx.files.internal("sounds/buttonclick.wav"));
+		usePower = Gdx.audio.newSound(Gdx.files.internal("sounds/usePower.wav"));
+		music.loop();
+	}
+ 	
+	
 	public static void loadSettings() {
 		/*** load all preferences/settings ***/
 		prefs = Gdx.app.getPreferences("ProjectZero");
@@ -317,7 +335,7 @@ public class AssetHandler {
 		font.setScale(scale);
 		return font;
 	}
- 	
+	
 	public static void release() {
 		/*** release all assets ***/
 		logoTexture.dispose();
