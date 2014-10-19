@@ -32,8 +32,6 @@ public class GameRenderer {
 	private float resumeCountDown;
 	private float VIEWPORT_FACTOR = 4.0f;
 	private boolean isViewportScaled;
-	private float rotation = 0.0f;
-	private float diffRotation = 0.0f;
 	
 	// paused menu variables
 	SimpleButton btnResumeGame;

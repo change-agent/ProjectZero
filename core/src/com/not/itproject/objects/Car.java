@@ -1,5 +1,6 @@
 package com.not.itproject.objects;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -15,12 +16,16 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 public class Car extends GameObject{	
 	/** ----------------------------- CONSTANTS ------------------------------ **/
 	// Static properties used for car handling
-	private static final float LOCK_ANGLE = 35 * DEG_TO_RAD;
-	private static final float STEER_SPEED = 0.8f;
-	private static final float DRIFT_COEFF = 0.2f; // Decrease for more skid
-	private static final float LINEAR_FRICTION = 2.0f;
-	private static final float CHASSIS_DENSITY = 3.0f;
-	private static final float WHEEL_DENSITY = 1.8f;
+	private final float LOCK_ANGLE = 35 * DEG_TO_RAD;
+	private final float STEER_SPEED = 0.8f;
+	private final float LINEAR_FRICTION = 2.0f;
+	private final float CHASSIS_DENSITY = 3.0f;
+	private final float WHEEL_DENSITY = 1.8f;
+	private float maxHorsePower = 600;
+	private float minHorsePower = 400;
+	private float minDriftCoeff = 0.2f;
+	private float maxDriftCoeff = 0.6f;
+	private float driftCoeff = 0.2f; // Decrease for more skid
 	
 	/** ----------------------------- VARIABLES ------------------------------ **/
 	// Variable properties ued for car handling
@@ -28,7 +33,7 @@ public class Car extends GameObject{
 	private RevoluteJoint leftFrontWheelJoint, rightFrontWheelJoint;
 	private float enginePower = 0.0f;
 	private float steeringAngle = 0.0f;
-	private float horsepower = 600.0f;
+	private float horsepower = maxHorsePower;
 	private PowerUp power;
 	private boolean hasPower;
 	private boolean usePower;
@@ -213,11 +218,11 @@ public class Car extends GameObject{
 		// Prevent too much skidding by killing orthogonal
 		Vector2 currRightNorm = wheel.getWorldVector( new Vector2(1, 0) );
 		Vector2 orhthogAmount = currRightNorm.scl(currRightNorm.dot(wheel.getLinearVelocity()));
-		Vector2 impulse = orhthogAmount.scl(0.2f * wheel.getMass() * -DRIFT_COEFF);
+		Vector2 impulse = orhthogAmount.scl(0.2f * wheel.getMass() * -driftCoeff);
 		wheel.applyLinearImpulse(impulse, wheel.getWorldCenter(), true);
 		
 		// Prevent too much spot - rotation by killing the angular velocity
-		float angleImpulse = 0.8f * wheel.getInertia() * -DRIFT_COEFF;
+		float angleImpulse = 0.8f * wheel.getInertia() * -driftCoeff;
 		wheel.applyAngularImpulse(wheel.getAngularVelocity() * angleImpulse, true);
 	}
 	
@@ -240,7 +245,7 @@ public class Car extends GameObject{
 	
 	public void powerOffEngine() {
 		// Kills the engine slowly to give the effect of drag slow-down
-		enginePower /= 1.004;
+		enginePower /= 1.002;
 	}
 	
 	public void powerOffEngine(boolean powerOff) {
@@ -321,19 +326,19 @@ public class Car extends GameObject{
 		chassis.setLinearVelocity(velocity);
 	}
 	
-	public void setEnginePower(float scale) {
-		horsepower *= scale;
+	public void setMaxEnginePower(float scale) {
+		maxHorsePower *= scale;
 	}
 	
 	public Player getOwner() {
 		return owner;
 	}
 	public void setFriction(float scale) {
-		chassis.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
-		leftFrontWheel.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
-		leftRearWheel.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
-		rightFrontWheel.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
-		rightRearWheel.getFixtureList().get(0).setFriction(LINEAR_FRICTION * scale);
+		driftCoeff *= scale;
+		driftCoeff = MathUtils.clamp(driftCoeff, minDriftCoeff, maxDriftCoeff);
+		
+		horsepower *= 1/scale;
+		horsepower = MathUtils.clamp(horsepower, minHorsePower, maxHorsePower);
 	}
 	
 	public void setMaskData(short maskBits) {

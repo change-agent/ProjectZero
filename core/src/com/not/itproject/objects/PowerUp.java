@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.not.itproject.handlers.AssetHandler;
+import com.not.itproject.objects.GameObject.ObjType;
 import com.not.itproject.objects.GameVariables.PowerType;
 
 public class PowerUp {
@@ -29,6 +30,9 @@ public class PowerUp {
 		}
 		if(this.powerType == PowerType.STARPOWER) {
 			System.out.print("star power");
+		}
+		if(this.powerType == PowerType.STICKYROAD) {
+			System.out.print("Sticky road");
 		}
 	}
 	
@@ -79,7 +83,7 @@ public class PowerUp {
 		if(this.powerType == PowerType.SPEEDBOOST)
 		{
 			if( renewBuff(player) == false ) {
-				player.getCar().setEnginePower(1.5f);
+				player.getCar().setMaxEnginePower(2.0f);
 			}	
 		}
 		if(this.powerType == PowerType.SPEEDREDUCE)
@@ -87,14 +91,14 @@ public class PowerUp {
 			for (Player opponent : opponents) {
 				if(opponent == player) {continue;}
 				if( renewBuff(opponent) == false ) {
-					opponent.getCar().setEnginePower(0.50f);
+					opponent.getCar().setMaxEnginePower(0.5f);
 				}
 			}
 		}
 		if(this.powerType == PowerType.STARPOWER)
 		{
 			if( renewBuff(player) == false ) {
-				player.getCar().setMaskData((short)~0xFFFF);
+				player.getCar().setMaskData((short)~ObjType.OBSTACLE.value());
 			}
 		}
 		if(this.powerType == PowerType.ICEROAD)
@@ -106,18 +110,27 @@ public class PowerUp {
 				}
 			}
 		}
+		if(this.powerType == PowerType.STICKYROAD)
+		{
+			for (Player opponent : opponents) {
+				if(opponent == player) {continue;}
+				if( renewBuff(opponent) == false ) {
+					opponent.getCar().setFriction(2.0f);
+				}
+			}
+		}
 	}
 	
 	public void reverseApplyPower(Player player) 
 	{
 		if(this.powerType == PowerType.SPEEDBOOST)
 		{
-			player.getCar().setEnginePower(1/(1.5f));
+			player.getCar().setMaxEnginePower(0.5f);
 			System.out.println("Power reversed!");
 		}
 		if(this.powerType == PowerType.SPEEDREDUCE)
 		{
-			player.getCar().setEnginePower(2.0f);
+			player.getCar().setMaxEnginePower(2.0f);
 			System.out.println("Power reversed!");
 		}
 		if(this.powerType == PowerType.STARPOWER)
@@ -126,7 +139,11 @@ public class PowerUp {
 		}
 		if(this.powerType == PowerType.ICEROAD)
 		{
-			player.getCar().setFriction(1.0f);
+			player.getCar().setFriction(1/0.2f);
+		}
+		if(this.powerType == PowerType.STICKYROAD)
+		{
+			player.getCar().setFriction(0.5f);
 		}
 	}
 	/** ----------------------------- END METHODS ------------------------- **/

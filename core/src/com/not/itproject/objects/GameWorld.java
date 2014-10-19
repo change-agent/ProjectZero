@@ -6,12 +6,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.EllipseMapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -223,6 +218,8 @@ public class GameWorld {
 		// update players and check for win
 		for (Player player : players) {
 			player.update(delta);
+			float friction = tiledMapHandler.getFrictionFromPosition(player.getCar().getPosition());
+			player.getCar().setFriction(friction);
 			
 			if(player.getLapNum() == gameVariables.GAMELAPS) {
 				gameStatus = GameState.ENDED;
@@ -232,7 +229,10 @@ public class GameWorld {
 			if(player.getCar().usePower()){
 				PowerUp power = player.getCar().getPower();
 				player.getCar().removePower();
-				power.applyPower(player, players);
+				if(power != null)
+				{
+					power.applyPower(player, players);
+				}
 			}
 		}
 		

@@ -21,9 +21,12 @@ public class GameVariables {
 	public enum PlayerColour {RED, BLUE, GREEN, YELLOW};
 	public final int GAMELAPS = 3;
 	public final static float PPM = 8;
+	public final static float GRASS_FRICTION_MODIFIER = 1.01f;
+	public final static float ROAD_FRICTION_MODIFIER = 1/( 2 *GRASS_FRICTION_MODIFIER );
 	
+	// Enumerated types for Powerup
 	public enum PowerType {
-		SPEEDBOOST(5), SPEEDREDUCE(5), STARPOWER(5), ICEROAD(6);
+		STARPOWER(5), ICEROAD(4), STICKYROAD(4), SPEEDBOOST(5), SPEEDREDUCE(5);
 		
 		private float lifeTime;		
 		PowerType(float lifeTime) {

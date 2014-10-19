@@ -6,8 +6,6 @@ import java.util.Map;
 import com.not.itproject.networks.NetworkClient;
 import com.not.itproject.networks.NetworkMessage;
 import com.not.itproject.networks.NetworkServer;
-import com.not.itproject.screens.SelectionScreen;
-import com.not.itproject.screens.SelectionScreen.SelectionState;
 
 public class NetworkHandler {
 	// declare variables

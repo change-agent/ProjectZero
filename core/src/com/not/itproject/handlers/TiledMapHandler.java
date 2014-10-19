@@ -6,19 +6,23 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.not.itproject.objects.Checkpoint;
+import com.not.itproject.objects.GameVariables;
 import com.not.itproject.objects.GameWorld;
 import com.not.itproject.objects.Obstacle;
 import com.not.itproject.objects.PowerUpContainer;
 
 public class TiledMapHandler {
 	// Map rendering
-	public TiledMap tiledMap;
-	public int mapHeight;
-	public int mapWidth;
-	public int tileHeight;
-	public int tileWidth;
+	private TiledMap tiledMap;
+	private int mapHeight;
+	private int mapWidth;
+	private int tileHeight;
+	private int tileWidth;
+	private int numTilesWidth;
+	private int numTilesHeight;
 
 	public TiledMapHandler(GameWorld gameWorld, int selectionChoice)
 	{
@@ -32,8 +36,10 @@ public class TiledMapHandler {
 		tiledMap = new TmxMapLoader().load(AssetHandler.maps[selectionChoice]);
 		tileHeight = tiledMap.getProperties().get("tileheight", Integer.class);
 		tileWidth = tiledMap.getProperties().get("tilewidth", Integer.class);
-		mapHeight = tiledMap.getProperties().get("height", Integer.class) * tileHeight; 
-		mapWidth = tiledMap.getProperties().get("width", Integer.class) * tileWidth;
+		numTilesHeight = tiledMap.getProperties().get("height", Integer.class);
+		numTilesWidth = tiledMap.getProperties().get("width", Integer.class);
+		mapHeight = numTilesHeight * tileHeight; 
+		mapWidth = numTilesWidth * tileWidth;
 		
 		for(MapObject object : tiledMap.getLayers().get("Obstacles").getObjects()) {
 			if(object instanceof RectangleMapObject) {
@@ -64,14 +70,27 @@ public class TiledMapHandler {
 	}
 	
 	// ------------------------- Tile access functions  ---------------------------//
-	public void getCellFromPosition(Vector2 position)
+	public float getFrictionFromPosition(Vector2 position)
 	{
+		int i = (int)position.x / tileWidth;
+		int j = (int)position.y / tileHeight;
+		i = MathUtils.clamp(i, 0, numTilesWidth - 1);
+		j = MathUtils.clamp(j, 0, numTilesHeight - 1);
 		
-	}
-	
-	public float getFrictionFromCell(TiledMapTileLayer.Cell cell)
-	{
-		return 1;
+		TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get("Grass");
+		TiledMapTileLayer.Cell cell = (TiledMapTileLayer.Cell) layer.getCell(i, j);
+		if(cell != null)
+		{
+			return GameVariables.GRASS_FRICTION_MODIFIER;
+		}
+
+		layer = (TiledMapTileLayer) tiledMap.getLayers().get("Road");
+		cell = (TiledMapTileLayer.Cell) layer.getCell(i, j);
+		if(cell != null)
+		{
+			return GameVariables.ROAD_FRICTION_MODIFIER;
+		}
+		return 1.0f;
 	}
 	
 	// ---------------------------- Getters and setters --------------------------//
