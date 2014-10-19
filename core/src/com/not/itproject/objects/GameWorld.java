@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
+import com.not.itproject.handlers.TiledMapHandler;
 import com.not.itproject.networks.NetworkMessage;
 import com.not.itproject.objects.GameObject.ObjType;
 import com.not.itproject.objects.GameVariables.PlayerColour;
@@ -34,13 +36,6 @@ public class GameWorld {
 	public GameVariables gameVariables;
 	public float carWidth;
 	public float carHeight;
-	
-	// Map rendering
-	TiledMap tiledMap;
-	int mapHeight;
-	int mapWidth;
-	int tileHeight;
-	int tileWidth;
 	
 	// Network handling
 	private Queue<NetworkMessage.GameCarInformation> networkUpdates;
@@ -87,7 +82,7 @@ public class GameWorld {
 					// Handle the power up collection
 					if(car.getOwner().getPlayerID() == getPlayer().getPlayerID())
 					{
-						AssetHandler.powerUpCollected.play();
+						AssetHandler.playSound("powerUpCollected");
 					}
 					PowerUpContainer powerUpContainer = (PowerUpContainer) gameObject;
 					car.setPower(powerUpContainer.getPowerUp());
@@ -123,7 +118,7 @@ public class GameWorld {
 			else 
 			{	
 				// TODO => this will pay sounds for all players
-				AssetHandler.crash.play();
+				AssetHandler.playSound("crash");
 			}
 		}
 	};
@@ -134,6 +129,7 @@ public class GameWorld {
 	public List<Player> players;
 	public List<GameObject> staticObjects;
 	public List<Checkpoint> checkpoints;
+	TiledMapHandler tiledMapHandler;
 	
 	// Box2D world in which our objects will be created in and handled by
 	public World worldBox2D;
@@ -166,39 +162,8 @@ public class GameWorld {
 		carWidth = 16;
 		carHeight = 32;
 		
-		// Load the map and set up the obstacles
-		tiledMap = new TmxMapLoader().load("maps/test.tmx");
-		tileHeight = tiledMap.getProperties().get("tileheight", Integer.class);
-		tileWidth = tiledMap.getProperties().get("tilewidth", Integer.class);
-		mapHeight = tiledMap.getProperties().get("height", Integer.class) * tileHeight; 
-		mapWidth = tiledMap.getProperties().get("width", Integer.class) * tileWidth;
-		
-		for(MapObject object : tiledMap.getLayers().get("Obstacles").getObjects()) {
-			if(object instanceof RectangleMapObject) {
-				float x = ((RectangleMapObject) object).getRectangle().x;
-				float y = ((RectangleMapObject) object).getRectangle().y;
-				float width = ((RectangleMapObject) object).getRectangle().width;
-				float height = ((RectangleMapObject) object).getRectangle().height;
-				staticObjects.add(new Obstacle(worldBox2D, x, y, width * 15, height * 15, 0));
-			}
-			else if(object instanceof EllipseMapObject){
-				float x = ((EllipseMapObject) object).getEllipse().x;
-				float y = ((EllipseMapObject) object).getEllipse().y;
-				float width = ((EllipseMapObject) object).getEllipse().width;
-				float height = ((EllipseMapObject) object).getEllipse().height;
-				staticObjects.add(new PowerUpContainer(worldBox2D, x, y, width * 15, height * 15, 0));
-			}
-		}
-		for(MapObject object : tiledMap.getLayers().get("Checkpoints").getObjects()) {
-			if(object instanceof RectangleMapObject) {
-				float x = ((RectangleMapObject) object).getRectangle().x;
-				float y = ((RectangleMapObject) object).getRectangle().y;
-				float width = ((RectangleMapObject) object).getRectangle().width;
-				float height = ((RectangleMapObject) object).getRectangle().height;
-				String id = ((RectangleMapObject) object).getName();
-				checkpoints.add(new Checkpoint(worldBox2D, x, y, width * 15, height * 15, 0, id));
-			}
-		}
+		// Set up the map
+		tiledMapHandler = new TiledMapHandler(this, 0);
 		
 		// define network update queue
 		networkUpdates = new ConcurrentLinkedQueue<NetworkMessage.GameCarInformation>();
@@ -286,15 +251,15 @@ public class GameWorld {
 	
 	// ----------------- Tiled map getters and setters --------- //
 	public TiledMap getTiledMap() {
-		return tiledMap;
+		return tiledMapHandler.getTiledMap();
 	}
 	
 	public int getMapHeight() {
-		return mapHeight;
+		return tiledMapHandler.getMapHeight();
 	}
 	
 	public int getMapWidth() {
-		return mapWidth;
+		return tiledMapHandler.getMapWidth();
 	}
 	
 	// ----------------- Network functions ---------------------//

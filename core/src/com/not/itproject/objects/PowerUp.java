@@ -75,7 +75,7 @@ public class PowerUp {
 	// Applies power to a specific player
 	public void applyPower(Player player, List<Player> opponents) 
 	{
-		AssetHandler.usePower.play();
+		AssetHandler.playSound("usePower");
 		if(this.powerType == PowerType.SPEEDBOOST)
 		{
 			if( renewBuff(player) == false ) {

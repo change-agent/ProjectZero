@@ -29,7 +29,7 @@ public class SimpleButton {
 				(int) (Gdx.input.getY() * ProjectZero.RATIO));
 		if(isTouched)
 		{
-			AssetHandler.buttonClick.play();
+			AssetHandler.playSound("buttonClick");
 		}
 	}
 	

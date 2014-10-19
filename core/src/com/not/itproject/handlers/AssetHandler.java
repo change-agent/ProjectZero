@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -50,11 +51,13 @@ public class AssetHandler {
 	public static BitmapFont font;
 	public static Preferences prefs;
 	
-	public static Sound music;
+	public static Music music;
 	public static Sound crash;
 	public static Sound buttonClick;
 	public static Sound powerUpCollected;
 	public static Sound usePower;
+	
+	public static String[] maps = new String[]{"maps/test.tmx"};
 		
 	public static void load() {
 		/*** load all assets ***/
@@ -65,13 +68,13 @@ public class AssetHandler {
 		loadVehicles();
 		loadObjects();
 		loadUncategorised();
-		loadSounds();
 		
 		// load fonts
 		font = new BitmapFont(Gdx.files.internal("fonts/kenvector.fnt"), true);
 		
 		// load preferences/settings
 		loadSettings();
+		loadSounds();
 	}
 	
 	private static void loadBackgrounds() {
@@ -280,15 +283,74 @@ public class AssetHandler {
 		bannerWhite.flip(false, true);
 	}
 	
+	// --------------------- Sound loading and handling ---------------------- //
 	public static void loadSounds() {
-		music = Gdx.audio.newSound(Gdx.files.internal("sounds/theme.wav"));
+		music = Gdx.audio.newMusic(Gdx.files.internal("sounds/theme.wav"));
 		crash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash.wav"));
 		powerUpCollected = Gdx.audio.newSound(Gdx.files.internal("sounds/powerUp.wav"));
 		buttonClick = Gdx.audio.newSound(Gdx.files.internal("sounds/buttonclick.wav"));
 		usePower = Gdx.audio.newSound(Gdx.files.internal("sounds/usePower.wav"));
-		music.loop();
+		playMusic();
+	}
+	
+	public static void playMusic()
+	{
+		if(music.isPlaying() == false && getSoundMute() == false)
+		{
+			music.setLooping(true);
+			music.play();
+		}
+	}
+	
+	public static void stopMusic()
+	{
+		if(music.isPlaying())
+		{
+			music.stop();
+		}
+	}
+	
+	public static void playSound(String sound)
+	{
+		if(getSoundMute() == true) { return; }
+		if(sound.compareToIgnoreCase("crash") == 0)
+		{
+			crash.play();
+		}
+		if(sound.compareToIgnoreCase("powerUpCollected") == 0)
+		{
+			powerUpCollected.play();
+		}
+		if(sound.compareToIgnoreCase("buttonClick") == 0)
+		{
+			buttonClick.play();
+		}
+		if(sound.compareToIgnoreCase("usePower") == 0)
+		{
+			usePower.play();
+		}
+				
 	}
  	
+	public static void setSoundMute(boolean value) {
+		// set sound mute on/off
+		prefs.putBoolean("soundMute", value);
+		prefs.flush();
+		if(value == true)
+		{
+			stopMusic();
+		}
+		else
+		{
+			playMusic();
+		}
+	}
+	
+	public static boolean getSoundMute() {
+		// get sound mute status
+		return prefs.getBoolean("soundMute");
+	}
+	// --------------------- end Sound loading and handling ---------------------- //
 	
 	public static void loadSettings() {
 		/*** load all preferences/settings ***/
@@ -306,17 +368,6 @@ public class AssetHandler {
 		}
 	}
 	
-	public static void setSoundMute(boolean value) {
-		// set sound mute on/off
-		prefs.putBoolean("soundMute", value);
-		prefs.flush();
-	}
-	
-	public static boolean getSoundMute() {
-		// get sound mute status
-		return prefs.getBoolean("soundMute");
-	}
-
 	// debugging playerID
 	static String debugPlayerID = UUID.randomUUID().toString();
 	public static String getPlayerID() {
