@@ -81,6 +81,7 @@ public class GameRenderer {
 	
 	public void update(float delta) {
 		// get game state
+		AssetHandler.playMusic();
 		
 		// determine viewport
 		if (!isViewportScaled && (gameWorld.isReady() || gameWorld.isRunning())) {

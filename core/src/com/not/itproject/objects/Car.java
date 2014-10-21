@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
+import com.not.itproject.handlers.AssetHandler;
 
 public class Car extends GameObject{	
 	/** ----------------------------- CONSTANTS ------------------------------ **/

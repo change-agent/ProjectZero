@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="32" tileheight="32">
- <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32">
-  <image source="tileset.png" width="512" height="512"/>
+ <tileset firstgid="1" name="grass" tilewidth="32" tileheight="32">
+  <image source="grass.png" width="512" height="512"/>
  </tileset>
- <tileset firstgid="257" name="preview" tilewidth="32" tileheight="32">
-  <image source="preview.jpg" width="1024" height="768"/>
+ <tileset firstgid="257" name="road" tilewidth="32" tileheight="32">
+  <image source="road.png" width="64" height="64"/>
  </tileset>
  <layer name="Grass" width="15" height="15">
   <properties>
    <property name="Friction" value="0.2"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJxLYGBgSBggTCpA10uKPaTopcRefPL4zCVGnhI3UGIvtd2Cy150tYTMxqeWVECsPbTAAI5nPeE=
+   eJyVz8lKl2EUB+C/pZU2SJlDZkpYmZmBNLpwEZSuJASzEiQarJVIZcNGojkoE8wGUxC7AclMswFpUHNIyQswuoTuwEd4A5HPqAPP4ny/95zDFxeLxZawlHgSWMZyVpBIEitZxWrWkMxa1pHCelJJI50MNpDJRrLYRDY5bI79f/2ZLwp9LlvYyjby2E4+OyhgZ3hbGGYPhn43e9jLPvZzgOKIuyXsouIfZ+f/bzlHOBWx9xCHKaUsIq/hJBc4zRnOhqySo1RxjOOcoDrkddRzg4sL9s7tqOUc5yPuNnKdLm6Gb5do4DJXuMq1kD3gIU08oplXtIT8Fre5w13ucT/i7lx18omXoX9MK094yjOe08YL2ukIb7v5Qc8iu/9Wg/ziM6/p5Q199POWAd7xng98ZJIpfjPNF74yxDAjfGOUMcaZ4Dsz/GQW79tA2w==
   </data>
  </layer>
  <layer name="Road" width="15" height="15">
@@ -19,7 +19,7 @@
    <property name="Friction" value="1.0"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJxjYBg44MkMwauIpJGBMjN2M7EBNTS1bAT0Itu5hkR7m/HIr4SaCaKxuQGff0lxA7p/QcALai42e2FyMBod4PMTPjlcboEBdP+iqyVkNjJIRlNLbJpaicVeegMAVnkZQQ==
+   eJxjYBg4wMzIwMCEB7MgsUFqkQEjI3YzsQF0tYT0MlNgLz55fOYSI0+JG5gpsBeffdQKD2rHMaG0hc9eegMAS28Auw==
   </data>
  </layer>
  <objectgroup name="Obstacles">

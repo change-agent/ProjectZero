@@ -1,5 +1,7 @@
 package com.not.itproject.handlers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.not.itproject.zero.ProjectZero;
 
 public class AssetHandler {
@@ -51,11 +54,13 @@ public class AssetHandler {
 	public static BitmapFont font;
 	public static Preferences prefs;
 	
-	public static Music music;
+	public static List<Music> playlist = new ArrayList<Music>();;
+	public static Music currentSong;
 	public static Sound crash;
 	public static Sound buttonClick;
 	public static Sound powerUpCollected;
 	public static Sound usePower;
+	public static Sound engine;
 	
 	public static String[] maps = new String[]{"maps/test.tmx"};
 		
@@ -285,28 +290,47 @@ public class AssetHandler {
 	
 	// --------------------- Sound loading and handling ---------------------- //
 	public static void loadSounds() {
-		music = Gdx.audio.newMusic(Gdx.files.internal("sounds/theme.wav"));
+		playlist.add(Gdx.audio.newMusic(Gdx.files.internal("sounds/theme.wav")));
+		playlist.add(Gdx.audio.newMusic(Gdx.files.internal("sounds/race.wav")));
+		playlist.add(Gdx.audio.newMusic(Gdx.files.internal("sounds/Mars.wav")));
+		playlist.add(Gdx.audio.newMusic(Gdx.files.internal("sounds/Mercury.wav")));
+		playlist.add(Gdx.audio.newMusic(Gdx.files.internal("sounds/map_adv.wav")));
+		playlist.add(Gdx.audio.newMusic(Gdx.files.internal("sounds/Venus.wav")));
+		playlist.add(Gdx.audio.newMusic(Gdx.files.internal("sounds/map_basic.wav")));
+		
 		crash = Gdx.audio.newSound(Gdx.files.internal("sounds/crash.wav"));
 		powerUpCollected = Gdx.audio.newSound(Gdx.files.internal("sounds/powerUp.wav"));
 		buttonClick = Gdx.audio.newSound(Gdx.files.internal("sounds/buttonclick.wav"));
 		usePower = Gdx.audio.newSound(Gdx.files.internal("sounds/usePower.wav"));
-		playMusic();
+		engine = Gdx.audio.newSound(Gdx.files.internal("sounds/engine.wav"));
+		
+		currentSong = playlist.get(0);
+		currentSong.play();
+	}
+	
+	public static void getNextTrack()
+	{
+		currentSong.stop();
+		int index = playlist.indexOf(currentSong);
+		int next = MathUtils.clamp(index + 1, 0, playlist.size() - 1);
+		currentSong = playlist.get(next);
+		currentSong.play();
 	}
 	
 	public static void playMusic()
 	{
-		if(music.isPlaying() == false && getSoundMute() == false)
+		if(!currentSong.isPlaying())
 		{
-			music.setLooping(true);
-			music.play();
+			getNextTrack();
+			currentSong.play();
 		}
 	}
 	
 	public static void stopMusic()
 	{
-		if(music.isPlaying())
+		if(currentSong != null)
 		{
-			music.stop();
+			currentSong.stop();
 		}
 	}
 	

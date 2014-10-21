@@ -3,6 +3,7 @@ package com.not.itproject.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Vector2;
+import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.objects.GameInputProcessor;
 import com.not.itproject.objects.GameRenderer;
