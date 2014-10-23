@@ -6,9 +6,15 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.maps.MapObject;
+<<<<<<< Updated upstream
 import com.badlogic.gdx.maps.MapObjects;
+=======
+import com.badlogic.gdx.maps.objects.EllipseMapObject;
+>>>>>>> Stashed changes
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -18,7 +24,6 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
-import com.not.itproject.handlers.TiledMapHandler;
 import com.not.itproject.networks.NetworkMessage;
 import com.not.itproject.objects.GameObject.ObjType;
 import com.not.itproject.objects.GameVariables.PlayerColour;
@@ -30,9 +35,15 @@ public class GameWorld {
 	public float screenWidth = Gdx.graphics.getWidth();
 	public float screenHeight = Gdx.graphics.getHeight();
 	public float gameWidth, gameHeight;
-	public GameVariables gameVariables;
 	public float carWidth;
 	public float carHeight;
+	
+	// Map rendering
+	TiledMap tiledMap;
+	int mapHeight;
+	int mapWidth;
+	int tileHeight;
+	int tileWidth;
 	
 	// Network handling
 	private Queue<Object> networkUpdates;
@@ -140,8 +151,7 @@ public class GameWorld {
 				}
 			}
 			else 
-			{	
-				// TODO => this will pay sounds for all players
+			{
 				AssetHandler.playSound("crash");
 			}
 		}
@@ -153,7 +163,6 @@ public class GameWorld {
 	public List<Player> players;
 	public List<GameObject> staticObjects;
 	public List<Checkpoint> checkpoints;
-	TiledMapHandler tiledMapHandler;
 	
 	// Box2D world in which our objects will be created in and handled by
 	public World worldBox2D;
@@ -166,7 +175,6 @@ public class GameWorld {
 	public GameWorld(ProjectZero game) {
 		// Init the game, game variables and objects
 		this.game = game;
-		gameVariables = new GameVariables();
 		players = new ArrayList<Player>();
 		staticObjects = new ArrayList<GameObject>();
 		checkpoints = new ArrayList<Checkpoint>();
@@ -176,7 +184,8 @@ public class GameWorld {
 		gameHeight = screenHeight / (screenWidth / gameWidth);
 		
 		// initialize variables
-		gameStatus = GameState.READY;
+//		gameStatus = GameState.READY;
+		gameStatus = GameState.RUNNING;
 		
 		//Initialize box2D world object
 		worldBox2D = new World(new Vector2(0.0f, 0.0f), false);
@@ -186,8 +195,39 @@ public class GameWorld {
 		carWidth = 16;
 		carHeight = 32;
 		
-		// Set up the map
-		tiledMapHandler = new TiledMapHandler(this, 0);
+		// Load the map and set up the obstacles
+		tiledMap = new TmxMapLoader().load("maps/test.tmx");
+		tileHeight = tiledMap.getProperties().get("tileheight", Integer.class);
+		tileWidth = tiledMap.getProperties().get("tilewidth", Integer.class);
+		mapHeight = tiledMap.getProperties().get("height", Integer.class) * tileHeight; 
+		mapWidth = tiledMap.getProperties().get("width", Integer.class) * tileWidth;
+		
+		for(MapObject object : tiledMap.getLayers().get("Obstacles").getObjects()) {
+			if(object instanceof RectangleMapObject) {
+				float x = ((RectangleMapObject) object).getRectangle().x;
+				float y = ((RectangleMapObject) object).getRectangle().y;
+				float width = ((RectangleMapObject) object).getRectangle().width;
+				float height = ((RectangleMapObject) object).getRectangle().height;
+				staticObjects.add(new Obstacle(worldBox2D, x, y, width * 15, height * 15, 0));
+			}
+			else if(object instanceof EllipseMapObject){
+				float x = ((EllipseMapObject) object).getEllipse().x;
+				float y = ((EllipseMapObject) object).getEllipse().y;
+				float width = ((EllipseMapObject) object).getEllipse().width;
+				float height = ((EllipseMapObject) object).getEllipse().height;
+				staticObjects.add(new PowerUpContainer(worldBox2D, x, y, width * 15, height * 15, 0));
+			}
+		}
+		for(MapObject object : tiledMap.getLayers().get("Checkpoints").getObjects()) {
+			if(object instanceof RectangleMapObject) {
+				float x = ((RectangleMapObject) object).getRectangle().x;
+				float y = ((RectangleMapObject) object).getRectangle().y;
+				float width = ((RectangleMapObject) object).getRectangle().width;
+				float height = ((RectangleMapObject) object).getRectangle().height;
+				String id = ((RectangleMapObject) object).getName();
+				checkpoints.add(new Checkpoint(worldBox2D, x, y, width * 15, height * 15, 0, id));
+			}
+		}
 		
 		// define network update queue
 		networkUpdates = new ConcurrentLinkedQueue<Object>();
@@ -198,8 +238,12 @@ public class GameWorld {
 		// This worlds player will always be at index 0
 		// This makes using powers more transparent and will allow for network data efficiency
 		PlayerColour colour = null;
+<<<<<<< Updated upstream
 		MapObjects startingPositions = tiledMapHandler.getStartingPositions();
+		for (int i=0; i<NetworkHandler.getListOfPlayers().size(); i++) {
+=======
 		for (int i=0; i<GameVariables.MAX_PLAYERS; i++) {
+>>>>>>> Stashed changes
 			switch (i) {
 				case 0:
 					// first player is red
@@ -210,88 +254,107 @@ public class GameWorld {
 					colour = GameVariables.PlayerColour.BLUE;
 					break;
 				case 2:
-					// third player is blue
+					// third player is green
 					colour = GameVariables.PlayerColour.GREEN;
 					break;
 				case 3:
-					// fourth player is blue
+					// fourth player is yellow
 					colour = GameVariables.PlayerColour.YELLOW;
 					break;
 			}
+<<<<<<< Updated upstream
+			// Access the tiled map to place them at the correct position
+			if(i < startingPositions.getCount())
+			{
+				RectangleMapObject startPos = (RectangleMapObject)startingPositions.get(i);
+				float x = startPos.getRectangle().x;
+				float y = startPos.getRectangle().y;
+				players.add(new Player(worldBox2D, NetworkHandler.getListOfPlayers().get(i), colour,
+						x, y, carWidth, carHeight, 0, tiledMapHandler.getMapWidth(),
+						tiledMapHandler.getMapHeight() ));
+			}
+		}
+	}
+
+	public void update(float delta) 
+	{	
+=======
 			
 			// check if player exists
 			if (NetworkHandler.getListOfPlayers().get(i) != null) {
-				
+				ProjectZero.log(NetworkHandler.getListOfPlayers().get(i).playerID + " " +
+						NetworkHandler.getListOfPlayers().get(i).lastPosition);
 				// load player data
 				String currPlayerID = NetworkHandler.getListOfPlayers().get(i).playerID;
 				if (NetworkHandler.getListOfPlayers().get(i).lastPosition.x == 0
 						&& NetworkHandler.getListOfPlayers().get(i).lastPosition.y == 0) {
-					// Access the tiled map to place them at the correct position
-					if(i < startingPositions.getCount())
-					{
-						RectangleMapObject startPos = (RectangleMapObject)startingPositions.get(i);
-						float x = startPos.getRectangle().x;
-						float y = startPos.getRectangle().y;
-						players.add(new Player(worldBox2D, currPlayerID, colour,
-								x, y, carWidth, carHeight, 0, 
-								tiledMapHandler.getMapWidth(),
-								tiledMapHandler.getMapHeight()));
-					}
+					ProjectZero.log("NEW");
+					// new players
+					players.add(new Player(worldBox2D, NetworkHandler
+							.getListOfPlayers().get(i).playerID, colour,
+							gameWidth / 2 + i * carWidth * 2, gameHeight / 2,
+							carWidth, carHeight, 0));
 				} else {
+					ProjectZero.log("LOAD");
 					// load values
-					players.add(new Player(worldBox2D, currPlayerID, colour,
+					players.add(new Player(
+							worldBox2D,
+							currPlayerID,
+							colour,
 							ProjectZero.gameSession
 									.getPlayerByPlayerID(currPlayerID).lastPosition.x,
 							ProjectZero.gameSession
 									.getPlayerByPlayerID(currPlayerID).lastPosition.y,
-							carWidth, carHeight, 0,
-							tiledMapHandler.getMapWidth(),
-							tiledMapHandler.getMapHeight()));
+							carWidth, carHeight, 0));
 				}
 			}
 		}
 	}
 
 	public void update(float delta) {
-
+>>>>>>> Stashed changes
 		// This updates the box2d world
 		// Adjust last two params for performance increase
 		worldBox2D.step(delta, 4, 4);
-
+		
 		// process network updates to box2d world
 		while (networkUpdates.size() != 0) {
 			// go through queues
 			Object object = networkUpdates.remove();
-
+			
 			// player information
-			if (object instanceof NetworkMessage.GameCarInformation) {
+			if (object instanceof NetworkMessage.GameCarInformation )
+			{	
 				// get info
 				NetworkMessage.GameCarInformation info = (NetworkMessage.GameCarInformation) object;
-
+				
 				// update players according
 				ProjectZero.gameScreen.updatePlayer(info.playerID,
 						info.position, info.velocity, info.rotation);
 			}
-
+			
 			// game state information
-			else if (object instanceof NetworkMessage.GameStateInformation) {
+			else if (object instanceof NetworkMessage.GameStateInformation) 
+			{
 				// get info
 				NetworkMessage.GameStateInformation info = (NetworkMessage.GameStateInformation) object;
 
 				// determine what action to perform
-				if (info.state == NetworkMessage.GameState.PAUSE) {
+				if (info.state == NetworkMessage.GameState.PAUSE) {							
 					// pause game
 					ProjectZero.gameScreen.getGameWorld().pauseGame();
-				} else if (info.state == NetworkMessage.GameState.RESUME) {
+				}
+				else if (info.state == NetworkMessage.GameState.RESUME) {
 					// resume game
 					ProjectZero.gameScreen.getGameWorld().resumeGame();
-				} else if (info.state == NetworkMessage.GameState.EXIT) {
+				}
+				else if (info.state == NetworkMessage.GameState.EXIT) {		
 					// check if host
 					if (NetworkHandler.isHost()) {
 						// save game
 						ProjectZero.gameScreen.getGameWorld().saveGame();
 					}
-
+					
 					// exit game
 					ProjectZero.gameScreen.getGameWorld().endGame();
 					return;
@@ -302,10 +365,8 @@ public class GameWorld {
 		// update players and check for win
 		for (Player player : players) {
 			player.update(delta);
-			float friction = tiledMapHandler.getFrictionFromPosition(player.getCar().getPosition());
-			player.getCar().setFriction(friction);
 			
-			if(player.getLapNum() == GameVariables.GAME_LAPS) {
+			if(player.getLapNum() == (GameVariables.GAME_LAPS + 1)) {
 				gameStatus = GameState.ENDED;
 			}
 			
@@ -313,10 +374,7 @@ public class GameWorld {
 			if(player.getCar().usePower()){
 				PowerUp power = player.getCar().getPower();
 				player.getCar().removePower();
-				if(power != null)
-				{
-					power.applyPower(player, players);
-				}
+				power.applyPower(player, players);
 			}
 		}
 		
@@ -335,15 +393,15 @@ public class GameWorld {
 	
 	// ----------------- Tiled map getters and setters --------- //
 	public TiledMap getTiledMap() {
-		return tiledMapHandler.getTiledMap();
+		return tiledMap;
 	}
 	
 	public int getMapHeight() {
-		return tiledMapHandler.getMapHeight();
+		return mapHeight;
 	}
 	
 	public int getMapWidth() {
-		return tiledMapHandler.getMapWidth();
+		return mapWidth;
 	}
 	
 	// ----------------- Network functions ---------------------//
@@ -367,7 +425,6 @@ public class GameWorld {
 		// clear queue
 		networkUpdates = new ConcurrentLinkedQueue<Object>();
 	}
-
 
 	// ------------ Gamestate functions ----------------------//
 	// *** Game state functions ***// 
@@ -408,6 +465,7 @@ public class GameWorld {
 		gameStatus = GameState.RUNNING;
 
 		// send network message to players
+		initialiseGameWorld();
 	}
 	
 	public void resumeGame() {

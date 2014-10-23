@@ -2,7 +2,7 @@ package com.not.itproject.objects;
 
 public class GameVariables {
 	// universal variables
-	public final static boolean DEBUG = false;
+	public final static boolean DEBUG = true;
 	
 	// networking variables
 	public final static int[] VALID_UDP_PORTS = {54777, 54778, 54779};
@@ -19,7 +19,7 @@ public class GameVariables {
 	
 	// in-game variables
 	public enum PlayerColour {RED, BLUE, GREEN, YELLOW};
-	public final int GAMELAPS = 3;
+	public final static int GAME_LAPS = 1;
 	public final static float PPM = 8;
 	public final static float GRASS_FRICTION_MODIFIER = 1.01f;
 	public final static float ROAD_FRICTION_MODIFIER = 1/( 2 *GRASS_FRICTION_MODIFIER );

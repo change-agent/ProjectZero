@@ -1,10 +1,7 @@
 package com.not.itproject.networks;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
@@ -13,6 +10,7 @@ import com.esotericsoftware.kryonet.Server;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.objects.GameVariables;
+import com.not.itproject.sessions.GamePlayer;
 import com.not.itproject.zero.ProjectZero;
 
 
@@ -60,12 +58,32 @@ public class NetworkServer {
 		registerServer();
 		
 		// add host to list of players
-		NetworkHandler.getListOfPlayers().put(
-				NetworkHandler.getListOfPlayers().size(), 
-				AssetHandler.getPlayerID());
-		NetworkHandler.getListOfPlayerStatus().put(
-				AssetHandler.getPlayerID(),
-				NetworkMessage.SelectionState.PENDING);
+		if (!ProjectZero.gameSession.isGameLoaded()) {
+			GamePlayer player = new GamePlayer();
+			player.index = 0;
+			player.playerID = AssetHandler.getPlayerID();
+			player.currentLap = 0;
+			player.lastPosition = new Vector2(0, 0);
+			
+			// add player
+			NetworkHandler.getListOfPlayers().add(0, player);
+			NetworkHandler.getListOfPlayerStatus().put(
+					AssetHandler.getPlayerID(),
+					NetworkMessage.SelectionState.PENDING);
+		} else {
+			// if game is loaded - add all players as ready
+			for (GamePlayer player : NetworkHandler.getListOfPlayers()) {
+				if (player != null) {
+					NetworkHandler.getListOfPlayerStatus().put(
+							player.playerID,
+							NetworkMessage.SelectionState.WAITING);
+				}
+			}			
+			
+			NetworkHandler.getListOfPlayerStatus().put(
+					AssetHandler.getPlayerID(),
+					NetworkMessage.SelectionState.READY);
+		}
 
 		// handle incoming connections
 		defineServerListener();
@@ -86,15 +104,33 @@ public class NetworkServer {
 
 						switch (request.type) {
 							case JOIN:
-								// check to see if session has started
 								boolean playerAdded = false;
-								if (!NetworkHandler.getGameStart()) {
+								boolean playerRejoined = false;
+								// check if game is loaded game and if game has started
+								if (ProjectZero.gameSession.isGameLoaded() && !NetworkHandler.getGameStart()) {
+									if (ProjectZero.gameSession.getPlayerByPlayerID(request.playerID) != null) {
+										// allow player to rejoin
+										NetworkHandler.getListOfPlayerStatus().put(request.playerID, NetworkMessage.SelectionState.READY);
+										playerRejoined = true;
+									}
+								}
+								
+								// check to see if session has started and has vacancy
+								else if (!NetworkHandler.getGameStart()) {
 									// add player ID to list of players - if game not started
 									for (int i=0; i<GameVariables.MAX_PLAYERS; i++) {
-										// check if key exists
-										if (!NetworkHandler.getListOfPlayers().containsKey(i)) {
+										// check if index empty
+										ProjectZero.log("Value: " + (NetworkHandler.getListOfPlayers().get(i) == null));
+										if (NetworkHandler.getListOfPlayers().get(i) == null) {
+											// new player
+											GamePlayer player = new GamePlayer();
+											player.index = i;
+											player.playerID = request.playerID;
+											player.currentLap = 0;
+											player.lastPosition = new Vector2(0, 0);
+											
 											// add player
-											NetworkHandler.getListOfPlayers().put(i, request.playerID);
+											NetworkHandler.getListOfPlayers().add(i, player);
 											NetworkHandler.getListOfPlayerStatus().put(request.playerID, NetworkMessage.SelectionState.PENDING);
 											playerAdded = true;
 											break;
@@ -103,12 +139,19 @@ public class NetworkServer {
 								}
 								
 								// check to see if player was added
-								if (playerAdded) {
+								if (playerAdded || playerRejoined) {
 									// send response
 									NetworkMessage.ConnectionResponse response = new NetworkMessage.ConnectionResponse();
 									response.type = NetworkMessage.ResponseStatus.SUCCESS;
 									connection.sendTCP(response);
 								} 
+								// check if player was rejected
+								else if (!playerAdded && !playerRejoined) {
+									// send response
+									NetworkMessage.ConnectionResponse response = new NetworkMessage.ConnectionResponse();
+									response.type = NetworkMessage.ResponseStatus.PRIVATE;
+									connection.sendTCP(response);
+								}
 								else {
 									// send response
 									NetworkMessage.ConnectionResponse response = new NetworkMessage.ConnectionResponse();
@@ -121,9 +164,21 @@ public class NetworkServer {
 								// remove player ID from list of players
 								int key = 0;
 								boolean foundKey = false;
+								
+								// check if game is loaded game and if game has started
+								if (ProjectZero.gameSession.isGameLoaded()) {
+									if (NetworkHandler.getListOfPlayers().get(key).playerID
+											.contains(request.playerID)) {
+										// update player state
+										NetworkHandler.getListOfPlayerStatus().put(request.playerID,
+												NetworkMessage.SelectionState.WAITING);
+									}
+									return;
+								}
+								
 								// iterate to find key and remove player
 								while (!foundKey) {
-									if (NetworkHandler.getListOfPlayers().get(key)
+									if (NetworkHandler.getListOfPlayers().get(key).playerID
 											.contains(request.playerID)) {
 										// remove player
 										foundKey = true;
@@ -159,15 +214,9 @@ public class NetworkServer {
 						// get info
 						NetworkMessage.GameStateInformation info = (NetworkMessage.GameStateInformation) object;
 
-						// determine what action to perform
-						if (info.state == NetworkMessage.GameState.PAUSE) {							
-							// pause game
-							ProjectZero.gameScreen.getGameWorld().pauseGame();
-						}
-						else if (info.state == NetworkMessage.GameState.RESUME) {
-							// resume game
-							ProjectZero.gameScreen.getGameWorld().resumeGame();
-						}
+						// add message to queue (prioritise by clearing)
+						ProjectZero.gameScreen.getGameWorld().clearNetworkQueue();
+						ProjectZero.gameScreen.getGameWorld().addToNetworkQueue(info);
 						
 						// send information to other clients
 						server.sendToAllTCP(info);
@@ -182,6 +231,16 @@ public class NetworkServer {
 						NetworkHandler.getListOfPlayerStatus().put(info.playerID, info.state);
 					}
 					
+					// get game session information
+					else if (object instanceof NetworkMessage.GameSessionInformation) {
+						// get info
+						NetworkMessage.GameSessionInformation info = (NetworkMessage.GameSessionInformation) object;
+						
+						// add lastposition to player
+						ProjectZero.gameSession.setLastPosition(info.playerID, info.lastPosition.x, info.lastPosition.y);
+					}
+					
+					
 				} catch (Exception e) {
 					// capture errors
 				}
@@ -195,8 +254,9 @@ public class NetworkServer {
 		server.close();
 		setServerOnline(false);
 				
-		// reset networkHandler
+		// reset networkHandler and game session
 		NetworkHandler.reinitialise();
+		ProjectZero.gameSession.newGameSession();
 	}
 
 	// send (track/vehicle) selection screen
@@ -217,6 +277,11 @@ public class NetworkServer {
 		// send message
 		try {
 			NetworkMessage.GameStartInformation info = new NetworkMessage.GameStartInformation();
+			info.playerList = null;
+			if (ProjectZero.gameSession.isGameLoaded()) {
+				// send player list if game is loaded
+				info.playerList = NetworkHandler.getListOfPlayers();
+			}
 			server.sendToAllTCP(info);
 		} catch (Exception e) {
 			// capture errors
@@ -228,8 +293,7 @@ public class NetworkServer {
 			// send car information
 			NetworkMessage.GameCarInformation info = new NetworkMessage.GameCarInformation();
 			info.playerID = AssetHandler.getPlayerID();
-			Calendar c = new GregorianCalendar();
-			info.timestamp = c.getTime();
+			info.timestamp = ProjectZero.calendar.getTime();
 			info.position = position;
 			info.velocity = velocity;
 			info.rotation = rotation;

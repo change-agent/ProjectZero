@@ -1,10 +1,12 @@
 package com.not.itproject.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.not.itproject.handlers.AssetHandler;
+import com.not.itproject.objects.GameVariables;
 import com.not.itproject.objects.SimpleButton;
 import com.not.itproject.objects.ToggleButton;
 import com.not.itproject.zero.ProjectZero;
@@ -61,6 +63,20 @@ public class MainScreen extends AbstractScreen {
 			// debug log to console
 			ProjectZero.log("Sound button is toggled. " + 
 					"Toggle on: " + btnSoundToggle.isToggleOn());
+		}
+		
+		if (GameVariables.DEBUG) {
+			if (Gdx.input.isKeyPressed(Keys.NUM_1)) { 
+				AssetHandler.prefs.putString("playerID", "12345");
+				AssetHandler.prefs.flush();
+				ProjectZero.log("PlayerID: " + AssetHandler.getPlayerID());
+			}
+
+			if (Gdx.input.isKeyPressed(Keys.NUM_2)) { 
+				AssetHandler.prefs.putString("playerID", "abcde");
+				AssetHandler.prefs.flush();
+				ProjectZero.log("PlayerID: " + AssetHandler.getPlayerID());
+			}
 		}
 	}
 	

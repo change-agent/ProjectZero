@@ -15,7 +15,7 @@ public class RoomScreen extends AbstractScreen {
 	// declare variables
 	SimpleButton btnLoadGame;
 	SimpleButton btnNewGame;
-	SimpleButton btnLoad;
+//	SimpleButton btnLoad;
 	SimpleRoundButton btnBack;
 	SimpleRoundButton btnRefresh;
 	RoomState screenStatus;
@@ -24,6 +24,7 @@ public class RoomScreen extends AbstractScreen {
 	// declare buttons for showing sessions
 	private boolean setupNetwork = false;
 	Map<Integer, SimpleButton> btnGameSessions;
+	Map<Integer, SimpleButton> btnSavedGameSessions;
 	
 	// main constructor
 	public RoomScreen(ProjectZero game) {
@@ -38,13 +39,14 @@ public class RoomScreen extends AbstractScreen {
 				(int)(gameHeight * 4/5), btnWidth, 30);
 		btnNewGame = new SimpleButton((int)(gameWidth * 3/4) - btnWidth/2 - btnOffset, 
 				(int)(gameHeight * 4/5), btnWidth, 30);
-		btnLoad = new SimpleButton((int)(gameWidth * 3/4) - btnWidth/2 - btnOffset, 
-				(int)(gameHeight * 4/5), btnWidth, 30);
+//		btnLoad = new SimpleButton((int)(gameWidth * 3/4) - btnWidth/2 - btnOffset, 
+//				(int)(gameHeight * 4/5), btnWidth, 30);
 		btnBack = new SimpleRoundButton(20, 20, 15);
 		btnRefresh = new SimpleRoundButton((int)gameWidth - 20, 20, 15);
 		
 		// variable for storing session buttons
 		btnGameSessions = new HashMap<Integer, SimpleButton>();
+		btnSavedGameSessions = new HashMap<Integer, SimpleButton>();
 	}
 
 	private void detectGameSessions() {
@@ -66,13 +68,36 @@ public class RoomScreen extends AbstractScreen {
 			}
 		}
 	}
+	
+	private void getSavedGameSessions() {		
+		// clear button objects
+		btnSavedGameSessions.clear();
+		
+		// add button object
+		int btnOffset = 40;
+		int btnWidth = (int) (gameWidth - btnOffset*2);
+		
+		// iterate and add buttons to load session
+		for (int i=0; i < AssetHandler.getSavedGameSessions().size(); i++) {
+			// host if player was previously host
+			if (AssetHandler.getSavedGameSessions().get(i) != null &&
+					AssetHandler.getSavedGameSessions().get(i)
+					.getPlayerByPlayerID(AssetHandler.getPlayerID()) != null &&
+					AssetHandler.getSavedGameSessions().get(i)
+					.getPlayerByPlayerID(AssetHandler.getPlayerID()).index == 0) {
+				// add button
+				btnSavedGameSessions.put(i, new SimpleButton(btnOffset - 20, 
+						btnOffset + (33 * i), btnWidth, 30));
+			}
+		}
+	}
 
 	public void update(float delta) {
 		// setup networking
-		if (!setupNetwork) {
+		if (!setupNetwork && screenStatus == RoomState.WAITING) {
 			// initialise networking
 			NetworkHandler.client.startClient();
-			detectGameSessions();
+//			detectGameSessions();
 			setupNetwork = true;
 		}
 		
@@ -114,6 +139,10 @@ public class RoomScreen extends AbstractScreen {
 			setupNetwork = false;
 			screenStatus = RoomState.LOAD;
 			
+			// generate buttons
+			AssetHandler.loadAllGameSessions();
+			getSavedGameSessions();
+			
 			// debug log to console
 			ProjectZero.log("Load Game button is pressed.");
 
@@ -135,15 +164,36 @@ public class RoomScreen extends AbstractScreen {
 	
 	private void updateLoad(float delta) {
 		// update objects
-		btnLoad.update(delta);
+//		btnLoad.update(delta);
 		btnBack.update(delta);
 		
 		// check input from user and perform action
-		if (btnLoad.isTouched()) {
-			// debug log to console
-			ProjectZero.log("Load button is pressed.");
-
-		} else if (btnBack.isTouched()) {
+		for (int i = 0; i < btnSavedGameSessions.size(); i++) {
+			if (AssetHandler.getSavedGameSessions().get(i) != null) {
+				// render session buttons
+				btnSavedGameSessions.get(i).update(delta);
+				
+				// handle user input
+				if (btnSavedGameSessions.get(i).isTouched()) {
+					// load to game session
+					ProjectZero.gameSession.loadGameSession(AssetHandler.getSavedGameSessions().get(i));
+					
+					// return user back to waiting state
+					screenStatus = RoomState.WAITING;
+					
+					// proceed to next room
+					game.nextScreen(ProjectZero.selectionScreen, this);
+				}
+			}
+		}
+		
+		// check input from user and perform action
+//		if (btnLoad.isTouched()) {
+//			// debug log to console
+//			ProjectZero.log("Load button is pressed.");
+//
+//		} 
+		if (btnBack.isTouched()) {
 			// proceed back to waiting
 			screenStatus = RoomState.WAITING;
 		}
@@ -222,10 +272,29 @@ public class RoomScreen extends AbstractScreen {
 	}
 
 	private void renderLoad(float delta) {
+		// display all saved game sessions
+		for (int i=0; i < btnSavedGameSessions.size(); i++) {
+			if (AssetHandler.getSavedGameSessions().get(i) != null) {
+				// render saved session buttons
+				btnSavedGameSessions.get(i).update(delta);
+				batch.draw(AssetHandler.button,
+						btnSavedGameSessions.get(i).getPosition().x, btnSavedGameSessions.get(i).getPosition().y,
+						btnSavedGameSessions.get(i).getWidth(), btnSavedGameSessions.get(i).getHeight());
+				
+				// button text  
+				AssetHandler.getFont(0.3f).draw(batch, "Saved Date:", 
+						btnSavedGameSessions.get(i).getPosition().x + 8, 
+						btnSavedGameSessions.get(i).getPosition().y + 6);
+				AssetHandler.getFont(0.25f).draw(batch, AssetHandler.getSavedGameSessions().get(i).getLastSaved(), 
+						btnSavedGameSessions.get(i).getPosition().x + 15, 
+						btnSavedGameSessions.get(i).getPosition().y + 18);
+			}
+		}
+		
 		// render load state
-		batch.draw(AssetHandler.buttonLoad, 
-				btnLoad.getPosition().x, btnLoad.getPosition().y, 
-				btnLoad.getWidth(), btnLoad.getHeight());
+//		batch.draw(AssetHandler.buttonLoad, 
+//				btnLoad.getPosition().x, btnLoad.getPosition().y, 
+//				btnLoad.getWidth(), btnLoad.getHeight());
 		batch.draw(AssetHandler.buttonBack, 
 				btnBack.getPosition().x - btnBack.getRadius(), 
 				btnBack.getPosition().y - btnBack.getRadius(), 

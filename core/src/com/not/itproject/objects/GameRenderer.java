@@ -130,6 +130,7 @@ public class GameRenderer {
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		btnResumeGame.update(delta);
+		btnSaveExit.update(delta);
 		btnSoundToggle.update(delta);
 		
 		// check input from user and perform action
@@ -146,20 +147,23 @@ public class GameRenderer {
 				NetworkHandler.getNetworkClient().sendGameStateInformation(NetworkMessage.GameState.RESUME);
 			} 
 		}	 
-		else if (btnSaveExit.isTouched()) {
-			// save game
-			gameWorld.saveGame();
-			
-			// exit game
-			gameWorld.endGame();
-			
+		else if (btnSaveExit.isTouched()) {			
 			// send network message
 			if (NetworkHandler.isHost()) {
 				// as host - send information about game state
 				NetworkHandler.getNetworkServer().sendGameStateInformation(NetworkMessage.GameState.EXIT);
+				
+				// save game
+				gameWorld.saveGame();
+				
+				// exit game
+				gameWorld.endGame();
 			} else if (NetworkHandler.isClient()) {
 				// as client - send information about game state
 				NetworkHandler.getNetworkClient().sendGameStateInformation(NetworkMessage.GameState.EXIT);
+				
+				// exit game
+				ProjectZero.gameScreen.getGameWorld().endGame();
 			} 
 		} 
 		else if (btnSoundToggle.isTouched()) {
@@ -239,11 +243,11 @@ public class GameRenderer {
 		tiledMapRenderer.render();
 		batch.begin();
 
-		// draw players
-		renderPlayers(delta);
-
 		// draw obstacles
 		renderObstacles(delta);
+
+		// draw players
+		renderPlayers(delta);
 		batch.end();
 	}
 
