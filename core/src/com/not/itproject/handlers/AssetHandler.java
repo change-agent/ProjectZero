@@ -310,6 +310,7 @@ public class AssetHandler {
 	
 	public static void getNextTrack()
 	{
+		if(getSoundMute() == true) { return; }
 		currentSong.stop();
 		int index = playlist.indexOf(currentSong);
 		int next = MathUtils.clamp(index + 1, 0, playlist.size() - 1);
@@ -319,6 +320,7 @@ public class AssetHandler {
 	
 	public static void playMusic()
 	{
+		if(getSoundMute() == true) { return; }
 		if(!currentSong.isPlaying())
 		{
 			getNextTrack();
