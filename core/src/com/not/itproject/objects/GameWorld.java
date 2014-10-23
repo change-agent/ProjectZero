@@ -97,7 +97,7 @@ public class GameWorld {
 					// Handle the power up collection
 					if(car.getOwner().getPlayerID() == getPlayer().getPlayerID())
 					{
-						AssetHandler.powerUpCollected.play();
+						AssetHandler.playSound("powerUpCollected");
 					}
 					PowerUpContainer powerUpContainer = (PowerUpContainer) gameObject;
 					car.setPower(powerUpContainer.getPowerUp());
@@ -133,10 +133,14 @@ public class GameWorld {
 				}
 				else
 				{	
-					// Handle the power up collection
 					PowerUpContainer powerUpContainer = (PowerUpContainer) gameObject;
 					car.setPower(powerUpContainer.getPowerUp());
 					powerUpContainer.CollectPowerUp();
+					// Handle the power up collection
+					if(car.getOwner().getPlayerID() == getPlayer().getPlayerID())
+					{
+						AssetHandler.playSound("powerUpCollected");
+					}
 				}
 			}
 			else 
@@ -153,7 +157,7 @@ public class GameWorld {
 	public List<Player> players;
 	public List<GameObject> staticObjects;
 	public List<Checkpoint> checkpoints;
-	TiledMapHandler tiledMapHandler;
+	public TiledMapHandler tiledMapHandler;
 	
 	// Box2D world in which our objects will be created in and handled by
 	public World worldBox2D;

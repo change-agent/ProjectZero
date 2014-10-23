@@ -1,5 +1,7 @@
 package com.not.itproject.objects;
 
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.networks.NetworkMessage;
+import com.not.itproject.objects.GameVariables.PowerType;
 import com.not.itproject.zero.ProjectZero;
 
 public class GameRenderer {
@@ -248,6 +251,9 @@ public class GameRenderer {
 
 		// draw players
 		renderPlayers(delta);
+		
+		// draw player buffs to screen
+		renderActiveBuffs(delta);
 		batch.end();
 	}
 
@@ -341,6 +347,45 @@ public class GameRenderer {
 						0, 0, 
 						staticObj.getWidth(), staticObj.getHeight(), 
 						1.0f, 1.0f, staticObj.getRotation());
+			}
+		}
+	}
+	
+	private void renderActiveBuffs(float delta)
+	{
+		float height = 4;
+		List<PowerUp> powerUps = gameWorld.getPlayer().getActiveBuffs();
+		for(int i=0; i < powerUps.size(); i++)
+		{
+			if(powerUps.get(i).getPowerType() == PowerType.ICEROAD)
+			{
+				AssetHandler.getFont(0.1f).draw(batch, "ICE", 
+						gameWorld.getPlayer().getCar().getPosition().x + 20, 
+						gameWorld.getPlayer().getCar().getPosition().y - 20 + i * height);
+			}
+			else if(powerUps.get(i).getPowerType() == PowerType.SPEEDBOOST)
+			{
+				AssetHandler.getFont(0.1f).draw(batch, "BOOST", 
+						gameWorld.getPlayer().getCar().getPosition().x + 20, 
+						gameWorld.getPlayer().getCar().getPosition().y - 20 + i * height);
+			}
+			else if(powerUps.get(i).getPowerType() == PowerType.SPEEDREDUCE)
+			{
+				AssetHandler.getFont(0.1f).draw(batch, "SLOW", 
+						gameWorld.getPlayer().getCar().getPosition().x + 20, 
+						gameWorld.getPlayer().getCar().getPosition().y - 20 + i * height);
+			}
+			else if(powerUps.get(i).getPowerType() == PowerType.STARPOWER)
+			{
+				AssetHandler.getFont(0.1f).draw(batch, "STAR", 
+						gameWorld.getPlayer().getCar().getPosition().x + 20, 
+						gameWorld.getPlayer().getCar().getPosition().y - 20 + i * height);
+			}
+			else if(powerUps.get(i).getPowerType() == PowerType.STICKYROAD)
+			{
+				AssetHandler.getFont(0.1f).draw(batch, "STICKY", 
+						gameWorld.getPlayer().getCar().getPosition().x + 20, 
+						gameWorld.getPlayer().getCar().getPosition().y - 20 + i * height);
 			}
 		}
 	}

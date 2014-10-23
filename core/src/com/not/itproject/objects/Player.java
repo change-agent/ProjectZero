@@ -109,4 +109,9 @@ public class Player {
 	public void incrementLap() {
 		lapNum++;
 	}
+	
+	public List<PowerUp> getActiveBuffs()
+	{
+		return this.activeBuffs;
+	}
 }

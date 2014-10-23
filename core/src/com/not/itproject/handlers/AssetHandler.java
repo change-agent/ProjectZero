@@ -59,6 +59,9 @@ public class AssetHandler {
 	public static Texture backgroundUniversalTexture, backgroundErrorTexture;
 	public static TextureRegion backgroundUniversal, backgroundError;
 	
+	public static Texture helpGameplayTexture, helpSessionsTexture, helpTrackSelectionTexture;
+	public static TextureRegion helpGameplay, helpSessions, helpTrackSelection;
+	
 	public static BitmapFont font;
 	public static Preferences prefs;
 	public static List<Music> playlist = new ArrayList<Music>();;
@@ -100,12 +103,31 @@ public class AssetHandler {
 		backgroundUniversalTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		backgroundErrorTexture = new Texture(Gdx.files.internal("backgrounds/backgroundError.png"));
 		backgroundErrorTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
+		
+		helpGameplayTexture = new Texture(Gdx.files.internal("Tutorials/helpGameplay.png"));
+		helpGameplayTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		helpSessionsTexture = new Texture(Gdx.files.internal("Tutorials/helpSessions.png"));
+		helpSessionsTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		helpTrackSelectionTexture = new Texture(Gdx.files.internal("Tutorials/helpTrackSelection.png"));
+		helpTrackSelectionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
 		// load regions
 		backgroundUniversal = new TextureRegion(backgroundUniversalTexture);
 		backgroundUniversal.flip(false, true);
+		
 		backgroundError = new TextureRegion(backgroundErrorTexture);
 		backgroundError.flip(false, true);
+		
+		helpGameplay = new TextureRegion(helpGameplayTexture);
+		helpGameplay.flip(false, true);
+		
+		helpSessions = new TextureRegion(helpSessionsTexture);
+		helpSessions.flip(false, true);
+		
+		helpTrackSelection = new TextureRegion(helpTrackSelectionTexture);
+		helpTrackSelection.flip(false, true);
 	}
 	
 	private static void loadVehicles() {
@@ -385,7 +407,7 @@ public class AssetHandler {
 	public static void playSound(String sound)
 	{
 		// sound is not muted
-		if(!getSoundMute()) { 
+		if(getSoundMute() == false) { 
 			if(sound.compareToIgnoreCase("crash") == 0)
 			{
 				crash.play();

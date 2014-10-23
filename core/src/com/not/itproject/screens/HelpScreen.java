@@ -3,7 +3,9 @@ package com.not.itproject.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector2;
 import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.objects.SimpleButton;
 import com.not.itproject.objects.SimpleRoundButton;
@@ -96,6 +98,7 @@ public class HelpScreen extends AbstractScreen {
 					// debug log to console
 					ProjectZero.log("Next page button is pressed.");
 					
+					
 				}
 				break;
 				
@@ -144,6 +147,8 @@ public class HelpScreen extends AbstractScreen {
 				
 				// render first help screen
 				batch.begin();
+				batch.draw(AssetHandler.helpSessions, 0, 0,
+						gameWidth, gameHeight);
 				batch.draw(AssetHandler.buttonBack, 
 						btnBack.getPosition().x - btnBack.getRadius(), 
 						btnBack.getPosition().y - btnBack.getRadius(), 
@@ -166,6 +171,8 @@ public class HelpScreen extends AbstractScreen {
 				
 				// render second help screen
 				batch.begin();
+				batch.draw(AssetHandler.helpTrackSelection, 0, 0,
+						gameWidth, gameHeight);
 				batch.draw(AssetHandler.buttonBack, 
 						btnBack.getPosition().x - btnBack.getRadius(), 
 						btnBack.getPosition().y - btnBack.getRadius(), 
@@ -178,7 +185,7 @@ public class HelpScreen extends AbstractScreen {
 						btnNext.getPosition().x, 
 						btnNext.getPosition().y, 
 						btnNext.getWidth(), btnNext.getHeight());
-				batch.end();
+				
 				
 				// render shapes
 				shapeRenderer.begin(ShapeType.Line);
@@ -194,6 +201,7 @@ public class HelpScreen extends AbstractScreen {
 						btnNext.getPosition().y, 
 						btnNext.getWidth(), btnNext.getHeight());
 				shapeRenderer.end();
+				batch.end();
 				break;
 				
 			case HELP_THREE:
@@ -203,17 +211,19 @@ public class HelpScreen extends AbstractScreen {
 				
 				// render second help screen
 				batch.begin();
+				batch.draw(AssetHandler.helpGameplay, 0, 0,
+						gameWidth, gameHeight);
 				batch.draw(AssetHandler.buttonBack, 
 						btnBack.getPosition().x - btnBack.getRadius(), 
 						btnBack.getPosition().y - btnBack.getRadius(), 
 						btnBack.getRadius() * 2, btnBack.getRadius() * 2);
 				batch.draw(AssetHandler.buttonNavigatePrev, 
-						btnPrevious.getPosition().x - btnPrevious.getWidth(), 
-						btnPrevious.getPosition().y - btnPrevious.getHeight(), 
+						btnPrevious.getPosition().x, 
+						btnPrevious.getPosition().y, 
 						btnPrevious.getWidth(), btnPrevious.getHeight());
 				batch.draw(AssetHandler.buttonNavigateNext, 
-						btnNext.getPosition().x - btnNext.getWidth(), 
-						btnNext.getPosition().y - btnNext.getHeight(), 
+						btnNext.getPosition().x, 
+						btnNext.getPosition().y, 
 						btnNext.getWidth(), btnNext.getHeight());
 				batch.end();
 				break;
