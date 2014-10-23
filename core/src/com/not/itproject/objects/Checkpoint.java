@@ -12,12 +12,16 @@ public class Checkpoint extends GameObject {
 
 	private Body body;
 	private String id;
+	private float width;
+	private float height;
 	
 	public Checkpoint(World worldBox2D, float x, float y, float width, float height, float rotation, String id) {
 		// define super
 		super(worldBox2D, x, y, width, height, 0);
 		objType = ObjType.CHECKPOINT;
 		this.id = id;
+		this.width = width;
+		this.height = height;
 		
 		// Define the box2D body for this power
 		BodyDef box = new BodyDef();
@@ -42,5 +46,10 @@ public class Checkpoint extends GameObject {
 	
 	public String getId() {
 		return this.id;
+	}
+	
+	public Vector2 getPosition() {
+		Vector2 centerPos = body.getPosition();
+		return centerPos;
 	}
 }

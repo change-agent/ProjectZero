@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class PowerUpContainer extends GameObject
 {
-	private final float SPAWNTIME = 1;
+	private final float SPAWNTIME = 5;
 	private Body body;
 	private PowerUp powerUp;
 	private float cooldown;

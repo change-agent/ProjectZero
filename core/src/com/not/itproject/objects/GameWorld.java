@@ -6,6 +6,9 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -111,8 +114,7 @@ public class GameWorld {
 				}
 			}
 			else 
-			{	
-				// TODO => this will pay sounds for all players
+			{
 				AssetHandler.playSound("crash");
 			}
 		}
@@ -169,6 +171,7 @@ public class GameWorld {
 		// This worlds player will always be at index 0
 		// This makes using powers more transparent and will allow for network data efficiency
 		PlayerColour colour = null;
+		MapObjects startingPositions = tiledMapHandler.getStartingPositions();
 		for (int i=0; i<NetworkHandler.getListOfPlayers().size(); i++) {
 			switch (i) {
 				case 0:
@@ -188,13 +191,21 @@ public class GameWorld {
 					colour = GameVariables.PlayerColour.YELLOW;
 					break;
 			}
-			players.add(new Player(worldBox2D, NetworkHandler.getListOfPlayers().get(i), colour,
-					gameWidth / 2 + i*carWidth*2, gameHeight / 2, carWidth, carHeight, 0));
+			// Access the tiled map to place them at the correct position
+			if(i < startingPositions.getCount())
+			{
+				RectangleMapObject startPos = (RectangleMapObject)startingPositions.get(i);
+				float x = startPos.getRectangle().x;
+				float y = startPos.getRectangle().y;
+				players.add(new Player(worldBox2D, NetworkHandler.getListOfPlayers().get(i), colour,
+						x, y, carWidth, carHeight, 0, tiledMapHandler.getMapWidth(),
+						tiledMapHandler.getMapHeight() ));
+			}
 		}
 	}
 
-	public void update(float delta) {
-		
+	public void update(float delta) 
+	{	
 		// This updates the box2d world
 		// Adjust last two params for performance increase
 		worldBox2D.step(delta, 4, 4);

@@ -1,6 +1,7 @@
 package com.not.itproject.handlers;
 
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -107,6 +108,11 @@ public class TiledMapHandler {
 	public TiledMap getTiledMap()
 	{
 		return this.tiledMap;
+	}
+	
+	public MapObjects getStartingPositions()
+	{
+		return tiledMap.getLayers().get("Starting position").getObjects();
 	}
 	
 	public int getTileHeight()

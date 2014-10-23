@@ -43,7 +43,7 @@ public class TestFramework extends Game {
 		
 		// define player
 		player = new Player(null, "playerID", GameVariables.PlayerColour.RED, 
-				playerX, playerY, playerWidth, playerHeight, rotation);
+				playerX, playerY, playerWidth, playerHeight, rotation, 480, 480);
 		
 		// perform tests
 		Gdx.app.log("Project Zero", "Testing Framework");

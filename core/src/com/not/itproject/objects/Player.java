@@ -16,13 +16,14 @@ public class Player {
 	private int lapNum;
 	private List<PowerUp> activeBuffs;
 	private HashMap<String, Checkpoint> checkpoints;
+	private Checkpoint lastCheckpoint;
 
 	
 	// main constructor
 	public Player(World worldBox2D, String playerID, PlayerColour colour, float x, float y, 
-			float width, float height, float rotation)
+			float width, float height, float rotation, int mapWidth, int mapHeight)
 	{	
-		this.car = new Car(worldBox2D, this, x, y, width, height, 0);
+		this.car = new Car(worldBox2D, this, x, y, width, height, 0, mapWidth, mapHeight);
 		this.activeBuffs = new ArrayList<PowerUp>(GameVariables.PowerType.values().length);
 		this.playerID = playerID;
 		this.playerColour = colour;
@@ -45,6 +46,8 @@ public class Player {
 		}
 	}
 	
+	// Check the power buffer to see if a power is currently  activated and is applying it's
+	// effect to the player
 	public int buffAlreadyActive(PowerUp buff) {
 		int index = -1;
 		for(PowerUp currBuff : activeBuffs) {
@@ -55,6 +58,7 @@ public class Player {
 		return index;
 	}
 	
+	// Adds the buff to the stack, renewing the timer if present
 	public void addBuffToStack(PowerUp buff) {
 		activeBuffs.add(buff);
 	}
@@ -94,6 +98,12 @@ public class Player {
 	public void addCheckpoint(String name, Checkpoint checkpoint)
 	{
 		checkpoints.put(name, checkpoint);
+		lastCheckpoint = checkpoint;
+	}
+	
+	public Checkpoint getLastCheckpoint()
+	{
+		return lastCheckpoint;
 	}
 
 	public void clearCheckpoints() {

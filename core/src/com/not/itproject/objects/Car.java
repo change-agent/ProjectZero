@@ -41,11 +41,13 @@ public class Car extends GameObject{
 	private float wheelWidth = width / 8;
 	private float wheelHeight = height / 8;
 	private Player owner;
+	private int mapWidth;
+	private int mapHeight;
 	
 	/** ----------------------------- START CONSTRUCTOR ----------------------- **/
 	// Box2D box used for applying forces and collision handling
 	public Car(World worldBox2D, Player owner, float x, float y, 
-			float width, float height, float rotation) {
+			float width, float height, float rotation, int mapWidth, int mapHeight) {
 		super(worldBox2D, x, y, width, height, rotation);
 	
 		// Set up the object and power variables
@@ -54,6 +56,8 @@ public class Car extends GameObject{
 		this.objType = ObjType.CAR;
 		this.usePower = false;
 		this.owner = owner;
+		this.mapWidth = mapWidth;
+		this.mapHeight = mapHeight;
 		
 		// Set up the physics body
 		BodyDef bodyDef = new BodyDef();
@@ -201,6 +205,28 @@ public class Car extends GameObject{
 		// Update the sprite position and rotation based on chassis
 		position = chassis.getPosition();
 		rotation = chassis.getAngle() * RAD_TO_DEG;
+		
+		// Clamp the cars position
+		if(position.x < 0)
+		{
+			Vector2 resetPos = new Vector2(0, position.y);
+			chassis.setTransform(resetPos, rotation * DEG_TO_RAD);
+		}
+		if(position.x > mapWidth)
+		{
+			Vector2 resetPos = new Vector2(mapWidth, position.y);
+			chassis.setTransform(resetPos, rotation * DEG_TO_RAD);
+		}
+		if(position.y < 0)
+		{
+			Vector2 resetPos = new Vector2(position.x, 0);
+			chassis.setTransform(resetPos, rotation * DEG_TO_RAD);
+		}
+		if(position.y > mapHeight)
+		{
+			Vector2 resetPos = new Vector2(position.x, mapHeight);
+			chassis.setTransform(resetPos, rotation * DEG_TO_RAD);
+		}
 	}
 	
 	public void applyMovement(Vector2 position, Vector2 velocity, float rotation) {	
