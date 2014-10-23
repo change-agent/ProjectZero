@@ -1,9 +1,12 @@
 package com.not.itproject.handlers;
 
+<<<<<<< Updated upstream
 import java.util.ArrayList;
 import java.util.List;
+=======
 import java.util.HashMap;
 import java.util.Map;
+>>>>>>> Stashed changes
 import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
@@ -14,10 +17,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+<<<<<<< Updated upstream
 import com.badlogic.gdx.math.MathUtils;
+=======
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.not.itproject.sessions.GameSession;
+>>>>>>> Stashed changes
 import com.not.itproject.zero.ProjectZero;
 
 public class AssetHandler {
@@ -28,8 +34,7 @@ public class AssetHandler {
 							buttonNextTexture, buttonReadyTexture, buttonStartSessionTexture,
 							buttonBackTexture, buttonRefreshTexture, powerUpTexture, obstacleTexture,
 							buttonResumeGameTexture, buttonOptionTexture, buttonSaveExitTexture,
-							buttonOkayTexture, buttonYesTexture, buttonNoTexture,
-							buttonNavigatePrevTexture, buttonNavigateNextTexture;
+							buttonOkayTexture, buttonYesTexture, buttonNoTexture;
 	public static Texture carRedTexture, carBlueTexture, carGreenTexture, carYellowTexture;
 	public static TextureRegion logo, button, buttonStart, buttonTutorial,
 							toggleButtonSoundOff, toggleButtonSoundOn,
@@ -38,19 +43,17 @@ public class AssetHandler {
 							buttonBack, buttonRefresh, powerUp, obstacle,
 							carRed, carBlue, carGreen, carYellow,
 							buttonOption, buttonResumeGame, buttonSaveExit,
-							buttonOkay, buttonYes, buttonNo,
-							buttonNavigatePrev, buttonNavigateNext;
+							buttonOkay, buttonYes, buttonNo;
 	
 	public static Texture menuTrackTexture, menuVehicleTexture, menuReadyTexture,
 							playerRedTexture, playerBlueTexture,
 							playerGreenTexture, playerYellowTexture,
 							playerNATexture, playerAITexture, playerReadyTexture,
-							playerWaitTexture,
 							bannerBlackTexture, bannerWhiteTexture;
 	public static TextureRegion menuTrack, menuVehicle, menuReady,
 							playerRed, playerBlue,
 							playerGreen, playerYellow,
-							playerNA, playerAI, playerReady, playerWait,
+							playerNA, playerAI, playerReady,
 							bannerBlack, bannerWhite;
 	
 	public static Texture navigateUpTexture, navigateDownTexture, navigateLeftTexture, navigateRightTexture;
@@ -61,9 +64,14 @@ public class AssetHandler {
 	
 	public static BitmapFont font;
 	public static Preferences prefs;
+<<<<<<< Updated upstream
+	
 	public static List<Music> playlist = new ArrayList<Music>();;
 	public static Music currentSong;
+=======
+
 	public static Music music;
+>>>>>>> Stashed changes
 	public static Sound crash;
 	public static Sound buttonClick;
 	public static Sound powerUpCollected;
@@ -170,10 +178,6 @@ public class AssetHandler {
 		buttonYesTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		buttonNoTexture = new Texture(Gdx.files.internal("navigation/buttonNo.png"));
 		buttonNoTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		buttonNavigatePrevTexture = new Texture(Gdx.files.internal("navigation/buttonNavigatePrev.png"));
-		buttonNavigatePrevTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		buttonNavigateNextTexture = new Texture(Gdx.files.internal("navigation/buttonNavigateNext.png"));
-		buttonNavigateNextTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		navigateUpTexture = new Texture(Gdx.files.internal("navigation/navigateUp.png"));
 		navigateUpTexture .setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		navigateDownTexture = new Texture(Gdx.files.internal("navigation/navigateDown.png"));
@@ -218,10 +222,6 @@ public class AssetHandler {
 		buttonYes.flip(false, true);
 		buttonNo = new TextureRegion(buttonNoTexture);
 		buttonNo.flip(false, true);
-		buttonNavigatePrev = new TextureRegion(buttonNavigatePrevTexture);
-		buttonNavigatePrev.flip(false, true);
-		buttonNavigateNext = new TextureRegion(buttonNavigateNextTexture);
-		buttonNavigateNext.flip(false, true);
 		navigateUp = new TextureRegion(navigateUpTexture);
 		navigateUp.flip(false, true);
 		navigateDown = new TextureRegion(navigateDownTexture);
@@ -270,8 +270,6 @@ public class AssetHandler {
 		playerAITexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		playerReadyTexture = new Texture(Gdx.files.internal("other/playerReady.png"));
 		playerReadyTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		playerWaitTexture = new Texture(Gdx.files.internal("other/playerWait.png"));
-		playerWaitTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bannerBlackTexture = new Texture(Gdx.files.internal("other/banner-black.png"));
 		bannerBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bannerWhiteTexture = new Texture(Gdx.files.internal("other/banner-white.png"));
@@ -304,8 +302,6 @@ public class AssetHandler {
 		playerAI.flip(false, true);
 		playerReady = new TextureRegion(playerReadyTexture);
 		playerReady.flip(false, true);
-		playerWait = new TextureRegion(playerWaitTexture);
-		playerWait.flip(false, true);
 		bannerBlack = new TextureRegion(bannerBlackTexture);
 		bannerBlack.flip(false, true);
 		bannerWhite = new TextureRegion(bannerWhiteTexture);
@@ -319,7 +315,7 @@ public class AssetHandler {
 				
 		// initialise settings
 		if (!prefs.contains("soundMute")) {
-			// default mute = false (sound is on)
+			// default mute = false
 			setSoundMute(false);
 		}
 		if (!prefs.contains("playerID")) {
@@ -346,28 +342,21 @@ public class AssetHandler {
 		engine = Gdx.audio.newSound(Gdx.files.internal("sounds/engine.wav"));
 		
 		currentSong = playlist.get(0);
-		if (!getSoundMute()) {
-			currentSong.play();
-		}
+		currentSong.play();
 	}
 	
 	public static void getNextTrack()
 	{
-		if(getSoundMute() == true) { return; }
 		currentSong.stop();
 		int index = playlist.indexOf(currentSong);
 		int next = MathUtils.clamp(index + 1, 0, playlist.size() - 1);
 		currentSong = playlist.get(next);
-		if (!getSoundMute()) {
-			currentSong.play();
-		}
+		currentSong.play();
 	}
 
 	public static void playMusic()
 	{
-		if(getSoundMute() == true) { return; }
 		if(!currentSong.isPlaying())
-		if(!currentSong.isPlaying() && !getSoundMute())
 		{
 			getNextTrack();
 			currentSong.play();
@@ -384,25 +373,24 @@ public class AssetHandler {
 
 	public static void playSound(String sound)
 	{
-		// sound is not muted
-		if(!getSoundMute()) { 
-			if(sound.compareToIgnoreCase("crash") == 0)
-			{
-				crash.play();
-			}
-			if(sound.compareToIgnoreCase("powerUpCollected") == 0)
-			{
-				powerUpCollected.play();
-			}
-			if(sound.compareToIgnoreCase("buttonClick") == 0)
-			{
-				buttonClick.play();
-			}
-			if(sound.compareToIgnoreCase("usePower") == 0)
-			{
-				usePower.play();
-			}
+		if(getSoundMute() == true) { return; }
+		if(sound.compareToIgnoreCase("crash") == 0)
+		{
+			crash.play();
 		}
+		if(sound.compareToIgnoreCase("powerUpCollected") == 0)
+		{
+			powerUpCollected.play();
+		}
+		if(sound.compareToIgnoreCase("buttonClick") == 0)
+		{
+			buttonClick.play();
+		}
+		if(sound.compareToIgnoreCase("usePower") == 0)
+		{
+			usePower.play();
+		}
+
 	}
 
 	public static void setSoundMute(boolean value) {
@@ -456,7 +444,6 @@ public class AssetHandler {
 		json.setOutputType(OutputType.json);
 		
 		// save to preferences
-		ProjectZero.log("Session Data: " + json.toJson(ProjectZero.gameSession));
 		prefs.putString("gameSession", json.toJson(ProjectZero.gameSession));
 		prefs.flush();
 	}
@@ -471,15 +458,17 @@ public class AssetHandler {
 	}
 
 	// debugging playerID
+	static String debugPlayerID = UUID.randomUUID().toString();
 	public static String getPlayerID() {
-		return prefs.getString("playerID");
+		// return prefs.getString("playerID");
+		return debugPlayerID;
 	}
 	
 	// vibrate device
 	public static void vibrate(int time) {
 		// vibrate in milliseconds
 		Gdx.input.vibrate(time);
-//		ProjectZero.log("Vibrate Device");
+		ProjectZero.log("Vibrate Device");
 	}
 	
 	public static BitmapFont getFont(float scale) {

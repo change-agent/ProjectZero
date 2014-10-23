@@ -2,10 +2,14 @@ package com.not.itproject.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad.TouchpadStyle;
@@ -13,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.networks.NetworkMessage;
+import com.not.itproject.objects.GameWorld.GameState;
+import com.not.itproject.zero.ProjectZero;
 
 public class GameInputProcessor {
 	// declare variables
@@ -23,21 +29,17 @@ public class GameInputProcessor {
 	Touchpad touchpad;
 	TouchpadStyle touchpadStyle;
 	Skin touchpadSkin;
-	Drawable touchBackground;
-	Drawable touchKnob;
+	Drawable touchBackground, touchKnob;
 	
-	Button buttonOne;
-	Button buttonTwo;
-	Button buttonThree;
-	Drawable touchButtonUp;
-	Drawable touchButtonDown;
-
+	Button buttonOne, buttonTwo, buttonThree;
+	Drawable touchButtonUp, touchButtonDown;
 	ButtonStyle buttonMenuStyle;
+	Drawable touchButtonMenuUp, touchButtonMenuDown;
 	Skin buttonMenuSkin;
-	Drawable touchButtonMenuUp;
-	Drawable touchButtonMenuDown;
-
 	Button buttonMenu;
+	
+	Label lapsCounter;
+	LabelStyle labelStyle;
 	
 	// main constructor
 	public GameInputProcessor(GameWorld world, float gameWidth, float gameHeight) {
@@ -49,6 +51,7 @@ public class GameInputProcessor {
 		// create controls
 		createTouchpad();
 		createButtons();
+		createHub();
 		
 		// create a stage and add controls
 		stage = new Stage(new FillViewport(gameWidth, gameHeight));
@@ -57,6 +60,9 @@ public class GameInputProcessor {
 		stage.addActor(buttonTwo);
 		stage.addActor(buttonThree);
 		stage.addActor(buttonMenu);
+		
+		// add hub variables
+		stage.addActor(lapsCounter);
 	}
 
 	public void createTouchpad() {
@@ -160,6 +166,31 @@ public class GameInputProcessor {
 		buttonThree.setPosition(270, 10);
 		buttonMenu.setPosition(gameWidth/2 - buttonMenu.getWidth()/2, 10);
 	}
+	
+	private void createHub() {
+		// define label variables
+		BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/kenvector.fnt"), false);
+		font.setScale(0.5f);
+		labelStyle = new LabelStyle(font, Color.BLACK);
+		lapsCounter = new Label("Laps", labelStyle);
+		
+		// determine text & position
+		updateLapCounter();
+		lapsCounter.setPosition(10, gameHeight - 20);
+	}
+	
+	private void updateLapCounter() {
+		if (ProjectZero.gameScreen != null && 
+				ProjectZero.gameScreen.getGameWorld().getGameState() == GameState.RUNNING) {
+			// get lap details
+			String lapDetails = "Laps: " + 
+					ProjectZero.gameScreen.getGameWorld().getPlayer().getLapNum() + " / " +
+					GameVariables.GAME_LAPS;
+			lapsCounter.setText(lapDetails);
+		} else {
+			lapsCounter.setText("");
+		}
+	}
 
 	public void update(float delta) {
 		// only update controls if game is running
@@ -239,10 +270,12 @@ public class GameInputProcessor {
 		}
 		
 		// update stage
+		updateLapCounter();
 		stage.act(delta);
 	}
 
 	public void render(float delta) {
+		// draw controls and hub
 		stage.draw();
 	}
 

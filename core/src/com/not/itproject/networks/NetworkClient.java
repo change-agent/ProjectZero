@@ -2,8 +2,6 @@ package com.not.itproject.networks;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,6 +90,14 @@ public class NetworkClient {
 							// proceed with joining
 							ProjectZero.roomScreen.enterGameSession();
 						} 	
+						else if (response.type == NetworkMessage.ResponseStatus.PRIVATE) {
+							// disconnect from server
+							leaveGameSession();
+							
+							// display error message
+							ProjectZero.errorScreen.displayError(ProjectZero.roomScreen, 
+									"Private", "Unable to join private game session.");
+						}
 						else if (response.type == NetworkMessage.ResponseStatus.FAILURE) {
 							// disconnect from server
 							leaveGameSession();
@@ -107,11 +113,17 @@ public class NetworkClient {
 						NetworkMessage.SelectionScreenInformation info = (NetworkMessage.SelectionScreenInformation) object;
 						NetworkHandler.setListOfPlayers(info.playerList);
 						NetworkHandler.setListOfPlayerStatus(info.playerStatusList);
-						ProjectZero.log("Keys: " + info.playerStatusList.keySet());
 					}
 					
 					// get game start
 					else if (object instanceof NetworkMessage.GameStartInformation) {
+						NetworkMessage.GameStartInformation info = (NetworkMessage.GameStartInformation) object;
+							
+						// get player list if exists
+						if (info.playerList != null) {
+							NetworkHandler.setListOfPlayers(info.playerList);
+						}
+						
 						// proceed to game screen
 						ProjectZero.selectionScreen.startGame(); 
 					}
@@ -133,15 +145,9 @@ public class NetworkClient {
 						// get info
 						NetworkMessage.GameStateInformation info = (NetworkMessage.GameStateInformation) object;
 
-						// determine what action to perform
-						if (info.state == NetworkMessage.GameState.PAUSE) {							
-							// pause game
-							ProjectZero.gameScreen.getGameWorld().pauseGame();
-						}
-						else if (info.state == NetworkMessage.GameState.RESUME) {							
-							// resume game
-							ProjectZero.gameScreen.getGameWorld().resumeGame();
-						}
+						// add message to queue (prioritise by clearing)
+						ProjectZero.gameScreen.getGameWorld().clearNetworkQueue();
+						ProjectZero.gameScreen.getGameWorld().addToNetworkQueue(info);
 					}
 					
 				} catch (Exception e) {
@@ -159,8 +165,9 @@ public class NetworkClient {
 		// close connection
 		client.close();
 		
-		// reset networkHandler
+		// reset networkHandler and game session
 		NetworkHandler.reinitialise();
+		ProjectZero.gameSession.newGameSession();
 		
 		// re-initialise client
 		client = new Client();
@@ -185,8 +192,7 @@ public class NetworkClient {
 			// send car information
 			NetworkMessage.GameCarInformation info = new NetworkMessage.GameCarInformation();
 			info.playerID = AssetHandler.getPlayerID();
-			Calendar c = new GregorianCalendar();
-			info.timestamp = c.getTime();
+			info.timestamp = ProjectZero.calendar.getTime();
 			info.position = position;
 			info.velocity = velocity;
 			info.rotation = rotation;
@@ -201,6 +207,18 @@ public class NetworkClient {
 			// send game state information
 			NetworkMessage.GameStateInformation info = new NetworkMessage.GameStateInformation();
 			info.state = state;
+			client.sendTCP(info);
+		} catch (Exception e) {
+			// capture errors
+		}
+	}
+
+	public void sendGameSessionInformation(Vector2 lastPosition) {
+		try {
+			// send game state information
+			NetworkMessage.GameSessionInformation info = new NetworkMessage.GameSessionInformation();
+			info.playerID = AssetHandler.getPlayerID();
+			info.lastPosition = lastPosition;
 			client.sendTCP(info);
 		} catch (Exception e) {
 			// capture errors

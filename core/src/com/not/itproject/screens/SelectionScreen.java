@@ -51,9 +51,19 @@ public class SelectionScreen extends AbstractScreen {
 
 	public void update(float delta) {
 		/* setup networking */
+		if (!setupNetwork) {
+			// change screen depending on player status
+			if (NetworkHandler.getListOfPlayerStatus().get(AssetHandler.getPlayerID()) == 
+					NetworkMessage.SelectionState.READY) {
+				// game state to ready
+				screenStatus = SelectionState.READY;
+			}
+		}
+		
 		if (!setupNetwork && !NetworkHandler.isClient()) {
 			// create a new game session as host
 			NetworkHandler.getNetworkServer().startGameSession();
+			
 			setupNetwork = true;
 		} else if (!setupNetwork && NetworkHandler.isClient()) {
 			// determine network has been setup as client
@@ -109,6 +119,9 @@ public class SelectionScreen extends AbstractScreen {
 			ProjectZero.log("Next button is pressed.");
 		}
 		else if (btnBack.isTouched()) {
+			// proceed to next screen
+			game.nextScreen(ProjectZero.roomScreen, this);
+			
 			// disconnect from network
 			if (NetworkHandler.isHost()) {
 				// as host - end game session
@@ -120,7 +133,6 @@ public class SelectionScreen extends AbstractScreen {
 			
 			// go back to room
 			setupNetwork = false;
-			game.nextScreen(ProjectZero.roomScreen, this);
 		}
 	}
 	
@@ -244,9 +256,15 @@ public class SelectionScreen extends AbstractScreen {
 				gameWidth, 35, 1, 1, 0);
 		
 		// render game session title
-		AssetHandler.getFont(0.5f).draw(batch, "Game Session ID: " + 
-				String.format("%05d", NetworkHandler.getGameSessionID()), 
-				50, 15);
+		if (ProjectZero.gameSession.isGameLoaded()) {
+			AssetHandler.getFont(0.5f).draw(batch, "Loaded Game ID: " + 
+					String.format("%05d", NetworkHandler.getGameSessionID()), 
+					50, 15);
+		} else {
+			AssetHandler.getFont(0.5f).draw(batch, "Game Session ID: " + 
+					String.format("%05d", NetworkHandler.getGameSessionID()), 
+					50, 15);
+		}
 		
 		// determine message to display
 		String message = null;
@@ -277,55 +295,103 @@ public class SelectionScreen extends AbstractScreen {
 				btnBack.getRadius() * 2, btnBack.getRadius() * 2);
 	}
 	
-	private void renderPlayers(float delta) {
+	private void renderPlayers(float delta) {		
 		// render number of players
-		if (NetworkHandler.getListOfPlayers().containsKey(0)) {
+		if (NetworkHandler.getListOfPlayers().get(0) != null) {
 			// number of players = 1 (host)
-			batch.draw(AssetHandler.playerRed, 10, 145, 50, 28);
+			if (NetworkHandler.getListOfPlayerStatus().get(
+					NetworkHandler.getListOfPlayers().get(0).playerID) == NetworkMessage.SelectionState.WAITING) 
+			{
+				// waiting for existing player to join
+				batch.draw(AssetHandler.playerNA, 10, 145, 50, 28);
+				batch.draw(AssetHandler.playerWait, 10, 145, 50, 28);
+			}
+			else if (NetworkHandler.getListOfPlayerStatus().get(
+					NetworkHandler.getListOfPlayers().get(0).playerID) != NetworkMessage.SelectionState.WAITING) 
+			{
+				// player is present
+				batch.draw(AssetHandler.playerRed, 10, 145, 50, 28);
+			}
 		} else {
 
 			batch.draw(AssetHandler.playerNA, 10, 145, 50, 28);
 		}
 		
-		if (NetworkHandler.getListOfPlayers().containsKey(1)) {
+		if (NetworkHandler.getListOfPlayers().get(1) != null) {
 			// number of players = 2
-			batch.draw(AssetHandler.playerBlue, 63, 145, 50, 28);
+			if (NetworkHandler.getListOfPlayerStatus().get(
+					NetworkHandler.getListOfPlayers().get(1).playerID) == NetworkMessage.SelectionState.WAITING) 
+			{
+				// waiting for existing player to join
+				batch.draw(AssetHandler.playerNA, 63, 145, 50, 28);
+				batch.draw(AssetHandler.playerWait, 63, 145, 50, 28);
+			}
+			else if (NetworkHandler.getListOfPlayerStatus().get(
+					NetworkHandler.getListOfPlayers().get(1).playerID) != NetworkMessage.SelectionState.WAITING) 
+			{
+				// player is present
+				batch.draw(AssetHandler.playerBlue, 63, 145, 50, 28);
+			}
 		} else {
 
 			batch.draw(AssetHandler.playerNA, 63, 145, 50, 28);
 		}
 		
-		if (NetworkHandler.getListOfPlayers().containsKey(2)) {
+		if (NetworkHandler.getListOfPlayers().get(2) != null) {
 			// number of players = 3
-			batch.draw(AssetHandler.playerGreen, 116, 145, 50, 28);
+			if (NetworkHandler.getListOfPlayerStatus().get(
+					NetworkHandler.getListOfPlayers().get(2).playerID) == NetworkMessage.SelectionState.WAITING) 
+			{
+				// waiting for existing player to join
+				batch.draw(AssetHandler.playerNA, 116, 145, 50, 28);
+				batch.draw(AssetHandler.playerWait, 116, 145, 50, 28);
+			}
+			else if (NetworkHandler.getListOfPlayerStatus().get(
+					NetworkHandler.getListOfPlayers().get(2).playerID) != NetworkMessage.SelectionState.WAITING) 
+			{
+				// player is present
+				batch.draw(AssetHandler.playerGreen, 116, 145, 50, 28);
+			}
 		} else {
 
 			batch.draw(AssetHandler.playerNA, 116, 145, 50, 28);
 		}
 		
-		if (NetworkHandler.getListOfPlayers().containsKey(3)) {
+		if (NetworkHandler.getListOfPlayers().get(3) != null) {
 			// number of players = 4
-			batch.draw(AssetHandler.playerYellow, 169, 145, 50, 28);
+			if (NetworkHandler.getListOfPlayerStatus().get(
+					NetworkHandler.getListOfPlayers().get(3).playerID) == NetworkMessage.SelectionState.WAITING) 
+			{
+				// waiting for existing player to join
+				batch.draw(AssetHandler.playerNA, 169, 145, 50, 28);
+				batch.draw(AssetHandler.playerWait, 169, 145, 50, 28);
+			}
+			else if (NetworkHandler.getListOfPlayerStatus().get(
+					NetworkHandler.getListOfPlayers().get(3).playerID) != NetworkMessage.SelectionState.WAITING) 
+			{
+				// player is present
+				batch.draw(AssetHandler.playerYellow, 169, 145, 50, 28);
+			}
 		} else {
 
 			batch.draw(AssetHandler.playerNA, 169, 145, 50, 28);
 		}
 		
 		// mark which player is you
-		if (NetworkHandler.getListOfPlayers().containsKey(0) &&
-				NetworkHandler.getListOfPlayers().get(0).contains(AssetHandler.getPlayerID())) {
+		if (NetworkHandler.getListOfPlayers().get(0) != null &&
+				NetworkHandler.getListOfPlayers().get(0).playerID.contains(AssetHandler.getPlayerID())) {
 			AssetHandler.getFont(0.5f).draw(batch, "Me", 22, 150);
 			
-		} else if (NetworkHandler.getListOfPlayers().containsKey(1) &&
-				NetworkHandler.getListOfPlayers().get(1).contains(AssetHandler.getPlayerID())) {
+		} else if (NetworkHandler.getListOfPlayers().get(1) != null &&
+				NetworkHandler.getListOfPlayers().get(1).playerID.contains(AssetHandler.getPlayerID())) {
 			AssetHandler.getFont(0.5f).draw(batch, "Me", 74, 150);
 			
-		} else if (NetworkHandler.getListOfPlayers().containsKey(2) &&
-				NetworkHandler.getListOfPlayers().get(2).contains(AssetHandler.getPlayerID())) {
+		} else if (NetworkHandler.getListOfPlayers().get(2) != null &&
+				NetworkHandler.getListOfPlayers().get(2).playerID.contains(AssetHandler.getPlayerID())) {
 			AssetHandler.getFont(0.5f).draw(batch, "Me", 127, 150);
 			
-		} else if (NetworkHandler.getListOfPlayers().containsKey(3) &&
-				NetworkHandler.getListOfPlayers().get(3).contains(AssetHandler.getPlayerID())) {
+		} else if (NetworkHandler.getListOfPlayers().get(3) != null &&
+				NetworkHandler.getListOfPlayers().get(3).playerID.contains(AssetHandler.getPlayerID())) {
 			AssetHandler.getFont(0.5f).draw(batch, "Me", 180, 150);
 		}
 			
@@ -333,28 +399,28 @@ public class SelectionScreen extends AbstractScreen {
 		AssetHandler.getFont(0.25f).draw(batch, "Host", 23, 163);
 		
 		// mark which player is ready
-		if (NetworkHandler.getListOfPlayers().containsKey(0) &&
+		if (NetworkHandler.getListOfPlayers().get(0) != null &&
 				NetworkHandler.getListOfPlayerStatus().get(
 						NetworkHandler.getListOfPlayers().get(0)) 
 						== (NetworkMessage.SelectionState.READY)) {
 			// show ready badge
 			batch.draw(AssetHandler.playerReady, 10, 145, 50, 28);
 		}
-		if (NetworkHandler.getListOfPlayers().containsKey(1) &&
+		if (NetworkHandler.getListOfPlayers().get(1) != null &&
 				NetworkHandler.getListOfPlayerStatus().get(
 						NetworkHandler.getListOfPlayers().get(1)) 
 						== (NetworkMessage.SelectionState.READY)) {
 			// show ready badge
 			batch.draw(AssetHandler.playerReady, 63, 145, 50, 28);
 		}
-		if (NetworkHandler.getListOfPlayers().containsKey(2) &&
+		if (NetworkHandler.getListOfPlayers().get(2) != null &&
 				NetworkHandler.getListOfPlayerStatus().get(
 						NetworkHandler.getListOfPlayers().get(2)) 
 						== (NetworkMessage.SelectionState.READY)) {
 			// show ready badge
 			batch.draw(AssetHandler.playerReady, 116, 145, 50, 28);
 		}
-		if (NetworkHandler.getListOfPlayers().containsKey(3) &&
+		if (NetworkHandler.getListOfPlayers().get(3) != null &&
 				NetworkHandler.getListOfPlayerStatus().get(
 						NetworkHandler.getListOfPlayers().get(3)) 
 						== (NetworkMessage.SelectionState.READY)) {
@@ -422,6 +488,9 @@ public class SelectionScreen extends AbstractScreen {
 	public void startGame() {
 		// mark game start
 		NetworkHandler.setGameStart(true);
+		
+		// initialise game session
+		ProjectZero.gameSession.startGameSession();
 		
 		// proceed to game screen
 		game.nextScreen(ProjectZero.gameScreen, this);

@@ -1,19 +1,22 @@
 package com.not.itproject.handlers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.not.itproject.networks.NetworkClient;
 import com.not.itproject.networks.NetworkMessage;
 import com.not.itproject.networks.NetworkServer;
+import com.not.itproject.sessions.GamePlayer;
+import com.not.itproject.zero.ProjectZero;
 
+	
 public class NetworkHandler {
 	// declare variables
 	public static NetworkServer server;
 	public static NetworkClient client;
 	public static int gameSessionID;
 	public static boolean gameStart;
-	private static Map<Integer, String> listOfPlayers;
 	private static Map<String, NetworkMessage.SelectionState> listOfPlayerStatus;
 
 	// main loading function
@@ -26,11 +29,8 @@ public class NetworkHandler {
 		setGameSessionID(-1);
 		setGameStart(false);
 		
-		// initialise variables
-		listOfPlayers = new HashMap<Integer, String>();
-		listOfPlayerStatus = new HashMap<String, NetworkMessage.SelectionState>();
-		
 		clearListOfPlayers();
+		clearlistOfPlayerStatus();
 	}
 	
 	// reinitialise network handler
@@ -40,10 +40,8 @@ public class NetworkHandler {
 		setGameStart(false);
 		
 		// re-initialise variables
-		listOfPlayers = new HashMap<Integer, String>();
-		listOfPlayerStatus = new HashMap<String, NetworkMessage.SelectionState>();
-		
 		clearListOfPlayers();
+		clearlistOfPlayerStatus();
 	}
 	
 	// dispose of network handler
@@ -109,8 +107,8 @@ public class NetworkHandler {
 	/**
 	 * @return the listOfPlayers
 	 */
-	public static Map<Integer, String> getListOfPlayers() {
-		return listOfPlayers;
+	public static ArrayList<GamePlayer> getListOfPlayers() {
+		return ProjectZero.gameSession.getListOfPlayers();
 	}
 
 	/**
@@ -123,8 +121,8 @@ public class NetworkHandler {
 	/**
 	 * @param listOfPlayers the listOfPlayers to set
 	 */
-	public static void setListOfPlayers(Map<Integer, String> playerList) {
-		listOfPlayers = playerList;
+	public static void setListOfPlayers(ArrayList<GamePlayer> playerList) {
+		ProjectZero.gameSession.setListOfPlayers(playerList);
 	}
 
 	/**
@@ -135,10 +133,17 @@ public class NetworkHandler {
 	}
 
 	/**
+	 * @param listOfPlayerStatus the listOfPlayerStatus to clear
+	 */
+	public static void clearlistOfPlayerStatus() {
+		listOfPlayerStatus = new HashMap<String, NetworkMessage.SelectionState>();
+	}
+	
+	/**
 	 * @param listOfPlayers the listOfPlayers to clear
 	 */
 	public static void clearListOfPlayers() {
-		listOfPlayers = new HashMap<Integer, String>();
+		ProjectZero.gameSession.clearListOfPlayers();
 	}
 
 	/**

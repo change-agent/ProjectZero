@@ -148,16 +148,15 @@ public class HelpScreen extends AbstractScreen {
 						btnBack.getPosition().x - btnBack.getRadius(), 
 						btnBack.getPosition().y - btnBack.getRadius(), 
 						btnBack.getRadius() * 2, btnBack.getRadius() * 2);
+				batch.draw(AssetHandler.buttonNavigatePrev, 
+						btnPrevious.getPosition().x, 
+						btnPrevious.getPosition().y, 
+						btnPrevious.getWidth(), btnPrevious.getHeight());
+				batch.draw(AssetHandler.buttonNavigateNext, 
+						btnNext.getPosition().x, 
+						btnNext.getPosition().y, 
+						btnNext.getWidth(), btnNext.getHeight());
 				batch.end();
-				
-				// render shapes
-				shapeRenderer.begin(ShapeType.Line);
-				shapeRenderer.setColor(Color.BLACK);
-				shapeRenderer.rect(btnNext.getPosition().x, btnNext.getPosition().y, 
-						btnNext.getWidth(), btnNext.getHeight(), 0, 0, 0);
-				shapeRenderer.circle(btnBack.getPosition().x, btnBack.getPosition().y, 
-						(float) btnBack.getRadius());
-				shapeRenderer.end();
 				break;
 				
 			case HELP_TWO:
@@ -171,17 +170,29 @@ public class HelpScreen extends AbstractScreen {
 						btnBack.getPosition().x - btnBack.getRadius(), 
 						btnBack.getPosition().y - btnBack.getRadius(), 
 						btnBack.getRadius() * 2, btnBack.getRadius() * 2);
+				batch.draw(AssetHandler.buttonNavigatePrev, 
+						btnPrevious.getPosition().x, 
+						btnPrevious.getPosition().y, 
+						btnPrevious.getWidth(), btnPrevious.getHeight());
+				batch.draw(AssetHandler.buttonNavigateNext, 
+						btnNext.getPosition().x, 
+						btnNext.getPosition().y, 
+						btnNext.getWidth(), btnNext.getHeight());
 				batch.end();
 				
 				// render shapes
 				shapeRenderer.begin(ShapeType.Line);
 				shapeRenderer.setColor(Color.BLACK);
-				shapeRenderer.rect(btnPrevious.getPosition().x, btnPrevious.getPosition().y, 
-						btnPrevious.getWidth(), btnPrevious.getHeight(), 0, 0, 0);
-				shapeRenderer.rect(btnNext.getPosition().x, btnNext.getPosition().y, 
-						btnNext.getWidth(), btnNext.getHeight(), 0, 0, 0);
 				shapeRenderer.circle(btnBack.getPosition().x, btnBack.getPosition().y, 
 						(float) btnBack.getRadius());
+				batch.draw(AssetHandler.buttonNavigatePrev, 
+						btnPrevious.getPosition().x, 
+						btnPrevious.getPosition().y, 
+						btnPrevious.getWidth(), btnPrevious.getHeight());
+				batch.draw(AssetHandler.buttonNavigateNext, 
+						btnNext.getPosition().x, 
+						btnNext.getPosition().y, 
+						btnNext.getWidth(), btnNext.getHeight());
 				shapeRenderer.end();
 				break;
 				
@@ -196,16 +207,15 @@ public class HelpScreen extends AbstractScreen {
 						btnBack.getPosition().x - btnBack.getRadius(), 
 						btnBack.getPosition().y - btnBack.getRadius(), 
 						btnBack.getRadius() * 2, btnBack.getRadius() * 2);
+				batch.draw(AssetHandler.buttonNavigatePrev, 
+						btnPrevious.getPosition().x - btnPrevious.getWidth(), 
+						btnPrevious.getPosition().y - btnPrevious.getHeight(), 
+						btnPrevious.getWidth(), btnPrevious.getHeight());
+				batch.draw(AssetHandler.buttonNavigateNext, 
+						btnNext.getPosition().x - btnNext.getWidth(), 
+						btnNext.getPosition().y - btnNext.getHeight(), 
+						btnNext.getWidth(), btnNext.getHeight());
 				batch.end();
-				
-				// render shapes
-				shapeRenderer.begin(ShapeType.Line);
-				shapeRenderer.setColor(Color.BLACK);
-				shapeRenderer.rect(btnPrevious.getPosition().x, btnPrevious.getPosition().y, 
-						btnPrevious.getWidth(), btnPrevious.getHeight(), 0, 0, 0);
-				shapeRenderer.circle(btnBack.getPosition().x, btnBack.getPosition().y, 
-						(float) btnBack.getRadius());
-				shapeRenderer.end();
 				break;
 		}
 	}

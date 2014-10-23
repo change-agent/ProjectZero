@@ -8,15 +8,19 @@ import java.util.Set;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.not.itproject.objects.GameVariables.PlayerColour;
+import com.not.itproject.zero.ProjectZero;
 
 public class Player {
 	private Car car;
 	private String playerID;
 	private PlayerColour playerColour;
-	private int lapNum;
 	private List<PowerUp> activeBuffs;
 	private HashMap<String, Checkpoint> checkpoints;
+<<<<<<< Updated upstream
 	private Checkpoint lastCheckpoint;
+
+=======
+>>>>>>> Stashed changes
 	
 	// main constructor
 	public Player(World worldBox2D, String playerID, PlayerColour colour, float x, float y, 
@@ -45,6 +49,8 @@ public class Player {
 		}
 	}
 	
+	// Check the power buffer to see if a power is currently  activated and is applying it's
+	// effect to the player
 	public int buffAlreadyActive(PowerUp buff) {
 		int index = -1;
 		for(PowerUp currBuff : activeBuffs) {
@@ -55,6 +61,7 @@ public class Player {
 		return index;
 	}
 	
+	// Adds the buff to the stack, renewing the timer if present
 	public void addBuffToStack(PowerUp buff) {
 		activeBuffs.add(buff);
 	}
@@ -77,7 +84,7 @@ public class Player {
 	}
 	
 	public int getLapNum() {
-		return lapNum;
+		return ProjectZero.gameSession.getPlayerByPlayerID(playerID).currentLap;
 	}
 
 	public void flagUsePower() {
@@ -96,7 +103,7 @@ public class Player {
 		checkpoints.put(name, checkpoint);
 		lastCheckpoint = checkpoint;
 	}
-		
+	
 	public Checkpoint getLastCheckpoint()
 	{
 		return lastCheckpoint;
@@ -107,6 +114,6 @@ public class Player {
 	}
 	
 	public void incrementLap() {
-		lapNum++;
+		ProjectZero.gameSession.lapCompletedByPlayer(playerID);
 	}
 }
