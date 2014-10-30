@@ -45,9 +45,9 @@ public class AssetHandler {
 							playerRedTexture, playerBlueTexture,
 							playerGreenTexture, playerYellowTexture,
 							playerNATexture, playerAITexture, playerReadyTexture,
-							playerWaitTexture,
+							playerWaitTexture, mapPreviewTexture,
 							bannerBlackTexture, bannerWhiteTexture;
-	public static TextureRegion menuTrack, menuVehicle, menuReady,
+	public static TextureRegion menuTrack, menuVehicle, menuReady, mapPreview,
 							playerRed, playerBlue,
 							playerGreen, playerYellow,
 							playerNA, playerAI, playerReady, playerWait,
@@ -56,8 +56,9 @@ public class AssetHandler {
 	public static Texture navigateUpTexture, navigateDownTexture, navigateLeftTexture, navigateRightTexture;
 	public static TextureRegion navigateUp, navigateDown, navigateLeft, navigateRight;
 	
-	public static Texture backgroundUniversalTexture, backgroundErrorTexture;
-	public static TextureRegion backgroundUniversal, backgroundError;
+	public static Texture backgroundUniversalTexture, backgroundErrorTexture, 
+							backgroundWinnerTexture, backgroundEndingTexture;
+	public static TextureRegion backgroundUniversal, backgroundError, backgroundWinner, backgroundEnding;
 	
 	public static Texture helpGameplayTexture, helpSessionsTexture, helpTrackSelectionTexture;
 	public static TextureRegion helpGameplay, helpSessions, helpTrackSelection;
@@ -103,13 +104,15 @@ public class AssetHandler {
 		backgroundUniversalTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		backgroundErrorTexture = new Texture(Gdx.files.internal("backgrounds/backgroundError.png"));
 		backgroundErrorTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		backgroundWinnerTexture = new Texture(Gdx.files.internal("backgrounds/backgroundWinner.png"));
+		backgroundWinnerTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		backgroundEndingTexture = new Texture(Gdx.files.internal("backgrounds/backgroundEnding.png"));
+		backgroundEndingTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		helpGameplayTexture = new Texture(Gdx.files.internal("tutorials/helpGameplay.png"));
 		helpGameplayTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
 		helpSessionsTexture = new Texture(Gdx.files.internal("tutorials/helpSessions.png"));
 		helpSessionsTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
 		helpTrackSelectionTexture = new Texture(Gdx.files.internal("tutorials/helpTrackSelection.png"));
 		helpTrackSelectionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
@@ -119,6 +122,12 @@ public class AssetHandler {
 		
 		backgroundError = new TextureRegion(backgroundErrorTexture);
 		backgroundError.flip(false, true);
+		
+		backgroundWinner = new TextureRegion(backgroundWinnerTexture);
+		backgroundWinner.flip(false, true);
+		
+		backgroundEnding = new TextureRegion(backgroundEndingTexture);
+		backgroundEnding.flip(false, true);
 		
 		helpGameplay = new TextureRegion(helpGameplayTexture);
 		helpGameplay.flip(false, true);
@@ -298,6 +307,8 @@ public class AssetHandler {
 		bannerBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bannerWhiteTexture = new Texture(Gdx.files.internal("other/banner-white.png"));
 		bannerWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		mapPreviewTexture = new Texture(Gdx.files.internal("maps/map-preview.png"));
+		mapPreviewTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		// load regions
 		logo = new TextureRegion(logoTexture);
@@ -332,6 +343,8 @@ public class AssetHandler {
 		bannerBlack.flip(false, true);
 		bannerWhite = new TextureRegion(bannerWhiteTexture);
 		bannerWhite.flip(false, true);
+		mapPreview = new TextureRegion(mapPreviewTexture);
+		mapPreview.flip(false, true);
 	}
 
 	

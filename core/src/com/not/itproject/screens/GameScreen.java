@@ -41,7 +41,9 @@ public class GameScreen extends AbstractScreen {
 		}
 		
 		// update world
-		gameWorld.update(delta);	
+		if (gameWorld.isReady() || gameWorld.isRunning()) {
+			gameWorld.update(delta);
+		}
 		gameRenderer.update(delta);
 	}
 	

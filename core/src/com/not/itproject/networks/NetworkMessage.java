@@ -53,4 +53,8 @@ public class NetworkMessage {
 		public String playerID;
 		public Vector2 lastPosition;
 	}
+	
+	public static class GameWinnerInformation {
+		public String playerID;
+	}
 }

@@ -239,7 +239,19 @@ public class NetworkServer {
 						// add lastposition to player
 						ProjectZero.gameSession.setLastPosition(info.playerID, info.lastPosition.x, info.lastPosition.y);
 					}
+
 					
+					// get game winner from client
+					else if (object instanceof NetworkMessage.GameWinnerInformation) {
+						// get info
+						NetworkMessage.GameWinnerInformation info = (NetworkMessage.GameWinnerInformation) object;
+
+						// process information - update player (other players only)
+						ProjectZero.gameScreen.getGameWorld().addToNetworkQueue(info);
+						
+						// send information to other clients
+						server.sendToAllTCP(info);
+					}
 					
 				} catch (Exception e) {
 					// capture errors
@@ -297,6 +309,17 @@ public class NetworkServer {
 			info.position = position;
 			info.velocity = velocity;
 			info.rotation = rotation;
+			server.sendToAllTCP(info);
+		} catch (Exception e) {
+			// capture errors
+		}
+	}
+
+	public void sendGameWinnerInformation(String playerID) {
+		try {
+			// send game winner information
+			NetworkMessage.GameWinnerInformation info = new NetworkMessage.GameWinnerInformation();
+			info.playerID = playerID;
 			server.sendToAllTCP(info);
 		} catch (Exception e) {
 			// capture errors

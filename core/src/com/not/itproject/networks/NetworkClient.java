@@ -150,6 +150,15 @@ public class NetworkClient {
 						ProjectZero.gameScreen.getGameWorld().addToNetworkQueue(info);
 					}
 					
+					// get game winner from client
+					else if (object instanceof NetworkMessage.GameWinnerInformation) {
+						// get info
+						NetworkMessage.GameWinnerInformation info = (NetworkMessage.GameWinnerInformation) object;
+
+						// process information - update player (other players only)
+						ProjectZero.gameScreen.getGameWorld().addToNetworkQueue(info);
+					}
+					
 				} catch (Exception e) {
 					// capture errors
 				}
@@ -207,6 +216,17 @@ public class NetworkClient {
 			// send game state information
 			NetworkMessage.GameStateInformation info = new NetworkMessage.GameStateInformation();
 			info.state = state;
+			client.sendTCP(info);
+		} catch (Exception e) {
+			// capture errors
+		}
+	}
+
+	public void sendGameWinnerInformation(String playerID) {
+		try {
+			// send game winner information
+			NetworkMessage.GameWinnerInformation info = new NetworkMessage.GameWinnerInformation();
+			info.playerID = playerID;
 			client.sendTCP(info);
 		} catch (Exception e) {
 			// capture errors
