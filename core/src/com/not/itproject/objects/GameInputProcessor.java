@@ -205,9 +205,13 @@ public class GameInputProcessor {
 					GameVariables.GAME_LAPS;
 			lapsCounter.setText(lapDetails);
 			hudBg.setVisible(true);
+			enginePowerFront.setVisible(true);
+			enginePowerBack.setVisible(true);
 		} else {
 			lapsCounter.setText("");
 			hudBg.setVisible(false);
+			enginePowerFront.setVisible(false);
+			enginePowerBack.setVisible(false);
 		}
 		
 		// engine power usage
