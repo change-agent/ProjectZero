@@ -181,7 +181,7 @@ public class GameInputProcessor {
 		// create hub background
 		hudBg = new Image(AssetHandler.bannerWhite);
 		hudBg.setPosition(0, gameHeight - 28);
-		hudBg.setSize(gameWidth, 28);
+		hudBg.setSize(125, 28);
 		
 		// determine text & position
 		updateLapCounter();
@@ -259,6 +259,14 @@ public class GameInputProcessor {
 			}
 			else{
 				world.getPlayer().getCar().powerOffEngine();
+			}
+			
+			// debug only
+			if (GameVariables.DEBUG) {
+				if (Gdx.input.isKeyPressed(Keys.NUM_0)) {
+					// increase game lap
+					world.getPlayerByID(AssetHandler.getPlayerID()).getCar().getOwner().incrementLap();
+				}
 			}
 			
 			// Activate power or menu

@@ -3,6 +3,7 @@ package com.not.itproject.objects;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,6 +16,7 @@ import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.networks.NetworkMessage;
 import com.not.itproject.objects.GameVariables.PowerType;
+import com.not.itproject.screens.AbstractScreen;
 import com.not.itproject.zero.ProjectZero;
 
 public class GameRenderer {
@@ -41,6 +43,7 @@ public class GameRenderer {
 	SimpleButton btnSaveExit;
 //	SimpleButton btnOption; // implement as a stretch when game has more options
 	ToggleButton btnSoundToggle;
+	SimpleButton btnConfirm;
 	
 	// main constructor
 	public GameRenderer(GameWorld gameWorld, GameInputProcessor gameInputProcessor) {
@@ -80,6 +83,8 @@ public class GameRenderer {
 		btnWidth = 100; // reassign for sound toggle
 		btnSoundToggle = new ToggleButton((int)(gameWidth / 2) - btnWidth/2, 
 				(int)(gameHeight * 4/5), btnWidth, 20, AssetHandler.getSoundMute());
+		btnConfirm = new SimpleButton((int)(gameWidth * 1/2) - btnWidth/2, 
+				(int)(gameHeight * 4/5), btnWidth, 30);
 	}
 	
 	public void update(float delta) {
@@ -92,7 +97,7 @@ public class GameRenderer {
 			isViewportScaled = true;
 			scaleViewport(true);
 		} 
-		else if (isViewportScaled && (gameWorld.isPaused())) {
+		else if (isViewportScaled && (gameWorld.isPaused() || gameWorld.hasEnded())) {
 			// do not scale
 			isViewportScaled = false;
 			scaleViewport(false);			
@@ -101,7 +106,7 @@ public class GameRenderer {
 		if (gameWorld.isReady()) { updateReady(delta); } 
 		else if (gameWorld.isRunning()) { updateRunning(delta); } 
 		else if (gameWorld.isPaused()) { updatePaused(delta); }
-//		else if (gameWorld.hasEnded()) { updateEnded(delta); }
+		else if (gameWorld.hasEnded()) { updateEnded(delta); }
 	}
 	
 	private void updateReady(float delta) {
@@ -172,6 +177,19 @@ public class GameRenderer {
 		else if (btnSoundToggle.isTouched()) {
 			// toggle sound mute
 			AssetHandler.setSoundMute(btnSoundToggle.isToggleOn());
+		}
+	}
+	
+	private void updateEnded(float delta) {
+		// update objects
+		camera.update();
+		batch.setProjectionMatrix(camera.combined);
+		btnConfirm.update(delta);
+		
+		// check input from user and perform action
+		if (btnConfirm.isTouched()) {
+			// exit game
+			gameWorld.endGame();		
 		}
 	}
 
@@ -260,6 +278,11 @@ public class GameRenderer {
 	public void renderPaused(float delta) {
 		// render paused controls/buttons
 		batch.begin();
+
+		// draw background
+		batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+				gameWidth, gameHeight);
+		
 		batch.draw(AssetHandler.buttonResumeGame, 
 				btnResumeGame.getPosition().x, btnResumeGame.getPosition().y, 
 				btnResumeGame.getWidth(), btnResumeGame.getHeight());
@@ -284,7 +307,41 @@ public class GameRenderer {
 	
 	public void renderEnded(float delta) {
 		//change screen to end game screen 
+		batch.begin();
+
+		// draw background
+		batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+				gameWidth, gameHeight);
 		
+		// render winner
+		ProjectZero.log(ProjectZero.gameSession.getWinnerPlayerID());
+		ProjectZero.log(AssetHandler.getPlayerID());
+		if (ProjectZero.gameSession.getWinnerPlayerID().equals(AssetHandler.getPlayerID())) {
+			// show you are the winner
+			batch.draw(AssetHandler.backgroundWinner, 0, 0,
+					gameWidth, gameHeight);
+
+			AssetHandler.getFont(0.4f).draw(batch, "Congratulations!", 80, 70);
+			AssetHandler.getFont(0.7f).draw(batch, "You won!", 95, 90);
+			
+		} else {
+			// show who is the winner
+			batch.draw(AssetHandler.backgroundEnding, 0, 0,
+					gameWidth, gameHeight);
+			
+			// get index
+			AssetHandler.getFont(0.6f).draw(batch, "Player " + ProjectZero.gameSession.getWinnerPlayerIndex(),
+					103, 60);
+			AssetHandler.getFont(0.6f).draw(batch, " is the winner", 
+					65, 78);
+			AssetHandler.getFont(0.4f).draw(batch, "Better luck next time!", 55, 110);
+		}
+			
+		// render okay button
+		batch.draw(AssetHandler.buttonOkay, 
+				btnConfirm.getPosition().x, btnConfirm.getPosition().y, 0, 0, 
+				btnConfirm.getWidth(), btnConfirm.getHeight(), 1, 1, 0);		
+		batch.end();
 	}
 	
 	public void renderControls(float delta) {

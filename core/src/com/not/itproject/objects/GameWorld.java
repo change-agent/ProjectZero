@@ -1,3 +1,4 @@
+
 package com.not.itproject.objects;
 
 import java.util.ArrayList;
@@ -53,8 +54,13 @@ public class GameWorld {
 			
 			if (getPlayer().getCar().equals((Car) B.getBody().getUserData()) ||
 					getPlayer().getCar().equals((Car) B.getBody().getUserData())) {
-				// tactile feedback
-				AssetHandler.vibrate(50);
+				if (((GameObject) A.getBody().getUserData()).getObjType() 
+						!= GameObject.ObjType.CHECKPOINT || 
+					((GameObject) B.getBody().getUserData()).getObjType() 
+						!= GameObject.ObjType.CHECKPOINT) {
+					// tactile feedback
+					AssetHandler.vibrate(50);
+				}
 			}
 			
 			if(A.isSensor()) 
@@ -301,17 +307,42 @@ public class GameWorld {
 					return;
 				}
 			}
+			
+			// game winner information
+			else if (object instanceof NetworkMessage.GameWinnerInformation) {
+				// get info - winner
+				NetworkMessage.GameWinnerInformation info = (NetworkMessage.GameWinnerInformation) object;
+				ProjectZero.gameSession.setWinnerPlayerID(info.playerID);
+				
+				// end game
+				endingGame();
+			}
 		}
 		
-		// update players and check for win
+		// check for win - individual
+		if (getPlayerByID(AssetHandler.getPlayerID()).getLapNum() == GameVariables.GAME_LAPS) {
+			// enter end state
+			if (NetworkHandler.isHost()) {
+				// set winner
+				ProjectZero.gameSession.setWinnerPlayerID(AssetHandler.getPlayerID());
+
+				// end game as host
+				endingGame();
+				
+				// send winner to players
+				NetworkHandler.getNetworkServer().sendGameWinnerInformation(AssetHandler.getPlayerID());
+			} 
+			else if (NetworkHandler.isClient()) {
+				// send winner to players
+				NetworkHandler.getNetworkClient().sendGameWinnerInformation(AssetHandler.getPlayerID());
+			}
+		}
+		
+		// update players 
 		for (Player player : players) {
 			player.update(delta);
 			float friction = tiledMapHandler.getFrictionFromPosition(player.getCar().getPosition());
 			player.getCar().setFriction(friction);
-			
-			if(player.getLapNum() == GameVariables.GAME_LAPS) {
-				gameStatus = GameState.ENDED;
-			}
 			
 			// Use powers if necessary
 			if(player.getCar().usePower()){
@@ -432,6 +463,11 @@ public class GameWorld {
 		gameStatus = GameState.PAUSED;
 	}
 
+	public void endingGame() {
+		// game ending
+		gameStatus = GameState.ENDED;
+	}
+	
 	public void endGame() {
 		// reinitialise ProjectZero
 		game.initialise();

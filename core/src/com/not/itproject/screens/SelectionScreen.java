@@ -445,6 +445,10 @@ public class SelectionScreen extends AbstractScreen {
 		batch.draw(AssetHandler.buttonNext, 
 				btnNext.getPosition().x, btnNext.getPosition().y, 
 				btnNext.getWidth(), btnNext.getHeight());
+
+		
+		// render map preview
+		batch.draw(AssetHandler.mapPreview, 66, 68, 100, 58);
 	}
 
 	private void renderVehicle(float delta) {
@@ -474,7 +478,11 @@ public class SelectionScreen extends AbstractScreen {
 	private void renderReady(float delta) {
 		// render ready menu
 		batch.draw(AssetHandler.menuReady, 10, 40, 300, 100);
-		
+
+		// draw selection
+		batch.draw(AssetHandler.mapPreview, 35, 68, 100, 58);
+		batch.draw(AssetHandler.carRed, 155, 65, 31, 60);
+				
 		// session host - start option
 		if (NetworkHandler.isHost() && allPlayersReady()) {
 			// show start option

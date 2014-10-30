@@ -12,6 +12,8 @@ public class GameSession {
 	private String lastSaved;
 	private boolean gameLoaded;
 	private ArrayList<GamePlayer> listOfPlayers;
+	private String winnerPlayerID;
+	private int winnerPlayerIndex;
 	
 	public GameSession() {
 		// initialise variables
@@ -23,6 +25,8 @@ public class GameSession {
 		lastSaved = ProjectZero.calendar.getTime().toString();
 		listOfPlayers = new ArrayList<GamePlayer>();
 		gameLoaded = false;
+		winnerPlayerID = "";
+		winnerPlayerIndex = 0;
 		
 		// initialise number of players
 		for (int i=0; i<GameVariables.MAX_PLAYERS; i++) {
@@ -131,5 +135,27 @@ public class GameSession {
 	 */
 	public boolean isGameLoaded() {
 		return gameLoaded;
+	}
+
+	/**
+	 * @return the winnerPlayerID
+	 */
+	public String getWinnerPlayerID() {
+		return winnerPlayerID;
+	}
+
+	/**
+	 * @return the winnerPlayerIndex
+	 */
+	public int getWinnerPlayerIndex() {
+		return winnerPlayerIndex;
+	}
+
+	/**
+	 * @param winnerPlayerID the winnerPlayerID to set
+	 */
+	public void setWinnerPlayerID(String winnerPlayerID) {
+		this.winnerPlayerID = winnerPlayerID;
+		this.winnerPlayerIndex = getPlayerByPlayerID(winnerPlayerID).index + 1;
 	}
 }
