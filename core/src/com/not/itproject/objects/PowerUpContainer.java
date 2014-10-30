@@ -86,7 +86,7 @@ public class PowerUpContainer extends GameObject
 		body.setUserData(this);
 		startCooldown();
 		
-		// mask body to prevent sensory detection
+		// mask body to prevent sensory detection until cool down time has completed
 		Filter unmask = new Filter();
 		unmask.maskBits = (short) ObjType.POWER_UP_CONTAINER.value();
 		body.getFixtureList().get(0).setFilterData(unmask);

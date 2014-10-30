@@ -12,6 +12,7 @@ public class Obstacle extends GameObject {
 
 	private Body body;
 	
+	// Creates a static box for the obstacle
 	public Obstacle(World worldBox2D, float x, float y, float width, float height, float rotation) {
 		// define super
 		super(worldBox2D, x, y, width, height, 0);

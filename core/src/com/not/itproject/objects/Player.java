@@ -30,6 +30,7 @@ public class Player {
 	}
 	
 	// ---------------- Effect Buffer -----------------------//
+	// Updates a buffer by removing depleted powers and updating the lifetime of active ones
 	public void update(float delta) {
 		car.update(delta);
 		Iterator<PowerUp> iter = activeBuffs.iterator();
@@ -45,6 +46,7 @@ public class Player {
 		}
 	}
 	
+	// Checks to see if a buff is already active in the current stack
 	public int buffAlreadyActive(PowerUp buff) {
 		int index = -1;
 		for(PowerUp currBuff : activeBuffs) {
@@ -59,6 +61,7 @@ public class Player {
 		activeBuffs.add(buff);
 	}
 	
+	// Renews lifetime if it is already active in the stack
 	public void renewActiveBuff(int index, PowerUp buff) {
 		activeBuffs.set(index, buff);
 	}
@@ -80,17 +83,20 @@ public class Player {
 		return lapNum;
 	}
 
+	// Flags a power for use so the next update iteration will use the power 
+	// if the car has one
 	public void flagUsePower() {
 		getCar().setUsePower();
 	}
 	
 	// --------------- Checkpoint handling functions ------------- //
-
 	public Set<String> getCheckpoints() 
 	{
 		return checkpoints.keySet();
 	}
 	
+	// Add a checkpoint to the hashmap, only adds a checkpoint once so that all
+	// Checkpoints need to be collected before a lap is deemed completed.
 	public void addCheckpoint(String name, Checkpoint checkpoint)
 	{
 		checkpoints.put(name, checkpoint);

@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 
 public class Car extends GameObject{		
 	/** ----------------------------- VARIABLES ------------------------------ **/
-	// Variable properties ued for car handling
+	// Variable properties used for car handling
 	private Body chassis, leftFrontWheel, rightFrontWheel, leftRearWheel, rightRearWheel;
 	private RevoluteJoint leftFrontWheelJoint, rightFrontWheelJoint;
 	private float enginePower = 0.0f;
@@ -85,6 +85,8 @@ public class Car extends GameObject{
 		wheelFixDef.filter.categoryBits = objType.value();
 		
 		// Create a shape for each wheel
+		// Linear dampening affects how far the car travels after engine off
+		// Angular dampening affects how far the car turns after turn off
 		BodyDef leftFrontWheelBodyDef = new BodyDef();
 		leftFrontWheelBodyDef.type = BodyType.DynamicBody;
 		leftFrontWheelBodyDef.linearDamping = 1.0f;
@@ -117,7 +119,7 @@ public class Car extends GameObject{
 		this.rightRearWheel = worldBox2D.createBody(rightRearWheelBodyDef);
 		rightRearWheel.createFixture(wheelFixDef);
 		
-		//Create the joints to attach to body
+		// Revolute joints have motors to drive the front wheels
 		RevoluteJointDef leftFrontJointDef = new RevoluteJointDef();
 		leftFrontJointDef.initialize(
 				chassis, leftFrontWheel, leftFrontWheel.getWorldCenter());
@@ -136,6 +138,7 @@ public class Car extends GameObject{
 		rightFrontJointDef.lowerAngle = -1 * GameVariables.LOCK_ANGLE;
 		rightFrontJointDef.upperAngle = GameVariables.LOCK_ANGLE;
 		
+		// prismatic joints are static joints with no motors
 		PrismaticJointDef leftRearJointDef = new PrismaticJointDef();
 		leftRearJointDef.initialize(chassis, leftRearWheel, 
 				leftRearWheel.getWorldCenter(), new Vector2(1.0f, 0));
@@ -174,7 +177,7 @@ public class Car extends GameObject{
 		killRightVelocity(rightFrontWheel);
 		killRightVelocity(rightRearWheel);
 		
-		// Update the steering of the wheels
+		// Update the steering of the wheels by setting and clamping wheel speed
 		float leftTurnSpeed, rightTurnSpeed;
 		leftTurnSpeed = steeringAngle - leftFrontWheelJoint.getJointAngle();
 		rightTurnSpeed = steeringAngle - rightFrontWheelJoint.getJointAngle();
@@ -192,29 +195,30 @@ public class Car extends GameObject{
 		position = chassis.getPosition();
 		rotation = chassis.getAngle() * RAD_TO_DEG;
 		
-		// Clamp the cars position
-		if(position.x < 0)
+		// Clamp the cars position if it hits a map boundary
+		if(position.x <= 0)
 		{
 			Vector2 resetPos = new Vector2(0, position.y);
 			chassis.setTransform(resetPos, rotation * DEG_TO_RAD);
 		}
-		if(position.x > mapWidth)
+		if(position.x >= mapWidth)
 		{
 			Vector2 resetPos = new Vector2(mapWidth, position.y);
 			chassis.setTransform(resetPos, rotation * DEG_TO_RAD);
 		}
-		if(position.y < 0)
+		if(position.y <= 0)
 		{
 			Vector2 resetPos = new Vector2(position.x, 0);
 			chassis.setTransform(resetPos, rotation * DEG_TO_RAD);
 		}
-		if(position.y > mapHeight)
+		if(position.y >= mapHeight)
 		{
 			Vector2 resetPos = new Vector2(position.x, mapHeight);
 			chassis.setTransform(resetPos, rotation * DEG_TO_RAD);
 		}
 	}
 	
+	// used by the network update function
 	public void applyMovement(Vector2 position, Vector2 velocity, float rotation) {	
 		// apply movement via position and velocity
 		if (!worldBox2D.isLocked()) {
@@ -226,9 +230,9 @@ public class Car extends GameObject{
 	/** ----------------------------- END UPDATE -------------------------------- **/
 	
 	/** ----------------------- CAR HANDLING FUNCTIONS -------------------------- **/
-	// Prevents the car from rotating about center and travelling orthogonally
+	// Prevents the car from rotating about center and traveling orthogonally
 	public void killRightVelocity(Body wheel) {
-		// Prevent too much skidding by killing orthogonal
+		// Prevent too much skiding by killing orthogonal
 		Vector2 currRightNorm = wheel.getWorldVector( new Vector2(1, 0) );
 		Vector2 orhthogAmount = currRightNorm.scl(currRightNorm.dot(wheel.getLinearVelocity()));
 		Vector2 impulse = orhthogAmount.scl(0.2f * wheel.getMass() * -GameVariables.DRIFT_COEFF);
@@ -355,6 +359,7 @@ public class Car extends GameObject{
 		horsepower = MathUtils.clamp(horsepower, GameVariables.MIN_HORSEPOWER, GameVariables.MAX_HORSEPOWER);
 	}
 	
+	// modifies which objects the car can collide with, set by maskbits which references the gameobjtype enum
 	public void setMaskData(short maskBits) {
 		Filter newMask = new Filter();
 		newMask.maskBits = maskBits;

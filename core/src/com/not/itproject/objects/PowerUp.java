@@ -13,27 +13,10 @@ public class PowerUp {
 	private PowerType powerType;
 	private Random rand;
 	
+	/** ----------------------------- TEST & CONSTRUCTOR METHODS ------------------------- **/
 	public PowerUp() {
 		this.rand = new Random();
 		selectRandomType();
-	}
-	
-	public void printPowerType() {
-		if(this.powerType == PowerType.SPEEDBOOST) {
-			System.out.print("SpeedBoost");
-		}
-		if(this.powerType == PowerType.SPEEDREDUCE) {
-			System.out.print("SpeedReduce");
-		}
-		if(this.powerType == PowerType.ICEROAD) {
-			System.out.print("Ice road");
-		}
-		if(this.powerType == PowerType.STARPOWER) {
-			System.out.print("star power");
-		}
-		if(this.powerType == PowerType.STICKYROAD) {
-			System.out.print("Sticky road");
-		}
 	}
 	
 	// Sets a random power from the enum type
@@ -57,6 +40,9 @@ public class PowerUp {
 		}
 	}
 	
+	
+	/** ----------------------------- UPDATE METHODS ------------------------- **/
+	// reduce the life-time of a buff
 	public void updateLifeTime(float delta) {
 		this.lifeTime = Math.max(0, lifeTime - delta);
 		System.out.println("buff in stack has: " + lifeTime);
@@ -76,7 +62,9 @@ public class PowerUp {
 		}
 	}
 	
-	// Applies power to a specific player
+	
+	/** ----------------------------- POWER APPLICATION METHODS ------------------------- **/
+	// Applies power to a specific player or a set of opponents
 	public void applyPower(Player player, List<Player> opponents) 
 	{
 		AssetHandler.playSound("usePower");
@@ -121,6 +109,7 @@ public class PowerUp {
 		}
 	}
 	
+	// Reverses a power that was applied by applying the opposite of applypower
 	public void reverseApplyPower(Player player) 
 	{
 		if(this.powerType == PowerType.SPEEDBOOST)
@@ -146,5 +135,26 @@ public class PowerUp {
 			player.getCar().setFriction(0.5f);
 		}
 	}
-	/** ----------------------------- END METHODS ------------------------- **/
+	
+	
+	/** ----------------------------- DEBUG ------------------------- **/
+	// Debugging for testing power types
+	public void printPowerType() {
+		if(this.powerType == PowerType.SPEEDBOOST) {
+			System.out.print("SpeedBoost");
+		}
+		if(this.powerType == PowerType.SPEEDREDUCE) {
+			System.out.print("SpeedReduce");
+		}
+		if(this.powerType == PowerType.ICEROAD) {
+			System.out.print("Ice road");
+		}
+		if(this.powerType == PowerType.STARPOWER) {
+			System.out.print("star power");
+		}
+		if(this.powerType == PowerType.STICKYROAD) {
+			System.out.print("Sticky road");
+		}
+	}
+
 }

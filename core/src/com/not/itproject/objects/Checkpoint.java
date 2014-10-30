@@ -15,6 +15,8 @@ public class Checkpoint extends GameObject {
 	private float width;
 	private float height;
 	
+	// Creates a static box for the checkpoint and sets it as a sensory object
+	// Sensory objects can detect but not action upon collisions
 	public Checkpoint(World worldBox2D, float x, float y, float width, float height, float rotation, String id) {
 		// define super
 		super(worldBox2D, x, y, width, height, 0);

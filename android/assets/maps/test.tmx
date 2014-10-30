@@ -6,6 +6,30 @@
  <tileset firstgid="257" name="road" tilewidth="32" tileheight="32">
   <image source="road.png" width="160" height="64"/>
  </tileset>
+ <layer name="Road" width="15" height="15">
+  <properties>
+   <property name="Friction" value="1.0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBg4wMbIwMBEJAapRQaMjNjNxAbQ1TIT0MtGgb345PGZS4w8JW5go8BefPZRKzyoHceUpC16AwCe7wDr
+  </data>
+ </layer>
+ <layer name="Grass" width="15" height="15">
+  <properties>
+   <property name="Friction" value="0.2"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJyVz8lKl2EUB+C/pZU2SJlDZkpYmZmBNLpwEZSuJASzEiQarJVIZcNGojkoE8wGUxC7AclMswFpUHNIyQswuoTuwEd4A5HPqAPP4ny/95zDFxeLxZawlHgSWMZyVpBIEitZxWrWkMxa1pHCelJJI50MNpDJRrLYRDY5bI79f/2ZLwp9LlvYyjby2E4+OyhgZ3hbGGYPhn43e9jLPvZzgOKIuyXsouIfZ+f/bzlHOBWx9xCHKaUsIq/hJBc4zRnOhqySo1RxjOOcoDrkddRzg4sL9s7tqOUc5yPuNnKdLm6Gb5do4DJXuMq1kD3gIU08oplXtIT8Fre5w13ucT/i7lx18omXoX9MK094yjOe08YL2ukIb7v5Qc8iu/9Wg/ziM6/p5Q199POWAd7xng98ZJIpfjPNF74yxDAjfGOUMcaZ4Dsz/GQW79tA2w==
+  </data>
+ </layer>
+ <objectgroup name="Starting position">
+  <object x="40" y="128.818" width="2" height="2.36364"/>
+  <object x="54.2727" y="128.727" width="2" height="2.36364"/>
+  <object x="39.7727" y="117.682" width="2" height="2.36364"/>
+  <object x="54.0454" y="117.591" width="2" height="2.36364"/>
+  <object x="39.7727" y="106.682" width="2" height="2.36364"/>
+  <object x="54.0454" y="106.591" width="2" height="2.36364"/>
+ </objectgroup>
  <objectgroup name="Obstacles">
   <object name="1" x="400.589" y="74.334" width="2.66667" height="2.66667" rotation="27.1531"/>
   <object name="2" x="394.322" y="85.7301" width="2.66667" height="2.66667" rotation="27.1531"/>
@@ -115,35 +139,11 @@
   <object name="53" x="88.6667" y="402.667" width="2.66667" height="2.66667" rotation="-46.8566"/>
  </objectgroup>
  <objectgroup name="Checkpoints">
-  <object name="2" x="288" y="45" width="1.66667" height="63.3333"/>
-  <object name="3" x="343" y="237.667" width="120" height="1.66667"/>
+  <object name="6" x="288" y="45" width="1.66667" height="63.3333"/>
+  <object name="5" x="343" y="237.667" width="120" height="1.66667"/>
   <object name="4" x="397" y="300.667" width="1.33333" height="66.6667"/>
-  <object name="1" x="94.6704" y="144.262" width="2" height="88.3333" rotation="-269.854"/>
-  <object name="6" x="77.3333" y="233" width="137.333" height="2"/>
-  <object name="5" x="178.5" y="352" width="1.5" height="94.5"/>
+  <object name="2" x="77.3333" y="233" width="137.333" height="2"/>
+  <object name="3" x="178.5" y="352" width="1.5" height="94.5"/>
+  <object name="1" x="14" y="141" width="67"/>
  </objectgroup>
- <objectgroup name="Starting position">
-  <object x="40" y="128.818" width="2" height="2.36364"/>
-  <object x="54.2727" y="128.727" width="2" height="2.36364"/>
-  <object x="39.7727" y="117.682" width="2" height="2.36364"/>
-  <object x="54.0454" y="117.591" width="2" height="2.36364"/>
-  <object x="39.7727" y="106.682" width="2" height="2.36364"/>
-  <object x="54.0454" y="106.591" width="2" height="2.36364"/>
- </objectgroup>
- <layer name="Road" width="15" height="15">
-  <properties>
-   <property name="Friction" value="1.0"/>
-  </properties>
-  <data encoding="base64" compression="zlib">
-   eJxjYBg4wMbIwMBEJAapRQaMjNjNxAbQ1TIT0MtGgb345PGZS4w8JW5go8BefPZRKzyoHceUpC16AwCe7wDr
-  </data>
- </layer>
- <layer name="Grass" width="15" height="15">
-  <properties>
-   <property name="Friction" value="0.2"/>
-  </properties>
-  <data encoding="base64" compression="zlib">
-   eJyVz8lKl2EUB+C/pZU2SJlDZkpYmZmBNLpwEZSuJASzEiQarJVIZcNGojkoE8wGUxC7AclMswFpUHNIyQswuoTuwEd4A5HPqAPP4ny/95zDFxeLxZawlHgSWMZyVpBIEitZxWrWkMxa1pHCelJJI50MNpDJRrLYRDY5bI79f/2ZLwp9LlvYyjby2E4+OyhgZ3hbGGYPhn43e9jLPvZzgOKIuyXsouIfZ+f/bzlHOBWx9xCHKaUsIq/hJBc4zRnOhqySo1RxjOOcoDrkddRzg4sL9s7tqOUc5yPuNnKdLm6Gb5do4DJXuMq1kD3gIU08oplXtIT8Fre5w13ucT/i7lx18omXoX9MK094yjOe08YL2ukIb7v5Qc8iu/9Wg/ziM6/p5Q199POWAd7xng98ZJIpfjPNF74yxDAjfGOUMcaZ4Dsz/GQW79tA2w==
-  </data>
- </layer>
 </map>

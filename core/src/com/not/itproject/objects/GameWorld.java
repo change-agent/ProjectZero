@@ -38,7 +38,8 @@ public class GameWorld {
 	// Network handling
 	private Queue<Object> networkUpdates;
 	
-	/**------------------- DEBUG CONTACT LISTENER FOR POWER UP TESTING------**/
+	// This is required by Box2D - do not remove
+	/**------------------- CONTACT LISTENER FOR COLLISION HANDLING ----------**/
 	public ContactListener c = new ContactListener() {
 		@Override
 		public void preSolve(Contact contact, Manifold oldManifold) {}
@@ -67,6 +68,9 @@ public class GameWorld {
 			{
 				GameObject gameObject = (GameObject) A.getBody().getUserData();
 				Car car = (Car) B.getBody().getUserData();
+				
+				// The sensory type is a checkpoint so we add it to the checkpoint list of the 
+				// Car that triggered the sensor
 				if(gameObject.getObjType() == GameObject.ObjType.CHECKPOINT)
 				{
 					// Handle the checkpoint detection
@@ -77,6 +81,8 @@ public class GameWorld {
 						// obtain if checkpoint not collected
 						ProjectZero.log("Checkpoint Obtained!");
 						Vector2 lastPosition = new Vector2(car.getPosition().x, car.getPosition().y);
+						
+						// Set the last position in the game state to the checkpoint
 						if (NetworkHandler.isHost()) {
 							// update game session as host
 							ProjectZero.gameSession.setLastPosition(AssetHandler.getPlayerID(), 
@@ -113,6 +119,7 @@ public class GameWorld {
 			
 			else if(B.isSensor()) 
 			{
+				// Same as above however B is the sensory object, so we swap A and B
 				GameObject gameObject = (GameObject) B.getBody().getUserData();
 				Car car = (Car) A.getBody().getUserData();
 				if(gameObject.getObjType() == GameObject.ObjType.CHECKPOINT)
@@ -150,8 +157,7 @@ public class GameWorld {
 				}
 			}
 			else 
-			{	
-				// TODO => this will pay sounds for all players
+			{	// Crashed with an obstacle or car
 				AssetHandler.playSound("crash");
 			}
 		}

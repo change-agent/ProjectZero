@@ -408,6 +408,7 @@ public class GameRenderer {
 		}
 	}
 	
+	// Renders the buffs a player has on their car as text to the screen
 	private void renderActiveBuffs(float delta)
 	{
 		float height = 4;
