@@ -37,4 +37,18 @@ public class GameVariables {
 			return this.lifeTime;
 		}
 	};
+	
+
+	/** ----------------------------- CAR CONSTANTS ------------------------------ **/
+	// Static properties used for car handling
+	public static float LOCK_ANGLE = 35 * ((float)Math.PI / 180);
+	public static float STEER_SPEED = 0.8f;
+	public static float LINEAR_FRICTION = 2.0f;
+	public static float CHASSIS_DENSITY = 3.0f;
+	public static float WHEEL_DENSITY = 1.8f;
+	public static float MAX_HORSEPOWER = 600;
+	public static float MIN_HORSEPOWER = 400;
+	public static float MIN_DRIFT_COEFF = 0.2f;
+	public static float MAX_DRIFT_COEFF = 0.6f;
+	public static float DRIFT_COEFF = 0.2f; // Decrease for more skid
 }
