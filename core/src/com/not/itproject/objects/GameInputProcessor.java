@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad.TouchpadStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.not.itproject.handlers.AssetHandler;
 import com.not.itproject.handlers.NetworkHandler;
 import com.not.itproject.networks.NetworkMessage;
 import com.not.itproject.objects.GameWorld.GameState;
@@ -40,6 +42,7 @@ public class GameInputProcessor {
 	
 	Label lapsCounter;
 	LabelStyle labelStyle;
+	Image hudBg;
 	
 	// main constructor
 	public GameInputProcessor(GameWorld world, float gameWidth, float gameHeight) {
@@ -62,6 +65,7 @@ public class GameInputProcessor {
 		stage.addActor(buttonMenu);
 		
 		// add hub variables
+		stage.addActor(hudBg);
 		stage.addActor(lapsCounter);
 	}
 
@@ -174,6 +178,11 @@ public class GameInputProcessor {
 		labelStyle = new LabelStyle(font, Color.BLACK);
 		lapsCounter = new Label("Laps", labelStyle);
 		
+		// create hub background
+		hudBg = new Image(AssetHandler.bannerWhite);
+		hudBg.setPosition(0, gameHeight - 28);
+		hudBg.setSize(gameWidth, 28);
+		
 		// determine text & position
 		updateLapCounter();
 		lapsCounter.setPosition(10, gameHeight - 20);
@@ -187,8 +196,10 @@ public class GameInputProcessor {
 					ProjectZero.gameScreen.getGameWorld().getPlayer().getLapNum() + " / " +
 					GameVariables.GAME_LAPS;
 			lapsCounter.setText(lapDetails);
+			hudBg.setVisible(true);
 		} else {
 			lapsCounter.setText("");
+			hudBg.setVisible(false);
 		}
 	}
 

@@ -174,7 +174,7 @@ public class GameRenderer {
 			AssetHandler.setSoundMute(btnSoundToggle.isToggleOn());
 		}
 	}
- 	
+
 	public void render(float delta) {
 		// get game state
 		if (gameWorld.isReady()) { 		
