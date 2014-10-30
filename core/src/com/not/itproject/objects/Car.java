@@ -13,27 +13,14 @@ import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 
-public class Car extends GameObject{	
-	/** ----------------------------- CONSTANTS ------------------------------ **/
-	// Static properties used for car handling
-	private final float LOCK_ANGLE = 35 * DEG_TO_RAD;
-	private final float STEER_SPEED = 0.8f;
-	private final float LINEAR_FRICTION = 2.0f;
-	private final float CHASSIS_DENSITY = 3.0f;
-	private final float WHEEL_DENSITY = 1.8f;
-	private float maxHorsePower = 600;
-	private float minHorsePower = 400;
-	private float minDriftCoeff = 0.2f;
-	private float maxDriftCoeff = 0.6f;
-	private float driftCoeff = 0.2f; // Decrease for more skid
-	
+public class Car extends GameObject{		
 	/** ----------------------------- VARIABLES ------------------------------ **/
 	// Variable properties ued for car handling
 	private Body chassis, leftFrontWheel, rightFrontWheel, leftRearWheel, rightRearWheel;
 	private RevoluteJoint leftFrontWheelJoint, rightFrontWheelJoint;
 	private float enginePower = 0.0f;
 	private float steeringAngle = 0.0f;
-	private float horsepower = maxHorsePower;
+	private float horsepower = GameVariables.MAX_HORSEPOWER;
 	private PowerUp power;
 	private boolean hasPower;
 	private boolean usePower;
@@ -69,7 +56,7 @@ public class Car extends GameObject{
 		PolygonShape chasisShape = new PolygonShape();
 		chasisShape.setAsBox(width/2 * PIXELS_TO_METERS, height/2 * PIXELS_TO_METERS);
 		FixtureDef chassisFixDef = new FixtureDef();
-		chassisFixDef.density = CHASSIS_DENSITY;
+		chassisFixDef.density = GameVariables.CHASSIS_DENSITY;
 		chassisFixDef.friction = 0;
 		chassisFixDef.shape = chasisShape;
 		chassisFixDef.filter.categoryBits = objType.value();
@@ -92,8 +79,8 @@ public class Car extends GameObject{
 		PolygonShape wheelShape = new PolygonShape();
 		wheelShape.setAsBox(wheelWidth / 2 * PIXELS_TO_METERS, wheelHeight / 2 * PIXELS_TO_METERS);
 		FixtureDef wheelFixDef = new FixtureDef();
-		wheelFixDef.density = WHEEL_DENSITY;
-		wheelFixDef.friction = LINEAR_FRICTION;
+		wheelFixDef.density = GameVariables.WHEEL_DENSITY;
+		wheelFixDef.friction = GameVariables.LINEAR_FRICTION;
 		wheelFixDef.shape = wheelShape;
 		wheelFixDef.filter.categoryBits = objType.value();
 		
@@ -137,8 +124,8 @@ public class Car extends GameObject{
 		leftFrontJointDef.enableMotor = true;
 		leftFrontJointDef.enableLimit = true;
 		leftFrontJointDef.maxMotorTorque = 125;
-		leftFrontJointDef.lowerAngle = -1 * LOCK_ANGLE;
-		leftFrontJointDef.upperAngle = LOCK_ANGLE;
+		leftFrontJointDef.lowerAngle = -1 * GameVariables.LOCK_ANGLE;
+		leftFrontJointDef.upperAngle = GameVariables.LOCK_ANGLE;
 		
 		RevoluteJointDef rightFrontJointDef = new RevoluteJointDef();
 		rightFrontJointDef.initialize(
@@ -146,8 +133,8 @@ public class Car extends GameObject{
 		rightFrontJointDef.enableMotor = true;
 		rightFrontJointDef.enableLimit = true;
 		rightFrontJointDef.maxMotorTorque = 125;
-		rightFrontJointDef.lowerAngle = -1 * LOCK_ANGLE;
-		rightFrontJointDef.upperAngle = LOCK_ANGLE;
+		rightFrontJointDef.lowerAngle = -1 * GameVariables.LOCK_ANGLE;
+		rightFrontJointDef.upperAngle = GameVariables.LOCK_ANGLE;
 		
 		PrismaticJointDef leftRearJointDef = new PrismaticJointDef();
 		leftRearJointDef.initialize(chassis, leftRearWheel, 
@@ -244,11 +231,11 @@ public class Car extends GameObject{
 		// Prevent too much skidding by killing orthogonal
 		Vector2 currRightNorm = wheel.getWorldVector( new Vector2(1, 0) );
 		Vector2 orhthogAmount = currRightNorm.scl(currRightNorm.dot(wheel.getLinearVelocity()));
-		Vector2 impulse = orhthogAmount.scl(0.2f * wheel.getMass() * -driftCoeff);
+		Vector2 impulse = orhthogAmount.scl(0.2f * wheel.getMass() * -GameVariables.DRIFT_COEFF);
 		wheel.applyLinearImpulse(impulse, wheel.getWorldCenter(), true);
 		
 		// Prevent too much spot - rotation by killing the angular velocity
-		float angleImpulse = 0.8f * wheel.getInertia() * -driftCoeff;
+		float angleImpulse = 0.8f * wheel.getInertia() * -GameVariables.DRIFT_COEFF;
 		wheel.applyAngularImpulse(wheel.getAngularVelocity() * angleImpulse, true);
 	}
 	
@@ -266,7 +253,7 @@ public class Car extends GameObject{
 	}
 	
 	public void setSteeringAngle(float steerAmount) {
-		steeringAngle = STEER_SPEED * steerAmount * LOCK_ANGLE;
+		steeringAngle = GameVariables.STEER_SPEED * steerAmount * GameVariables.LOCK_ANGLE;
 	}
 	
 	public void powerOffEngine() {
@@ -353,18 +340,19 @@ public class Car extends GameObject{
 	}
 	
 	public void setMaxEnginePower(float scale) {
-		maxHorsePower *= scale;
+		GameVariables.MAX_HORSEPOWER *= scale;
 	}
 	
 	public Player getOwner() {
 		return owner;
 	}
 	public void setFriction(float scale) {
-		driftCoeff *= scale;
-		driftCoeff = MathUtils.clamp(driftCoeff, minDriftCoeff, maxDriftCoeff);
+		GameVariables.DRIFT_COEFF *= scale;
+		GameVariables.DRIFT_COEFF = MathUtils.clamp(GameVariables.DRIFT_COEFF, 
+				GameVariables.MIN_DRIFT_COEFF, GameVariables.MAX_DRIFT_COEFF);
 		
 		horsepower *= 1/scale;
-		horsepower = MathUtils.clamp(horsepower, minHorsePower, maxHorsePower);
+		horsepower = MathUtils.clamp(horsepower, GameVariables.MIN_HORSEPOWER, GameVariables.MAX_HORSEPOWER);
 	}
 	
 	public void setMaskData(short maskBits) {

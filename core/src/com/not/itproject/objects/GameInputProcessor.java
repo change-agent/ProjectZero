@@ -42,7 +42,7 @@ public class GameInputProcessor {
 	
 	Label lapsCounter;
 	LabelStyle labelStyle;
-	Image hudBg;
+	Image hudBg, enginePowerBack, enginePowerFront;
 	
 	// main constructor
 	public GameInputProcessor(GameWorld world, float gameWidth, float gameHeight) {
@@ -66,6 +66,8 @@ public class GameInputProcessor {
 		
 		// add hub variables
 		stage.addActor(hudBg);
+		stage.addActor(enginePowerBack);
+		stage.addActor(enginePowerFront);
 		stage.addActor(lapsCounter);
 	}
 
@@ -182,13 +184,19 @@ public class GameInputProcessor {
 		hudBg = new Image(AssetHandler.bannerWhite);
 		hudBg.setPosition(0, gameHeight - 28);
 		hudBg.setSize(125, 28);
+		enginePowerBack = new Image(AssetHandler.bannerWhite);
+		enginePowerBack.setSize(125, 28);
+		enginePowerBack.setPosition(gameWidth - 125, gameHeight - 28);
+		enginePowerFront = new Image(AssetHandler.bannerBlack);
+		enginePowerFront.setSize(119, 22);
+		enginePowerFront.setPosition(gameWidth - 122, gameHeight - 25);
 		
 		// determine text & position
-		updateLapCounter();
+		updateHub();
 		lapsCounter.setPosition(10, gameHeight - 20);
 	}
 	
-	private void updateLapCounter() {
+	private void updateHub() {
 		if (ProjectZero.gameScreen != null && 
 				ProjectZero.gameScreen.getGameWorld().getGameState() == GameState.RUNNING) {
 			// get lap details
@@ -200,6 +208,15 @@ public class GameInputProcessor {
 		} else {
 			lapsCounter.setText("");
 			hudBg.setVisible(false);
+		}
+		
+		// engine power usage
+		float maxEnginePower = 119;
+		if (world.getPlayerByID(AssetHandler.getPlayerID()) != null) {
+			float enginePowerRatio = Math.abs(world.getPlayerByID(
+					AssetHandler.getPlayerID()).getCar().getEnginePower()) 
+					/ GameVariables.MAX_HORSEPOWER;
+			enginePowerFront.setSize(maxEnginePower * enginePowerRatio, 22);
 		}
 	}
 
@@ -289,7 +306,7 @@ public class GameInputProcessor {
 		}
 		
 		// update stage
-		updateLapCounter();
+		updateHub();
 		stage.act(delta);
 	}
 
