@@ -104,13 +104,13 @@ public class AssetHandler {
 		backgroundErrorTexture = new Texture(Gdx.files.internal("backgrounds/backgroundError.png"));
 		backgroundErrorTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
-		helpGameplayTexture = new Texture(Gdx.files.internal("Tutorials/helpGameplay.png"));
+		helpGameplayTexture = new Texture(Gdx.files.internal("tutorials/helpGameplay.png"));
 		helpGameplayTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
-		helpSessionsTexture = new Texture(Gdx.files.internal("Tutorials/helpSessions.png"));
+		helpSessionsTexture = new Texture(Gdx.files.internal("tutorials/helpSessions.png"));
 		helpSessionsTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
-		helpTrackSelectionTexture = new Texture(Gdx.files.internal("Tutorials/helpTrackSelection.png"));
+		helpTrackSelectionTexture = new Texture(Gdx.files.internal("tutorials/helpTrackSelection.png"));
 		helpTrackSelectionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		// load regions

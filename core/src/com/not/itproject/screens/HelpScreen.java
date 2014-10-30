@@ -142,21 +142,22 @@ public class HelpScreen extends AbstractScreen {
 		switch (screenStatus) {
 			case HELP_ONE:
 				// clear screen
-				Gdx.graphics.getGL20().glClearColor(0.65f, 0.8f, 0.85f, 0.85f);
+				Gdx.graphics.getGL20().glClearColor(0.65f, 0.7f, 0.85f, 0.85f);
 				Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 				
 				// render first help screen
 				batch.begin();
+				
+				// draw background
+				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+						gameWidth, gameHeight);
+				
 				batch.draw(AssetHandler.helpSessions, 0, 0,
 						gameWidth, gameHeight);
 				batch.draw(AssetHandler.buttonBack, 
 						btnBack.getPosition().x - btnBack.getRadius(), 
 						btnBack.getPosition().y - btnBack.getRadius(), 
 						btnBack.getRadius() * 2, btnBack.getRadius() * 2);
-				batch.draw(AssetHandler.buttonNavigatePrev, 
-						btnPrevious.getPosition().x, 
-						btnPrevious.getPosition().y, 
-						btnPrevious.getWidth(), btnPrevious.getHeight());
 				batch.draw(AssetHandler.buttonNavigateNext, 
 						btnNext.getPosition().x, 
 						btnNext.getPosition().y, 
@@ -166,11 +167,16 @@ public class HelpScreen extends AbstractScreen {
 				
 			case HELP_TWO:
 				// clear screen
-				Gdx.graphics.getGL20().glClearColor(0.65f, 0.9f, 0.85f, 0.85f);
+				Gdx.graphics.getGL20().glClearColor(0.65f, 0.8f, 0.85f, 0.85f);
 				Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 				
 				// render second help screen
 				batch.begin();
+				
+				// draw background
+				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+						gameWidth, gameHeight);
+				
 				batch.draw(AssetHandler.helpTrackSelection, 0, 0,
 						gameWidth, gameHeight);
 				batch.draw(AssetHandler.buttonBack, 
@@ -185,32 +191,21 @@ public class HelpScreen extends AbstractScreen {
 						btnNext.getPosition().x, 
 						btnNext.getPosition().y, 
 						btnNext.getWidth(), btnNext.getHeight());
-				
-				
-				// render shapes
-				shapeRenderer.begin(ShapeType.Line);
-				shapeRenderer.setColor(Color.BLACK);
-				shapeRenderer.circle(btnBack.getPosition().x, btnBack.getPosition().y, 
-						(float) btnBack.getRadius());
-				batch.draw(AssetHandler.buttonNavigatePrev, 
-						btnPrevious.getPosition().x, 
-						btnPrevious.getPosition().y, 
-						btnPrevious.getWidth(), btnPrevious.getHeight());
-				batch.draw(AssetHandler.buttonNavigateNext, 
-						btnNext.getPosition().x, 
-						btnNext.getPosition().y, 
-						btnNext.getWidth(), btnNext.getHeight());
-				shapeRenderer.end();
 				batch.end();
 				break;
 				
 			case HELP_THREE:
 				// clear screen
-				Gdx.graphics.getGL20().glClearColor(0.65f, 1.0f, 0.85f, 0.85f);
+				Gdx.graphics.getGL20().glClearColor(0.65f, 0.9f, 0.85f, 0.85f);
 				Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 				
 				// render second help screen
 				batch.begin();
+				
+				// draw background
+				batch.draw(AssetHandler.backgroundUniversal, 0, 0,
+						gameWidth, gameHeight);
+				
 				batch.draw(AssetHandler.helpGameplay, 0, 0,
 						gameWidth, gameHeight);
 				batch.draw(AssetHandler.buttonBack, 
@@ -221,10 +216,6 @@ public class HelpScreen extends AbstractScreen {
 						btnPrevious.getPosition().x, 
 						btnPrevious.getPosition().y, 
 						btnPrevious.getWidth(), btnPrevious.getHeight());
-				batch.draw(AssetHandler.buttonNavigateNext, 
-						btnNext.getPosition().x, 
-						btnNext.getPosition().y, 
-						btnNext.getWidth(), btnNext.getHeight());
 				batch.end();
 				break;
 		}
