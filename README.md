@@ -24,9 +24,22 @@ For initial retrieval of the project, there are a few requirements that are need
 
 3. Thirdly, pull this repository onto your local machine.
 
-4. Lastly, compile and test the project.
+4. Import this project as a gradle project. See deployment instructions below.
 
+5. If building on windows: 
+    5.1 Right click "ProjectZero - core" in the package explorer. 
+    5.2 Select "Build Path > Configure Build Path" then go to "Libraries"
+    5.3 Click "Add JARs..." and go to core "ProjectZero-core/lib" and select all the files in this directory.
+    5.4 Click "OK" and then "OK" again at the top level.
 
+6. If building for android:
+    6.1 Right click "ProjectZero - core" in the package explorer. 
+    6.2 Select "Build Path > Configure Build Path" then go to "Libraries"
+    6.3 Click "Add JARs..." and go to core "ProjectZero-core/lib" and select all the files in this directory.
+    6.4 Click "OK" and then "OK" again at the top level.
+    6.5 Click over to "Order and export" and make sure each of the newly added jar files are ticked. Click "OK" to save.
+
+7. Lastly, compile and test the project. If on windows right click the desktop project folder and run as java application. If on android, right click the android project folder and run as android application. You'll need to set up your phone in developer mode or have a virtual device running from eclipse.
 
 ### * Configuration ###
 
