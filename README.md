@@ -1,16 +1,16 @@
+### Imported from [Bitbucket](https://bitbucket.org/dbmasters/project-zero-group-10)
+- - - 
 # Project Zero - README #
 
 ## What is this repository for? ##
 
 Quick summary
 
-* Project Zero (Group 10)
+* Project Zero -- Android game (Group 10)
 
 Version
 
 * Prototype
-
-[Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ## How do I get set up? ##
 
